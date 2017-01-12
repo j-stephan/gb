@@ -1,9 +1,32 @@
-\documentclass[german,beleg]{zihpub}
+\documentclass[utf8,german,beleg]{zihpub}
+
+\usepackage{datetime}
+\usepackage{etoolbox}
+\usepackage[section]{minted}
+\usepackage{tcolorbox}
+
+\BeforeBeginEnvironment{minted}{\begin{tcolorbox}}
+\AfterEndEnvironment{minted}{\end{tcolorbox}}
+
+\newcommand{\lstfont}[1]{\color{#1}\small\ttfamily}
 
 \author{Jan Stephan}
-\title{Ich brauche noch einen Namen}
+\title{Untersuchung der Parallelisierung des Feldkamp-Davis-Kress-Algorithmus mittels CUDA}
 \matno{3755136}
-\betreuer{Ich brauche noch einen Betreuer}
+\betreuer{\hspace{0.15mm}Dr.-Ing. André Bieberle \\
+          \qquad \qquad Dr.-Ing. Guido Juckeland \\
+          \qquad \qquad Matthias Werner}
+\date{21. März 2017}
+\copyrighterklaerung{Ich habe wirklich nichts geklaut}
+\acknowledgments{Vielleicht die HZDR-Betreuer lieber hier nennen?}
+\bibfiles{bibliography.bib}
 
 \begin{document}
+
+\include{einleitung}
+\include{grundlagen}
+\include{umsetzung}
+\include{leistungsanalyse}
+\include{fazit}
+
 \end{document}
