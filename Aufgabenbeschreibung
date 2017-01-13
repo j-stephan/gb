@@ -1,0 +1,12 @@
+Aufgabenstellung für den Großen Beleg
+
+Thema: Untersuchung der Parallelisierung des Feldkamp-Davis-Kress-Algorithmus mittels CUDA
+
+Zielstellung:   Der FDK-Algorithmus ist ein weit verbreiteter Ansatz zur Rekonstruktion von kegelförmiger
+                Computer-Tomographie. In diesem Beleg soll untersucht werden:
+
+                - Zusammenfassung des Forschungsstandes hinsichtlich der Parallelisierung / der Verwendung
+                  von CUDA
+                - Gegenüberstellung verschiedener Optimierungsziele (Time-to-solution, Occupancy)
+                - Variantenvergleich verschiedener Implementierungsstrategien
+                - Implementierung und Analyse einer dieser Strategien
