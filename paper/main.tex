@@ -2,6 +2,7 @@
 
 \usepackage{datetime}
 \usepackage{etoolbox}
+\usepackage[acronyms]{glossaries}
 \usepackage[section]{minted}
 \usepackage{tcolorbox}
 
@@ -11,7 +12,7 @@
 \newcommand{\lstfont}[1]{\color{#1}\small\ttfamily}
 
 \author{Jan Stephan}
-\title{Untersuchung der Parallelisierung des Feldkamp-Davis-Kress-Algorithmus mittels CUDA}
+\title{Untersuchung der Parallelisierung des Feldkamp-Davis-Kress-Algorithmus mittels CUDA{\textregistered}}
 \matno{3755136}
 \betreuer{\hspace{0.15mm}Dr.-Ing. André Bieberle \\
           \qquad \qquad Dr.-Ing. Guido Juckeland \\
@@ -20,6 +21,12 @@
 \copyrighterklaerung{Ich habe wirklich nichts geklaut}
 \acknowledgments{Vielleicht die HZDR-Betreuer lieber hier nennen?}
 \bibfiles{bibliography.bib}
+
+\newacronym{fdk}{FDK-Algorithmus}{Feldkamp-Davis-Kress-Algorithmus}
+\newacronym{hzdr}{HZDR}{Helmholtz-Zentrum Dresden-Rossendorf}
+\newacronym{cuda}{CUDA{\textregistered}}{NVIDIA{\textregistered} CUDA{\textregistered}}
+\newacronym{paris}{\textit{PARIS}}{\textit{Portable and Accelerated 3D Reconstruction tool for radiation based Imaging
+                                  Systems}}
 
 \begin{document}
 
