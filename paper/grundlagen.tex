@@ -1,27 +1,63 @@
 \chapter{Grundlagen}
 
-\section{Der Feldkamp-Davis-Kress-Algorithmus}
+\section{Die Computertomographie}
+
+\subsection{Die Geschichte und prinzipielle Funktionsweise der Computertomographie}
+
+Die Geschichte der Computertomographie beginnt mit dem Röntgenverfahren, welches 1895 vom deutschen Physiker Wilhelm
+Conrad Röntgen entdeckt wurde~\cite{roentgen}. Mittels einer Strahlungsquelle wird ein Objekt durchleuchtet und auf
+einem Film bzw. einem Detektor abgebildet; der dreidimensionale Körper wird also auf eine zweidimensionale Fläche
+projiziert. Diesen Schritt bezeichnet man als \textit{Vorwärtsprojektion}.
+
+Führt man die Vorwärtsprojektion genügend oft in aufeinanderfolgenden Winkelschritten aus, bis man (idealerweise) einen
+Vollkreis abgefahren hat, so lässt sich aus den dabei entstandenen \textit{Projektionen} der ursprünglich durchleuchtete
+Körper, den wir in der Folge als \textit{Volumen} bezeichnen, rekonstruieren. Für jeden Punkt im Volumen
+(\textit{Voxel}) kann anhand der Informationen aus den Projektionen der Absorptionsgrad berechnet und dadurch die
+innere Struktur des Volumens bestimmt werden. Dieser Zusammenhang wurde in den 60er Jahren des 20. Jahrhunderts durch
+den südafrikanisch-amerikanischen Physiker Allan McLeod Cormack festgestellt, der ebenfalls die dazu notwendigen
+mathematischen Grundlagen entwickelte~\cite{cormack63}~\cite{cormack64}; ihm war allerdings unbekannt~\cite{cormack79},
+dass diese schon 1917 vom österreichischen Mathematiker Johann Radon gefunden wurden~\cite{radon}. Mathematisch ist der
+Vorgang der \textit{Rückprojektion} eine Anwendung der nach Radon benannten \textit{Radon-Transformation}.
+
+Ein Problem der Vorwärtsprojektion ist der Informationsverlust, der durch die mangelnde Tiefe des Detektors entsteht;
+die Tiefeninformationen werden auf die zweidimensionale Fläche {\glqq}verschmiert{\grqq}. Bei der Rückprojektion lässt
+sich dieser Verlust durch die Wahl eines geeigneten Bildfilters wiederum kaschieren, weshalb man auch von der
+\textit{gefilterten Rückprojektion} spricht.
+
+Da die gefilterte Rückprojektion für jedes Voxel einzeln berechnet werden muss, ist sie für einen Menschen nicht in
+sinnvoller Zeit lösbar. Aus diesem Grund ist man für die Lösung des Gesamtproblems also auf einen Computer angewiesen,
+woraus sich der Name des Verfahrens ableitet: \textit{Computertomographie}. Die ersten bis zur Marktreife entwickelten
+Computertomographen wurden gegen Ende der 60er Jahre des 20. Jahrhunderts vom englischen Elektroingenieur Godfrey
+Hounsfield gebaut. Dieser entwickelte die für die Rückprojektion nötigen Algorithmen ebenfalls selbst, da ihm die
+Vorarbeiten von Cormack und Radon nicht bekannt waren~\cite{kalender}. Für ihre voneinander unabhängigen Arbeiten
+erhielten Godfrey und Cormack 1979 den Nobelpreis für Physiologie oder Medizin, was die Bedeutung der
+Computertomographie insbesondere für die Medizin unterstreicht.
+
+\subsection{Der Feldkamp-Davis-Kress-Algorithmus und seine Parallelisierung}
+
+Der 1984 entwickelte \gls{fdk}~\cite{fdk} ist eine spezielle Ausprägung der gefilterten Rückprojektion. Ausgangspunkt
+der Strahlung ist eine Quelle, die das Volumen mit einem \textit{kegelförmigen} Strahl durchleuchtet und damit auf einem
+Detektor abbildet. Der Vorteil des \gls{fdk} liegt darin, dass die gefilterte Rückprojektion für jedes Voxel individuell
+berechnet werden kann, d.h. ohne Abhängigkeiten zu anderen Voxeln. Dieser Umstand ermöglicht einen Grad an Parallelität,
+für den sich im Englischen der Begriff \textit{embarassingly parallel} eingebürgert hat und macht den \gls{fdk} zu einem
+idealen Ziel für diverse Parallelisierungsansätze.
 
 \begin{itemize}
-    \item Welches Problem wird gelöst und wo tritt dieses Problem auf? -> evtl. kurzer geschichtlicher Überblick zur CT
-    \item Wie funktioniert der FDK-Algorithmus? -> Detaillierungsgrad?
-    \item Wie sieht der Datenfluss aus? -> Detektor, Vorverarbeitung, Wichtung, Filterung, Rückprojektion
-    \item Warum ist dieser Algorithmus besonders gut für Parallelisierung geeignet? -> viele viele Voxel, keine Abhängigkeiten
-    \item Welche Algorithmen gäbe es noch?
+    \item Xu et al.~\cite{xumuell}: vermutlich OpenGL
+    \item Li et al.~\cite{lipapa}: FPGA
+    \item Knaup et al.~\cite{knaupsteck}: PowerPC
+    \item Scherl et al.~\cite{scherlkeck}: \gls{cuda}
+    \item Balász et al.~\cite{balgab}: OpenCL
+    \item Hofmann et al.~\cite{hoftrei}: Intel{\textregistered} Xeon Phi{\texttrademark}: Knights Corner
 \end{itemize}
 
-\section{Parallelisierungsansätze}
-
-\begin{itemize}
-    \item Welche Ansätze sind seit 1984 (Erscheinungsjahr des FDK-Papers) entstanden? -> Vorstellung der Interessanten
-    \item Welche Vor- und Nachteile haben diese Ansätze? -> Warum brauchen wir etwas neues / warum können wir sie nicht anwenden?
-\end{itemize}
+Welche Vor- und Nachteile haben diese Ansätze? -> Warum brauchen wir etwas neues / warum können wir sie nicht anwenden?
 
 
-\section{Die CUDA-Plattform}
+\section{Die CUDA{\textregistered}-Plattform}
 
-\begin{itemize}
-    \item Warum GPUs für wissenschaftliche Berechnungen? -> Vergleich zu CPUs / anderen Beschleunigern
-    \item Warum CUDA? Was gäbe es noch? (OpenCL, OpenMP, OpenACC, ...) / Nachteile?
-    \item Das CUDA-Programmiermodell
-\end{itemize}
+\subsection{Grafikkarten und Wissenschaft}
+
+\subsection{Das CUDA{\textregistered}-Programmiermodell}
+
+\subsection{Alternativen zu CUDA{\textregistered}}
