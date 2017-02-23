@@ -37,19 +37,46 @@ Computertomographie insbesondere für die Medizin unterstreicht.
 
 Der 1984 entwickelte \gls{fdk}~\cite{fdk} ist eine spezielle Ausprägung der gefilterten Rückprojektion. Ausgangspunkt
 der Strahlung ist eine Quelle, die das Volumen mit einem \textit{kegelförmigen} Strahl durchleuchtet und damit auf einem
-Detektor abbildet. Der Vorteil des \gls{fdk} liegt darin, dass die gefilterte Rückprojektion für jedes Voxel individuell
-berechnet werden kann, das heißt ohne Abhängigkeiten zu anderen Voxeln. Dieser Umstand ermöglicht einen Grad an
-Parallelität, für den sich im Englischen der Begriff \textit{embarassingly parallel} eingebürgert hat und macht den
-\gls{fdk} zu einem idealen Ziel für diverse Parallelisierungsansätze.
+Detektor abbildet. Aufgrund seiner geringen Komplexität und einfachen Implementierbarkeit ist der \gls{fdk} einer der 
+beliebtesten Rückprojektionsalgorithmen für die Kegelstrahl-Computertomographie~\cite{xumuell}. Der Vorteil des
+\gls{fdk} liegt außerdem darin, dass die gefilterte Rückprojektion für jedes Voxel individuell berechnet werden kann,
+das heißt ohne Abhängigkeiten zu anderen Voxeln. Dieser Umstand ermöglicht einen Grad an Parallelität, für den sich im
+englischen Sprachraum der Begriff \textit{embarassingly parallel} eingebürgert hat, und macht den \gls{fdk} zu einem
+idealen Ziel für diverse Parallelisierungsansätze. Seit seiner Einführung ist der \gls{fdk} daher ein beliebtes
+Untersuchungsobjekt von Forschungsgruppen, die sich mit seiner Beschleunigung bzw.\ Parallelisierung mittels einer
+großen Variation von Architekturen, Plattformen und Programmiermodellen beschäftigen. Einige neuere Ansätze sollen im
+Folgenden vorgestellt werden.
 
-\begin{itemize}
-    \item Xu et al.~\cite{xumuell}: vermutlich OpenGL
-    \item Li et al.~\cite{lipapa}: FPGA
-    \item Knaup et al.~\cite{knaupsteck}: PowerPC
-    \item Scherl et al.~\cite{scherlkeck}: \gls{cuda}
-    \item Balász et al.~\cite{balgab}: OpenCL
-    \item Hofmann et al.~\cite{hoftrei}: Intel{\textregistered} Xeon Phi{\texttrademark}: Knights Corner
-\end{itemize}
+Xu et al. untersuchten bereits 2004, inwieweit sich der \gls{fdk} durch den Einsatz handelsüblicher Grafikkarten
+(\textit{commodity graphics hardware}) beschleunigen lässt~\cite{xumuell}. Dabei wurden die Schritte \textit{Wichtung}
+und \textit{Filterung} aufgrund ihrer geringen Komplexität ($\mathcal{O}(n^2)$) auf der CPU ausgeführt, während man die
+komplexere \textit{Rückprojektion} ($\mathcal{O}(n^4)$) auf der GPU berechnete. Die Rückprojektion fand schichtweise
+statt, jeweils für eine Voxelebene entlang der vertikalen Volumenachse. Bereits mit der damals verfügbaren Hardware
+wurde mit der verwendeten GPU ein Speedup von 7,5 (32bit Gleitkommazahlen) bzw.\ 37 (8bit Ganzzahlen) gegenüber der
+verwendeten CPU erreicht, was in Anbetracht des verfügbaren Grafikkartenspeichers bereits als enorme Beschleunigung zu
+werten ist. In ihrem Fazit stellen die Autoren die Vermutung auf, dass der Abstand zwischen den Leistungen von CPU und
+GPU in der Zukunft zugunsten der GPUs immer weiter werden würde: \textit{Since GPU performance has so far doubled every
+6 months (i.e., triple of Moore's law), we expect that the gap between CPU and GPU approaches will widen even further in
+the near future.}
+
+Li et al. beschäftigten sich 2005 damit, wie man den \gls{fdk} mit einem \gls{fpga} implementieren könnte. Dazu teilten sie
+das Ausgabevolumen, also die Zieldaten der Rückprojektion, in mehrere Würfel (\textit{bricks}) auf, um zu einer
+optimalen Cachenutzung zu kommen. Der von ihnen verwendete deterministische Aufteilungsalgorithmus hatte zur Folge, dass
+bei der Berechnung auf dem \gls{fpga} kein Cache-Verfehlen (\textit{cache miss}) mehr auftrat. Auf diese Weise konnten
+sie ein 16bit-Festkommazahlen-Volumen mit $1024^3$ Voxeln in 267,7 Sekunden rekonstruieren.
+
+Knaup et al. gingen 2007 der Frage nach, ob der \gls{fdk} durch die Eigenschaften der Cell-Architektur profitieren
+könne~\cite{knaupsteck}.
+
+Scherl et al. unternahmen 2008 den Versuch, den \gls{fdk} mittels \gls{cuda} zu beschleunigen~\cite{scherlkeck}.
+
+Balász et al. versuchten 2009 das Gleiche mit der \gls{opencl}~\cite{balgab}.
+
+Hofmann et al. untersuchten eventuelle Vorteile durch den Einsatz der neuen Koprozessoren vom Typ Intel{\textregistered}
+Xeon Phi{\texttrademark} 'Knights Corner'~\cite{hoftrei}.
+
+Zhao et al. verfolgten die Absicht, eine Beschleunigung durch Ausnutzung geometrischer Zusammenhänge zu
+erreichen~\cite{zhao}.
 
 Welche Vor- und Nachteile haben diese Ansätze? -> Warum brauchen wir etwas neues / warum können wir sie nicht anwenden?
 
