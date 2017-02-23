@@ -6,7 +6,7 @@
 
 Die Geschichte der Computertomographie beginnt mit dem Röntgenverfahren, welches 1895 vom deutschen Physiker Wilhelm
 Conrad Röntgen entdeckt wurde~\cite{roentgen}. Mittels einer Strahlungsquelle wird ein Objekt durchleuchtet und auf
-einem Film bzw. einem Detektor abgebildet; der dreidimensionale Körper wird also auf eine zweidimensionale Fläche
+einem Film bzw.\ einem Detektor abgebildet; der dreidimensionale Körper wird also auf eine zweidimensionale Fläche
 projiziert. Diesen Schritt bezeichnet man als \textit{Vorwärtsprojektion}.
 
 Führt man die Vorwärtsprojektion genügend oft in aufeinanderfolgenden Winkelschritten aus, bis man (idealerweise) einen
@@ -38,9 +38,9 @@ Computertomographie insbesondere für die Medizin unterstreicht.
 Der 1984 entwickelte \gls{fdk}~\cite{fdk} ist eine spezielle Ausprägung der gefilterten Rückprojektion. Ausgangspunkt
 der Strahlung ist eine Quelle, die das Volumen mit einem \textit{kegelförmigen} Strahl durchleuchtet und damit auf einem
 Detektor abbildet. Der Vorteil des \gls{fdk} liegt darin, dass die gefilterte Rückprojektion für jedes Voxel individuell
-berechnet werden kann, d.h. ohne Abhängigkeiten zu anderen Voxeln. Dieser Umstand ermöglicht einen Grad an Parallelität,
-für den sich im Englischen der Begriff \textit{embarassingly parallel} eingebürgert hat und macht den \gls{fdk} zu einem
-idealen Ziel für diverse Parallelisierungsansätze.
+berechnet werden kann, das heißt ohne Abhängigkeiten zu anderen Voxeln. Dieser Umstand ermöglicht einen Grad an
+Parallelität, für den sich im Englischen der Begriff \textit{embarassingly parallel} eingebürgert hat und macht den
+\gls{fdk} zu einem idealen Ziel für diverse Parallelisierungsansätze.
 
 \begin{itemize}
     \item Xu et al.~\cite{xumuell}: vermutlich OpenGL
@@ -53,8 +53,7 @@ idealen Ziel für diverse Parallelisierungsansätze.
 
 Welche Vor- und Nachteile haben diese Ansätze? -> Warum brauchen wir etwas neues / warum können wir sie nicht anwenden?
 
-
-\section{Die CUDA{\textregistered}-Plattform}
+\section{Die NVIDIA{\textregistered}-CUDA{\textregistered}-Plattform}
 
 \subsection{Grafikkarten und Wissenschaft}
 

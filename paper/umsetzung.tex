@@ -2,21 +2,42 @@
 
 \section{Variantenvergleich}
 
+\subsection{Parallelisierungsstrategien und Hindernisse}
+
+\subsection{Das Problem des GPU-Speichers}
+
+\subsection{Heterogene GPU-Systeme und effiziente Arbeitsteilung}
+
+\section{Das \textit{PARIS}-Programm}
+
+Das Programm \gls{paris}
+
+\subsection{Implementierungsziele}
+
 \begin{itemize}
-    \item Welche Parallelisierungsstrategien sind denkbar?
-    \item Warum CUDA? Was gäbe es neben CUDA noch?
-    \item Welche Limitierungen (CUDA, Hardware, HZDRismen...) gibt es?
-    \item Warum ist die gewählte Variante die beste?
+    \item Wartbarkeit
+    \item Portabilität
+    \item sinnvolle Geschwindigkeit
+    \item nutzbar auf Laptop / Workstation / GPU-Cluster
 \end{itemize}
 
-\section{Implementierung}
+\subsection{Geometrische Berechnungen}
 
 \begin{itemize}
-    \item Implementierungsziele: Wartbarkeit, Portabilität, sinnvolle Geschwindigkeit, nutzbar auf Laptop / Workstation
-          / Cluster
-    \item kurze Vorstellung/Erwähnung von GLADOS -> Pipeline-Struktur
-    \item Aufteilung des Volumens in Teilvolumen erklären
-    \item Implementierung der einzelnen Stufen
-    \item besonderer Fokus auf Rekonstruktionsstufe: welche Konstanten und Variablen gibt es, was kann optimiert werden,
-          welche Schwierigkeiten gibt es
+    \item Berechnung der Volumengeometrie
+    \item Aufteilung in Teilvolumen
+\end{itemize}
+
+\subsection{Implementierung der Vorstufen}
+
+\begin{itemize}
+    \item Wichtung
+    \item Filterung
+\end{itemize}
+
+\subsection{Implementierung der gefilterten Rückprojektion}
+
+\begin{itemize}
+    \item welche Konstanten und Variablen gibt es
+    \item welche Schwierigkeiten können auftreten
 \end{itemize}

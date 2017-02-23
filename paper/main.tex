@@ -2,7 +2,7 @@
 
 \usepackage{datetime}
 \usepackage{etoolbox}
-\usepackage[acronyms]{glossaries}
+\usepackage[acronyms,nomain,nonumberlist,xindy]{glossaries}
 \usepackage[section]{minted}
 \usepackage{tcolorbox}
 
@@ -22,13 +22,18 @@
 \acknowledgments{Vielleicht die HZDR-Betreuer lieber hier nennen?}
 \bibfiles{bibliography.bib}
 
+\makeglossaries
 \newacronym{fdk}{FDK-Algorithmus}{Feldkamp-Davis-Kress-Algorithmus}
 \newacronym{hzdr}{HZDR}{Helmholtz-Zentrum Dresden-Rossendorf}
 \newacronym{cuda}{CUDA{\textregistered}}{NVIDIA{\textregistered} CUDA{\textregistered}}
 \newacronym{paris}{\textit{PARIS}}{\textit{Portable and Accelerated 3D Reconstruction tool for radiation based Imaging
                                   Systems}}
 
+\deftranslation[to=German]{Acronyms}{Abkürzungsverzeichnis}
+
 \begin{document}
+
+\printglossaries
 
 \include{einleitung}
 \include{grundlagen}

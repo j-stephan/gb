@@ -1,8 +1,9 @@
 BIBLIOGRAPHY_SOURCE = bibliography.bib
 
-PAPER_SOURCE = main.tex
-PAPER_AUX = main.aux
-PAPER_TARGET = main.pdf
+PAPER = main
+PAPER_SOURCE = $(PAPER).tex
+PAPER_AUX = $(PAPER).aux
+PAPER_TARGET = $(PAPER).pdf
 
 RED=`echo '\033[0;31m'`
 YELLOW=`echo '\033[0;33m'`
@@ -29,6 +30,10 @@ $(PAPER_TARGET): $(PAPER_SOURCE) $(BIBLIOGRAPHY_SOURCE)
 	@echo ""
 	bibtex $(PAPER_AUX)
 	@echo ""
+	@echo ">>> GLOSSARIES <<<"
+	@echo ""
+	makeglossaries $(PAPER)
+	@echo ""
 	@echo ">>> PRERUN PDFLATEX <<<"
 	@echo ""
 	pdflatex -shell-escape -interaction=nonstopmode $(PAPER_SOURCE) 1> /dev/null 2> /dev/null
@@ -41,4 +46,4 @@ all: $(PAPER_TARGET)
 
 .PHONY: clean
 clean:
-	@rm -f *.out *.aux *.log *.pdf *.bbl *.blg *.dvi *.toc *.lof *.lot
+	@rm -f *.out *.aux *.log *.pdf *.bbl *.blg *.dvi *.toc *.lof *.lot *.acn *.acr *.alg *.glg *.glo *.gls *.ist *.xdy
