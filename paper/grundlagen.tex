@@ -2,12 +2,12 @@
 
 \section{Die Computertomographie}
 
-\subsection{Die Geschichte und prinzipielle Funktionsweise der Computertomographie}
+\subsection{Die prinzipielle Funktionsweise der Computertomographie}
 
-Die Geschichte der Computertomographie beginnt mit dem Röntgenverfahren, welches 1895 vom deutschen Physiker Wilhelm
-Conrad Röntgen entdeckt wurde~\cite{roentgen}. Mittels einer Strahlungsquelle wird ein Objekt durchleuchtet und auf
-einem Film bzw.\ einem Detektor abgebildet; der dreidimensionale Körper wird also auf eine zweidimensionale Fläche
-projiziert. Diesen Schritt bezeichnet man als \textit{Vorwärtsprojektion}.
+Am Anfang der Computertomographie steht das Röntgenverfahren, das 1895 vom deutschen Physiker Wilhelm Conrad Röntgen
+entdeckt wurde~\cite{roentgen}. Mit Hilfe einer Strahlungsquelle wird ein Objekt durchleuchtet und auf einem Film bzw.\
+einem Detektor abgebildet; der dreidimensionale Körper wird also auf eine zweidimensionale Fläche projiziert. Diesen
+Schritt bezeichnet man als \textit{Vorwärtsprojektion}.
 
 Führt man die Vorwärtsprojektion genügend oft in aufeinanderfolgenden Winkelschritten aus, bis man (idealerweise) einen
 Vollkreis abgefahren hat, so lässt sich aus den dabei entstandenen \textit{Projektionen} der ursprünglich durchleuchtete
@@ -19,66 +19,177 @@ mathematischen Grundlagen entwickelte~\cite{cormack63}~\cite{cormack64}; ihm war
 dass diese schon 1917 vom österreichischen Mathematiker Johann Radon gefunden wurden~\cite{radon}. Mathematisch ist der
 Vorgang der \textit{Rückprojektion} eine Anwendung der nach Radon benannten \textit{Radon-Transformation}.
 
-Ein Problem der Vorwärtsprojektion ist der Informationsverlust, der durch die mangelnde Tiefe des Detektors entsteht;
-die Tiefeninformationen werden auf die zweidimensionale Fläche {\glqq}verschmiert{\grqq}. Bei der Rückprojektion lässt
-sich dieser Verlust durch die Wahl eines geeigneten Bildfilters wiederum kaschieren, weshalb man auch von der
-\textit{gefilterten Rückprojektion} spricht.
+Ein Problem der Vorwärtsprojektion ist der Informationsverlust, der durch die mangelnde Tiefe des Films bzw.\ Detektors
+entsteht; die Tiefeninformationen werden auf die zweidimensionale Fläche {\glqq}verschmiert{\grqq}. Bei der
+Rückprojektion lässt sich dieser Verlust durch die Wahl eines geeigneten Bildfilters wiederum kaschieren, weshalb man
+auch von der \textit{gefilterten Rückprojektion} spricht.
 
 Da die gefilterte Rückprojektion für jedes Voxel einzeln berechnet werden muss, ist sie für einen Menschen nicht in
-sinnvoller Zeit lösbar. Aus diesem Grund ist man für die Lösung des Gesamtproblems also auf einen Computer angewiesen,
-woraus sich der Name des Verfahrens ableitet: \textit{Computertomographie}. Die ersten bis zur Marktreife entwickelten
+sinnvoller Zeit lösbar. Aus diesem Grund ist man für die Lösung des Gesamtproblems auf einen Computer angewiesen, woraus
+sich der Name des Verfahrens ableitet: \textit{Computertomographie}. Die ersten bis zur Marktreife entwickelten
 Computertomographen wurden gegen Ende der 60er Jahre des 20. Jahrhunderts vom englischen Elektroingenieur Godfrey
 Hounsfield gebaut. Dieser entwickelte die für die Rückprojektion nötigen Algorithmen ebenfalls selbst, da ihm die
 Vorarbeiten von Cormack und Radon nicht bekannt waren~\cite{kalender}. Für ihre voneinander unabhängigen Arbeiten
 erhielten Godfrey und Cormack 1979 den Nobelpreis für Physiologie oder Medizin, was die Bedeutung der
 Computertomographie insbesondere für die Medizin unterstreicht.
 
-\subsection{Der Feldkamp-Davis-Kress-Algorithmus und seine Parallelisierung}
+\subsection{Der Feldkamp-Davis-Kress-Algorithmus}
 
-Der 1984 entwickelte \gls{fdk}~\cite{fdk} ist eine spezielle Ausprägung der gefilterten Rückprojektion. Ausgangspunkt
-der Strahlung ist eine Quelle, die das Volumen mit einem \textit{kegelförmigen} Strahl durchleuchtet und damit auf einem
-Detektor abbildet. Aufgrund seiner geringen Komplexität und einfachen Implementierbarkeit ist der \gls{fdk} einer der 
-beliebtesten Rückprojektionsalgorithmen für die Kegelstrahl-Computertomographie~\cite{xumuell}. Der Vorteil des
-\gls{fdk} liegt außerdem darin, dass die gefilterte Rückprojektion für jedes Voxel individuell berechnet werden kann,
-das heißt ohne Abhängigkeiten zu anderen Voxeln. Dieser Umstand ermöglicht einen Grad an Parallelität, für den sich im
-englischen Sprachraum der Begriff \textit{embarassingly parallel} eingebürgert hat, und macht den \gls{fdk} zu einem
-idealen Ziel für diverse Parallelisierungsansätze. Seit seiner Einführung ist der \gls{fdk} daher ein beliebtes
-Untersuchungsobjekt von Forschungsgruppen, die sich mit seiner Beschleunigung bzw.\ Parallelisierung mittels einer
-großen Variation von Architekturen, Plattformen und Programmiermodellen beschäftigen. Einige neuere Ansätze sollen im
-Folgenden vorgestellt werden.
+Der 1984 entwickelte \gls{fdk}~\cite{fdk} ist eine spezielle Ausprägung der gefilterten Rückprojektion für die
+Computertomographie mit Kegelstrahlen. Der Ausgangspunkt der Strahlung ist eine Quelle, die das Volumen mit einem
+\textit{kegelförmigen} Strahl durchleuchtet und damit auf einem Detektor abbildet. Die so aufgenommenen
+zweidimensionalen Projektionen werden dann pixelweise mit dem folgenden Wichtungsfaktor multipliziert:
 
-Xu et al. untersuchten bereits 2004, inwieweit sich der \gls{fdk} durch den Einsatz handelsüblicher Grafikkarten
+\begin{equation}
+    w_{ij} = \frac{d_{det} - d_{src}}{\sqrt{(d_{det} - d_{src})^2 + h_j^2 + v_i^2}}
+\end{equation}
+
+Zum Ausgleich der durch die Vorwärtsprojektion verloren gegangenen Tiefeninformationen werden die Projektionen im
+nächsten Schritt zeilenweise gefiltert. Zu diesem Zweck müssen die Projektionen und der Filter allerdings mittels der
+diskreten Fouriertransformation in den komplexen Raum transformiert werden; zum Einsatz kommt dabei das Verfahren der
+schnellen Fouriertransformation (\textit{fast Fourier transform}, FFT) nach Cooley und Tukey~\cite{cooltuk}. Da dieses
+Verfahren nur mit einer Menge von Elementen funktioniert, die einer Zweierpotenz entspricht, müssen die
+Projektionszeilen und der Filter auf die nächste Zweierpotenz {\glqq}aufgerundet{\grqq} werden. Dazu wird, ausgehend von
+der Länge einer Projektionszeile $N_h$,  die Filterlänge $N_{hFFT}$ berechnet:
+
+\begin{equation}
+    N_{hFFT} = 2 \cdot 2^{\left\lceil \frac{\log N_h}{\log 2} \right\rceil}
+\end{equation}
+
+Mit der so bestimmten Filterlänge lässt sich der Filter $r$ erzeugen:
+
+\begin{equation}
+    \begin{aligned}
+        r(j) \text{ mit } j &\in \left[-\frac{N_{hFFT} - 2}{2}, \frac{N_{hFFT}}{2}\right]\\
+        r(j) &=
+            \begin{cases}
+                \frac{1}{8} \cdot \frac{1}{\tau^2} & \quad \text{wenn } j = 0\\
+                0 & \quad \text{wenn } j \text{ gerade}\\
+                -\frac{1}{2j^2\pi^2\tau^2} & \quad \text{wenn } j \text{ ungerade}\\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+
+Nun wird die zu filternde Zeile so lange mit $0$ aufgefüllt, bis die erweiterte Zeile $N_{hFFT}$ Pixel umfasst:
+
+\begin{equation}
+    \begin{aligned}
+        p &: \text{ mit Nullen aufgefüllte Projektionszeile}\\
+        p(0 \dots N_{h - 1}) &= \text{det}(0 \dots N_{h - 1})\\
+        p(N_{h} \dots N_{hFFT}) &= 0
+    \end{aligned}
+\end{equation}
+
+Im Anschluss werden sowohl der Filter $r$ als auch die erweiterte Projektionszeile $p$ in den komplexen Raum
+transformiert und dort miteinander multipliziert:
+
+\begin{equation}
+    \begin{aligned}
+        R &= \text{FFT}(r)\\
+        P &= \text{FFT}(p)\\
+        F &= P \cdot R \quad \text{sowohl für den reellen als auch den imaginären Teil}
+    \end{aligned}
+\end{equation}
+
+Die so gefilterte Projektionszeile $F$ wird dann mit der inversen schnellen Fouriertransformation (IFFT) in den
+reellen Raum zurücktransformiert und von den {\glqq}aufgefüllten{\grqq} Elementen bereinigt:
+
+\begin{equation}
+    \begin{aligned}
+        f &= \text{IFFT}(F)\\
+        \text{gefilterte Projektionszeile} &: f(0 \dots N_{h - 1})
+    \end{aligned}
+\end{equation}
+
+Die auf diese Weise gefilterten Projektionen können nun wie folgt für die Rückprojektion verwendet werden:
+
+Für jede Projektion $p$ mit dem Drehwinkel $\alpha_p$:
+
+\begin{itemize}
+    \item berechne für jede Voxelkoordinate $(x_k, y_l, z_m)$ deren rotierte Position $(s, t, z)$:
+        \begin{equation}
+            \begin{aligned}
+                s &= x_k \cos \alpha_p + y_l \sin \alpha_p\\
+                t &= -x_k \sin \alpha_p + y_l \cos \alpha_p\\
+                z &= z_m
+            \end{aligned}
+        \end{equation}
+
+    \item projiziere die rotierte Voxelkoordinate $(s, t, z)$ auf den Detektor:
+        \begin{equation}
+            \begin{aligned}
+                h' &= y' = t \cdot \frac{d_{det} - d_{src}}{s - d_{src}}\\
+                v' &= z' = z \cdot \frac{d_{det} - d_{src}}{s - d_{src}}
+            \end{aligned}
+        \end{equation}
+
+    \item interpoliere das Detektorsignal bei $(h', v')$:
+        \begin{equation}
+            \begin{aligned}
+                det' = det(h', v')
+            \end{aligned}
+        \end{equation}
+
+    \item führe die Rückprojektion aus:
+        \begin{equation}
+            \begin{aligned}
+                vol_{klm} &= vol_{klm} + 0,5 \cdot det' \cdot u^2\\
+                \text{mit } u &= \frac{d_{src}}{s - d_{src}}
+            \end{aligned}
+        \end{equation}
+\end{itemize}
+
+Nach Abschluss der Rückprojektion erhält man ein Volumen, dessen Voxel Aufschluss über seine innere Struktur geben.
+
+Aufgrund seiner geringen Komplexität und einfachen Implementierbarkeit ist der \gls{fdk} einer der beliebtesten
+Rückprojektionsalgorithmen für die Kegelstrahl-Computertomographie~\cite{xumuell}. Der Vorteil des \gls{fdk} liegt
+außerdem darin, dass die gefilterte Rückprojektion für jedes Voxel individuell berechnet werden kann, das heißt ohne
+Abhängigkeiten zu anderen Voxeln. Dieser Umstand ermöglicht für die maschinelle Berechnung den maximalen Grad an
+Parallelität, der im englischen Sprachraum auch als \textit{embarassingly parallel} bezeichnet wird, und macht den
+\gls{fdk} zu einem idealen Ziel für diverse Parallelisierungsansätze. Einige neuere Ansätze sollen im Folgenden
+vorgestellt werden.
+
+\subsection{Bisherige Parallelisierungsansätze}
+
+Seit seiner Einführung ist der \gls{fdk} ein beliebtes Untersuchungsobjekt diverser Forschungsgruppen, die sich mit
+seiner Beschleunigung bzw.\ Parallelisierung mittels einer großen Variation von Architekturen, Plattformen und
+Programmiermodellen beschäftigen. 
+
+Xu et al.\ untersuchten bereits 2004, inwieweit sich der \gls{fdk} durch den Einsatz handelsüblicher Grafikkarten
 (\textit{commodity graphics hardware}) beschleunigen lässt~\cite{xumuell}. Dabei wurden die Schritte \textit{Wichtung}
 und \textit{Filterung} aufgrund ihrer geringen Komplexität ($\mathcal{O}(n^2)$) auf der CPU ausgeführt, während man die
 komplexere \textit{Rückprojektion} ($\mathcal{O}(n^4)$) auf der GPU berechnete. Die Rückprojektion fand schichtweise
-statt, jeweils für eine Voxelebene entlang der vertikalen Volumenachse. Bereits mit der damals verfügbaren Hardware
-wurde mit der verwendeten GPU ein Speedup von 7,5 (32bit Gleitkommazahlen) bzw.\ 37 (8bit Ganzzahlen) gegenüber der
-verwendeten CPU erreicht, was in Anbetracht des verfügbaren Grafikkartenspeichers bereits als enorme Beschleunigung zu
-werten ist. In ihrem Fazit stellen die Autoren die Vermutung auf, dass der Abstand zwischen den Leistungen von CPU und
-GPU in der Zukunft zugunsten der GPUs immer weiter werden würde: \textit{Since GPU performance has so far doubled every
-6 months (i.e., triple of Moore's law), we expect that the gap between CPU and GPU approaches will widen even further in
-the near future.}
+statt, jeweils für eine Voxelebene entlang der vertikalen Volumenachse. In ihrem Fazit stellten die Autoren die
+Vermutung auf, dass der Abstand zwischen den Leistungen von CPU und GPU in der Zukunft zugunsten der GPUs immer weiter
+werden würde: \textit{Since GPU performance has so far doubled every 6 months (i.e., triple of Moore's law), we expect
+that the gap between CPU and GPU approaches will widen even further in the near future.}
 
-Li et al. beschäftigten sich 2005 damit, wie man den \gls{fdk} mit einem \gls{fpga} implementieren könnte. Dazu teilten sie
-das Ausgabevolumen, also die Zieldaten der Rückprojektion, in mehrere Würfel (\textit{bricks}) auf, um zu einer
-optimalen Cachenutzung zu kommen. Der von ihnen verwendete deterministische Aufteilungsalgorithmus hatte zur Folge, dass
-bei der Berechnung auf dem \gls{fpga} kein Cache-Verfehlen (\textit{cache miss}) mehr auftrat. Auf diese Weise konnten
-sie ein 16bit-Festkommazahlen-Volumen mit $1024^3$ Voxeln in 267,7 Sekunden rekonstruieren.
+Li et al.\ beschäftigten sich 2005 damit, wie man den \gls{fdk} mit einem \gls{fpga} implementieren könnte. Dazu teilten
+sie das Ausgabevolumen, also die Zieldaten der Rückprojektion, in mehrere Würfel (\textit{bricks}) auf, um zu einer
+optimalen Cachenutzung zu kommen. Der verwendete deterministische Aufteilungsalgorithmus hatte zur Folge, dass bei der
+Berechnung auf dem \gls{fpga} kein Cache-Verfehlen (\textit{cache miss}) mehr auftrat.
 
-Knaup et al. gingen 2007 der Frage nach, ob der \gls{fdk} durch die Eigenschaften der Cell-Architektur profitieren
+Knaup et al.\ gingen 2007 der Frage nach, ob der \gls{fdk} durch die Eigenschaften der Cell-Architektur profitieren
 könne~\cite{knaupsteck}.
 
-Scherl et al. unternahmen 2008 den Versuch, den \gls{fdk} mittels \gls{cuda} zu beschleunigen~\cite{scherlkeck}.
+Scherl et al.\ unternahmen 2008 den Versuch, den \gls{fdk} mittels \gls{cuda} zu beschleunigen~\cite{scherlkeck}. Im
+Gegensatz zu der Gruppe um Xu et al.\ führten sie alle Schritte auf der GPU aus und führten die Rückprojektion
+projektionsweise durch, das heißt, dass jede Projektion einzeln in das Gesamtvolumen zurückprojiziert wurde. Diese Art
+der Datenverarbeitung ermöglichte es, die Schritte \textit{Wichtung} und \textit{Filterung} parallel zur Rückprojektion
+auszuführen. Zur Ausnutzung dieser Eigenschaft und zur besseren Kapselung bzw.\ Modularisierung der Teilschritte
+entwickelten die Autoren daher eine Pipeline-Struktur zur parallelen Abarbeitung des Algorithmus, basierend auf dem von
+Mattson et al.\ vorgestellten Entwurfsmuster~\cite{mattsan}.
 
-Balász et al. versuchten 2009 das Gleiche mit der \gls{opencl}~\cite{balgab}.
+Balász et al.\ versuchten 2009 das Gleiche mit der \gls{opencl}~\cite{balgab}.
 
-Hofmann et al. untersuchten eventuelle Vorteile durch den Einsatz der neuen Koprozessoren vom Typ Intel{\textregistered}
-Xeon Phi{\texttrademark} 'Knights Corner'~\cite{hoftrei}.
+Hofmann et al.\ untersuchten eventuelle Vorteile durch den Einsatz der neuen Koprozessoren vom Typ 
+Intel{\textregistered} Xeon Phi{\texttrademark} {\glq}Knights Corner{\grq}~\cite{hoftrei}.
 
-Zhao et al. verfolgten die Absicht, eine Beschleunigung durch Ausnutzung geometrischer Zusammenhänge zu
-erreichen~\cite{zhao}.
-
-Welche Vor- und Nachteile haben diese Ansätze? -> Warum brauchen wir etwas neues / warum können wir sie nicht anwenden?
+Zhao et al.\ verfolgten die Absicht, eine Beschleunigung durch Ausnutzung geometrischer Zusammenhänge zu
+erreichen~\cite{zhao}. Sie setzten dabei auf die Tatsache, dass ein einmal bestimmtes, also auf den Detektor
+projiziertes, Voxel durch Rotation in 90°-Schritten die rotierten Voxel ebenfalls genau bestimmt. Ist also für ein
+Voxel im Projektionswinkel 0° die zugehörige Detektorkoordinate gefunden, so kann diese Detektorkoordinate
+für die Projektionswinkel 90°, 180° und 270° und die entsprechenden Voxel wiederverwendet werden.
 
 \section{Die NVIDIA{\textregistered}-CUDA{\textregistered}-Plattform}
 
