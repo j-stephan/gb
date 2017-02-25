@@ -193,8 +193,53 @@ für die Projektionswinkel 90°, 180° und 270° und die entsprechenden Voxel wi
 
 \section{Die NVIDIA{\textregistered}-CUDA{\textregistered}-Plattform}
 
-\subsection{Grafikkarten und Wissenschaft}
+\subsection{Programmierbare Grafikkarten}
 
-\subsection{Das CUDA{\textregistered}-Programmiermodell}
+Als NVIDIA{\textregistered} im Jahre 2006 seine \textit{Compute-Unified-Device-Architecture}-Plattform
+(CUDA{\textregistered}) vorstellte, die die direkte Programmierung der NVIDIA{\textregistered}-Grafikkarten ermöglichte,
+folgte die Firma damit einer Entwicklung, die in den ersten Jahren des neuen Jahrtausends begonnen hatte. Durch die
+Einführung von dezidierten Berechnungseinheiten für Gleitkommazahlen (\gls{fpu}) sowie den zunehmenden Funktionsumfang
+der auf den Grafikkarten verbauten Shader-Einheiten wurde es theoretisch möglich, Berechnungen, die vorher nur von CPUs
+ausgeführt werden konnten, nun auch von GPUs ausführen zu lassen. Dabei haben Grafikkarten gegenüber herkömmlichen
+Prozessoren den Vorteil, dass die auf ihnen ausgeführten Berechnungen aufgrund ihrer für die Computergrafik optimierten
+Bauweise -- also die Manipulation vieler Pixel zur gleichen Zeit -- automatisch \textit{datenparallel} sind. 
+\textit{Datenparallelität} bezeichnet dabei die parallele Ausführung derselben Berechnung bzw.\ Anweisung auf
+verschiedenen Daten. Dem gegenüber steht die \textit{Taskparallelität}, mit der eine parallele Abarbeitung verschiedener
+Aufgaben gemeint ist. \textit{Taskparallelität} entspricht eher dem Programmiermodell der klassischen CPU, ist auf GPUs
+dagegen nur begrenzt anwendbar.
+
+Die \textit{datenparallele} Berechnung auf GPUs, meistens \gls{gpgpu} genannt, bietet sich insbesondere
+für die Verarbeitung großer Datenmengen an, wie sie zum Beispiel in der Wissenschaft häufig vorkommt. Am Anfang der
+2000er Jahre gab es allerdings keine komfortable Möglichkeit, die erhältlichen Grafikkarten direkt zu programmieren;
+man war daher gezwungen, die zu berechnenden Daten zunächst in Objekte der Computergrafik umzuwandeln (beispielsweise 
+Texturen) und mit den Mitteln der bestehenden Computergrafik-Bibliotheken wie der \gls{opengl} oder \gls{directx} zu
+bearbeiten. Mit der Einführung von \gls{cuda} entfiel diese Beschränkung, da es nun möglich war, speziell für die
+Grafikkarte geschriebene Programme auf dieser auszuführen, ohne den Umweg über Computergrafik-Bibliotheken gehen zu
+müssen.
+
+\subsection{Das CUDA{\textregistered}-Programmier- und Ausführungsmodell}
 
 \subsection{Alternativen zu CUDA{\textregistered}}
+
+Während \gls{cuda} ein großer Fortschritt im Bereich des \gls{gpgpu} war, so blieb es aufgrund der Tatsache, dass es
+ein proprietäres Produkt von NVIDIA{\textregistered} ist, stets auf Grafikkarten und Beschleuniger dieses Herstellers
+beschränkt. Der Computerhersteller Apple{\textregistered}, der in der zweiten Hälfte der 2000er Jahre Grafikkarten des
+NVIDIA{\textregistered}-Konkurrenten AMD verbaute und seinen Kunden ebenfalls einen einfachen Zugang zu
+\gls{gpgpu} ermöglichen wollte, entwickelte daher eine eigene, wenn auch stark an \gls{cuda} angelehnte,
+\gls{gpgpu}-Plattform, die \gls{opencl} genannt wurde, und übergab diese kurz darauf dem Industriekonsortium Khronos zur
+Standardisierung. Im Jahre 2008 wurde dann mit \gls{opencl} 1.0 die erste hardware- und herstellerunabhängige
+\gls{gpgpu}-Plattform herausgegeben, die unter anderem von den drei größten GPU-Herstellern NVIDIA{\textregistered},
+AMD und Intel{\textregistered} unterstützt wurde. Theoretisch konnte dasselbe Programm nun ohne Änderungen mit einer
+beliebigen GPU beschleunigt werden. In der Praxis hinkte die Unterstützung des sukzessiver Versionen des Standards
+jedoch der Entwicklung der Hardware hinterher, insbesondere in Bezug auf NVIDIA{\textregistered}-Hardware. Während der 
+OpenCL 1.1 noch relativ zeitnah 
+
+Parallel zu der Weiterentwicklung der Grafikkarten fand auch bei den herkömmlichen Prozessoren durch die allmähliche
+Erhöhung der Kernanzahl eine Hinwendung zu parallelen Ausführungsmodellen statt. Ein Ansatz zur Vereinfachung der
+Programmierung vieler CPU-Kerne ist das seit 1997 gemeinschaftlich entwickelte \gls{openmp}. Im Gegensatz zu den
+Programmiermodellen von \gls{cuda} oder \gls{opencl}, die separate Programme auf den Beschleunigern starten, wird
+\gls{openmp} direkt mit Compiler-Direktiven in das eigentliche Programm eingebettet.
+
+An \gls{openmp} angelehnt ist \gls{openacc}, welches die \gls{gpgpu}-Programmierung mit Compiler-Direktiven
+ermöglicht. Syntax und Funktionsweise ähneln stark der von \gls{openmp}, haben jedoch den Nachteil, dass eine auf
+bestimmte Hardware zugeschnittene Optimierung nicht mehr so einfach möglich ist.
