@@ -2,16 +2,19 @@
 
 \usepackage{datetime}
 \usepackage{etoolbox}
-\usepackage[acronyms,nomain,nonumberlist,xindy]{glossaries}
+\usepackage[acronyms,nonumberlist,xindy]{glossaries}
 \usepackage[section]{minted}
 \usepackage{tcolorbox}
 \usepackage{tikz}
-\usepackage{tikz-3dplot}
+
+\usetikzlibrary{arrows}
 
 \BeforeBeginEnvironment{minted}{\begin{tcolorbox}}
 \AfterEndEnvironment{minted}{\end{tcolorbox}}
 
 \newcommand{\lstfont}[1]{\color{#1}\small\ttfamily}
+
+\definecolor{keyword-green}{RGB}{0, 128, 0}
 
 \author{Jan Stephan}
 \title{Untersuchung der Parallelisierung des Feldkamp-Davis-Kress-Algorithmus mittels CUDA{\textregistered}}
@@ -26,9 +29,25 @@
 \bibfiles{bibliography.bib}
 
 \makeglossaries
+\newglossaryentry{kernel}{name=Kernel,
+                          description={Programm, das auf einem Beschleuniger, wie etwa einer GPU, ausgeführt wird},
+                          plural=Kernel}
+\newglossaryentry{cuda}{name={CUDA{\textregistered}},
+                        description={NVIDIA{\textregistered} CUDA{\textregistered},
+                                     proprietäre Plattform für die Programmierung von Grafikkarten}}
+\newglossaryentry{directx}{name={DirectX{\textregistered}},
+                           description={Microsoft{\textregistered} DirectX{\textregistered},
+                                        proprietäre Plattform für u.a. Grafikprogrammierung}}
+\newglossaryentry{pixel}{name=Pixel,
+                         description={Punkt in einem zweidimensionalen Koordinatensystem, z.B.\ einem Bild oder einem
+                                      Detektor},
+                         plural=Pixel}
+\newglossaryentry{voxel}{name=Voxel,
+                         description={Punkt in einem dreidimensionalen Koordinatensystem, z.B.\ einem Volumen},
+                         plural=Voxel}
+
 \newacronym{fdk}{FDK-Algorithmus}{Feldkamp-Davis-Kress-Algorithmus}
 \newacronym{hzdr}{HZDR}{Helmholtz-Zentrum Dresden-Rossendorf}
-\newacronym{cuda}{CUDA{\textregistered}}{NVIDIA{\textregistered} CUDA{\textregistered}}
 \newacronym{paris}{PARIS}{\textit{Portable and Accelerated 3D Reconstruction tool for radiation based Imaging
                                   Systems}}
 \newacronym{fpga}{FPGA}{\textit{Field Programmable Gate Array}}
@@ -36,9 +55,10 @@
 \newacronym{fpu}{FPU}{\textit{floating point unit}}
 \newacronym{gpgpu}{GPGPU}{\textit{General Purpose Computation on Graphics Processing Unit}}
 \newacronym{opengl}{OpenGL{\texttrademark}}{\textit{Open Graphics Library}}
-\newacronym{directx}{DirectX{\textregistered}}{Microsoft{\textregistered} DirectX{\textregistered}}
 \newacronym{openmp}{OpenMP{\textregistered}}{\textit{Open Multi-Processing}}
 \newacronym{openacc}{OpenACC{\textregistered}}{\textit{Open Accelerators}}
+\newacronym{gpu}{GPU}{\textit{Graphics Processing Unit}}
+\newacronym{cpu}{CPU}{\textit{Central Processing Unit}}
 
 \deftranslation[to=German]{Acronyms}{Abkürzungsverzeichnis}
 
