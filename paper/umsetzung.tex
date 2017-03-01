@@ -2,9 +2,31 @@
 
 \section{Variantenvergleich}
 
-\subsection{Parallelisierungsstrategien und Hindernisse}
+\subsection{Bestehende Parallelisierungsstrategien und ihre Grenzen}
 
+Von den in Abschnitt~\ref{ssec:par} genannten Ansätzen in der Literatur sind aufgrund ihrer Umsetzung für \gls{gpu}s die
+Strategien von Xu et al.~\cite{xumuell}, Scherl et al.~\cite{scherlkeck} und Zhao et al.~\cite{zhao} von Interesse.
 
+Da Xu et al. 2004 mit ihrer Arbeit~\cite{xumuell} Neuland betraten, standen ihnen viele Techniken und Technologien, die
+seitdem entwickelt wurden, noch nicht zur Verfügung. Die 2004 erschienenen \gls{gpu}s hatten im Vergleich zu heutigen
+Grafikkarten sehr viel weniger Speicher; das damals beste Verfügbare Produkt von NVIDIA{\textregistered}, die GeForce
+6800 Ultra, konnte lediglich mit 512 MiB Speicher aufwarten und war nur über \gls{opengl} oder \gls{directx} indirekt
+programmierbar. Im Gegensatz dazu steht die GeForce GTX 1080 mit 8 GiB Speicher und der Möglichkeit der direkten
+Programmierung mittels \gls{cuda} oder \gls{opencl}. Den begrenzten Speicher versuchten sie (erfolgreich) durch eine
+Aufteilung des Volumens und eine schichtweise Rekonstruktion desselben unter Einbeziehung aller Projektionen zu
+erreichen.
+
+Die Forschungsgruppe um Scherl entwickelte eine Pipeline-Struktur
+
+Die Grenzen bei dem vorgeschlagenen Verfahren der Gruppe um Zhao et al.~\cite{zhao} sind vor allem praktischer Natur.
+Das von ihnen vorgestellte Modell sieht vor, Symmetrien auszunutzen und dadurch Rechenzeit einzusparen. Sie machen sich
+dabei den Umstand zunutze, dass die auf den Detektor projizierte Koordinate eines \gls{voxel}s der um 90° rotierten
+Projektionskoordinate des um den gleichen Betrag rotierten Voxels entspricht. Auf diese Weise lassen sich durch eine
+Berechnung die Detektorkoordinaten von vier \gls{voxel}n finden, was eine Verkürzung der Rechenzeit verspricht. In der
+Praxis scheitert dieses Verfahren an dem mechanischen Aufbau üblicher CT-Scanner. Da entweder Quelle und Detektor oder
+aber das Untersuchungsobjekt rotiert werden müssen, kommt es durch Fehler in der Mechanik häufig dazu, dass Aufnahmen
+doppelt gemacht oder übersprungen werden; auch kann es passieren, dass die Winkelschritte zwischen zwei Aufnahmen nicht
+immer einheitlich sind.
 
 \subsection{Das Problem des GPU-Speichers}
 
@@ -14,7 +36,7 @@
 
 Das Programm \gls{paris}
 
-\subsection{Implementierungsziele}
+\subsection{Implementierungsziele und -hürden}
 
 \begin{itemize}
     \item Wartbarkeit
@@ -22,6 +44,19 @@ Das Programm \gls{paris}
     \item sinnvolle Geschwindigkeit
     \item nutzbar auf Laptop / Workstation / GPU-Cluster
 \end{itemize}
+
+\subsection{Prämissen}
+
+\subsubsection{Detektorgeometrie}
+
+\begin{figure}[!htb]
+\caption{Geometrie des Detektors}
+\label{fig:det_geometrie}
+\end{figure}
+
+\subsubsection{Verschiebungen}
+
+\subsubsection{Pixel und Millimeter}
 
 \subsection{Geometrische Berechnungen}
 
@@ -32,10 +67,91 @@ Das Programm \gls{paris}
 
 \subsection{Implementierung der Vorstufen}
 
+\subsubsection{Wichtung}
+
+Die Grundlage der Wichtungsoperation ist die in Abschnitt~\ref{sssec:fdk_wichtung} vorgestellte
+Formel~\ref{eq:wichtung}:
+
+\begin{equation*}
+    w_{ij} = \frac{d_{det} - d_{src}}{\sqrt{(d_{det} - d_{src})^2 + h_j^2 + v_i^2}}
+\end{equation*}
+
+Es ist leicht zu sehen, dass sich der Wichtungsfaktor $w_{ij}$ zwar pro \gls{pixel} ändert, aber nicht von der konkreten
+Projektion abhängig ist. Es ist daher möglich, die Berechnung der Wichtungsfaktoren am Anfang des Programms genau einmal
+durchzuführen und in einer Wichtungsmatrix \texttt{m} zu speichern (siehe Quelltext~\ref{source:impl_gen_mat}). Die
+Berechnung der Wichtungsmatrix hängt von mehreren geometrischen Parametern ab (vgl.\
+Abschnitt~\ref{sssec:fdk_geometrie}):
+
 \begin{itemize}
-    \item Wichtung
-    \item Filterung
+    \item \texttt{dim\_x}: Anzahl der \gls{pixel} in horizontaler Richtung. Entspricht der Anzahl der Detektorpixel in
+          horizontaler Richtung $N_h$
+    \item \texttt{dim\_y}: Anzahl der \gls{pixel} in vertikaler Richtung. Entspricht der Anzahl der Detektorpixel in
+          vertikaler Richtung $N_v$
+    \item \texttt{h\_min}: horizontale Verschiebung des Detektormittelpunkts in mm.
+    \item \texttt{v\_min}: vertikale Verschiebung des Detektormittelpunkts in mm.
+    \item \texttt{d\_sd}: Abstand von der Quelle zum Detektor. Entsprich der Summe der Beträge der Strecken $d_{src}$
+          (Abstand zwischen der Quelle und dem Objekt) und $d_{det}$ (Abstand zwischen dem Objekt und dem Detektor).
+    \item \texttt{l\_px\_row}: horizontale Länge eines Detektorpixels, also der horizontale Abstand zwischen den
+          Mittelpunkten zweier aufeinanderfolgender \gls{pixel}.
+    \item \texttt{l\_px\_col}: vertikale Länge eines Detektorpixels, also der vertikale Abstand zwischen den
+          Mittelpunkten zweier aufeinanderfolgender \gls{pixel}.
 \end{itemize}
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+    __global__ void matrix_generation_kernel(float* m,
+    std::uint32_t dim_x, std::uint32_t dim_y, std::size_t pitch,
+    float h_min, float v_min, float d_sd, float l_px_row,
+    float l_px_col)
+    {
+        auto s = blockIdx.x * blockDim.x + threadIdx.x;
+        auto t = blockIdx.y * blockDim.y + threadIdx.y;
+
+        if((s < dim_x) && (t < dim_y))
+        {
+            auto row = reinterpret_cast<float*>(reinterpret_cast<char*>(m) + t * pitch);
+
+            // Detektorkoordinaten in mm
+            const auto h_s = (l_px_row / 2.f) + s * l_px_row + h_min;
+            const auto v_t = (l_px_col / 2.f) + t * l_px_col + v_min;
+
+            // berechne Wichtungsfaktor
+            row[s] = d_sd * rsqrtf(d_sd * d_sd + h_s * h_s + v_t * v_t);
+        }
+    }
+\end{minted}
+\captionof{listing}{Generierung der Wichtungsmatrix}
+\label{source:impl_gen_mat}
+\end{code}
+
+Bei der Wichtung einer Projektion \texttt{p} kann der jeweilige Wichtungsfaktor aus der generierten Matrix \texttt{m}
+ausgelesen und auf das zugehörige \gls{pixel} angewendet werden (siehe Quelltext~\ref{source:impl_weighting}). Die so
+gewichtete Projektion wird dann im folgenden Schritt gefiltert.
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+    __global__ void weighting_kernel(float* p, const float* m,
+    std::uint32_t dim_x, std::uint32_t dim_y, std::size_t pitch,
+    std::size_t m_pitch)
+    {
+        auto s = blockIdx.x * blockDim.x + threadIdx.x;
+        auto t = blockIdx.y * blockDim.y + threadIdx.y;
+
+        if((s < dim_x) && (t < dim_y))
+        {
+            auto p_row = reinterpret_cast<float*>(reinterpret_cast<char*>(p) + t * pitch);
+            auto m_row = reinterpret_cast<const float*>(reinterpret_cast<const char*>(m) + t * m_pitch);
+
+            // Wichtung
+            p_row[s] *= m_row[s];
+        }
+    }
+\end{minted}
+\captionof{listing}{Wichtung einer Projektion}
+\label{source:impl_weighting}
+\end{code}
+
+\subsubsection{Filterung}
 
 \subsection{Implementierung der gefilterten Rückprojektion}
 

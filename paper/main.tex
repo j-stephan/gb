@@ -1,11 +1,15 @@
 \documentclass[utf8,german,beleg]{zihpub}
 
+\usepackage{caption}
 \usepackage{datetime}
 \usepackage{etoolbox}
-\usepackage[acronyms,nonumberlist,xindy]{glossaries}
-\usepackage[section]{minted}
+\usepackage[acronyms,nonumberlist,toc,xindy]{glossaries}
+\usepackage[chapter,newfloat]{minted}
 \usepackage{tcolorbox}
 \usepackage{tikz}
+
+\newenvironment{code}{\captionsetup{type=listing}}{}
+\SetupFloatingEnvironment{listing}{name=Quelltext}
 
 \usetikzlibrary{arrows}
 
@@ -24,8 +28,9 @@
           \qquad \qquad Matthias Werner}
 \date{21. März 2017}
 \copyrighterklaerung{Ich habe wirklich nichts geklaut}
-\acknowledgments{Für die fachliche Betreuung während der Erstellung dieser Arbeit bedanke ich mich recht herzlich bei
-                 Herrn Dr.-Ing.\ Stephan Boden.}
+\acknowledgments{Für die fachliche Betreuung bei der Erstellung dieser Arbeit bedanke ich mich recht herzlich bei Herrn
+                 Dr.-Ing.\ Stephan Boden von der AREVA-Stiftungsprofessur für bildgebende Messverfahren für die
+                 Energie- und Verfahrenstechnik.}
 \bibfiles{bibliography.bib}
 
 \makeglossaries
@@ -45,6 +50,20 @@
 \newglossaryentry{voxel}{name=Voxel,
                          description={Punkt in einem dreidimensionalen Koordinatensystem, z.B.\ einem Volumen},
                          plural=Voxel}
+\newglossaryentry{host}{name=Host,
+                        description={Gerät, das einen Kernel auf dem Device ausführt. Üblicherweise ist dies das Gerät,
+                                     auf dem auch das Betriebssystem läuft, etwa ein Rechner oder ein Knoten auf einem
+                                     Superrechner},
+                        plural=Hosts}
+\newglossaryentry{device}{name=Device,
+                          description={Beschleuniger, der einen Kernel ausführt. Im Zusammenhang mit
+                                       CUDA{\textregistered} ist dieser typischerweise eine GPU},
+                          plural=Devices}
+\newglossaryentry{stream}{name=Stream,
+                          description={Warteschlange auf einem \gls{cuda}-\gls{device}. Operationen, wie z.B.\
+                                       \gls{kernel}aufrufe, werden innerhalb eines Streams sequentiell ausgeführt.
+                                       Mehrere Streams können vom gleichen \gls{device} parallel abgearbeitet werden},
+                          plural=Streams}
 
 \newacronym{fdk}{FDK-Algorithmus}{Feldkamp-Davis-Kress-Algorithmus}
 \newacronym{hzdr}{HZDR}{Helmholtz-Zentrum Dresden-Rossendorf}
@@ -59,12 +78,22 @@
 \newacronym{openacc}{OpenACC{\textregistered}}{\textit{Open Accelerators}}
 \newacronym{gpu}{GPU}{\textit{Graphics Processing Unit}}
 \newacronym{cpu}{CPU}{\textit{Central Processing Unit}}
+\newacronym{simd}{SIMD}{\textit{Single Instruction, Multiple Data}}
+\newacronym{simt}{SIMT}{\textit{Single Instruction, Multiple Threads}}
+\newacronym{sm}{SM}{\textit{Streaming Multiprocessor}}
+\newacronym{gpc}{GPC}{\textit{Graphics Processing Cluster}}
 
+% Germanisiere LaTeX
 \deftranslation[to=German]{Acronyms}{Abkürzungsverzeichnis}
+\deftranslation[to=German]{Glossary}{Glossar}
+\renewcommand*{\listlistingname}{Quelltextverzeichnis}
 
 \begin{document}
 
 \printglossaries
+\listoffigures
+\listoflistings
+\listoftables
 
 \include{einleitung}
 \include{grundlagen}
