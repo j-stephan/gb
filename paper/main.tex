@@ -69,6 +69,15 @@
                                        \gls{kernel}aufrufe, werden innerhalb eines Streams sequentiell ausgeführt.
                                        Mehrere Streams können vom gleichen \gls{device} parallel abgearbeitet werden},
                           plural=Streams}
+\newglossaryentry{race-condition}{name=Race Condition,
+                                  description={Paralleler, nicht (ausschließlich) lesender Zugriff mehrerer Threads auf
+                                               das gleiche Datum. Da die Reihenfolge der Schreib- und Lesezugriffe ohne
+                                               weitere Synchronisierungsmechanismen nicht definiert ist, besteht die
+                                               Möglichkeit der Datenkorruption},
+                                  plural=race conditions}
+\newglossaryentry{grid}{name=Grid,
+                        description={Menge aller auf dem \gls{device} durch einen \gls{kernel} gestarteten Threads},
+                        plural=Grids}
 
 \newacronym{fdk}{FDK-Algorithmus}{Feldkamp-Davis-Kress-Algorithmus}
 \newacronym{hzdr}{HZDR}{Helmholtz-Zentrum Dresden-Rossendorf}
@@ -88,6 +97,7 @@
 \newacronym{sm}{SM}{\textit{Streaming Multiprocessor}}
 \newacronym{gpc}{GPC}{\textit{Graphics Processing Cluster}}
 \newacronym{cufft}{cuFFT}{NVIDIA{\textregistered} CUDA{\textregistered} \textit{Fast Fourier Transform}}
+\newacronym{hpc}{HPC}{\textit{High Performance Computing}}
 
 % Germanisiere LaTeX
 \deftranslation[to=German]{Acronyms}{Abkürzungsverzeichnis}

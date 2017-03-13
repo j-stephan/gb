@@ -42,5 +42,36 @@ __global__ void filter_creation_kernel(float* __restrict__ r,
 \label{app:filter_norm}
 \end{code}
 
+\subsection{Implementierung der gefilterten Rückprojektion}
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+__device__ auto vol_centered_coordinate(unsigned int coord,
+                                        std::uint32_t dim,
+                                        float size)
+    -> float
+{
+    auto size2 = size / 2.f;
+    return -(dim * size2) + size2 + coord * size;
+}
+\end{minted}
+\captionof{listing}{Koordinatensystemtransformation im Volumen}
+\label{app:coord_vol}
+\end{code}
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+__device__ auto proj_pixel_coordinate(float coord, std::uint32_t dim,
+                                      float size, float offset)
+    -> float
+{
+    auto size2 = size / 2.f;
+    auto min = -(dim * size2) - offset;
+    return (coord - min) / size - (1.f / 2.f);
+}
+\end{minted}
+\captionof{listing}{Koordinatensystemtransformation auf dem Detektor}
+\label{app:coord_det}
+\end{code}
 
 \chapter{Analyse}

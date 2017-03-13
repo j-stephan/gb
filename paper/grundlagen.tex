@@ -21,18 +21,18 @@ dieser Strahl je nach Dichte des Materials entlang seiner Bahn abgeschwächt bzw
 ein Objekt als zwei- oder dreidimensionale Verteilung von Absorptionskonstanten verstehen, während die gesamte
 Abschwächung entlang einer Strahlbahn als Kurvenintegral dargestellt werden kann.
 
-Die Grundlage der folgenden Ausführungen ist die Abbildung~\ref{fig:math_proj}~\cite{kak}. Als Beispiel dienen ein
-Objekt, dargestellt als die Funktion $f(x, y)$, sowie Kurvenintegrale, dargestellt durch das Parameterpaar
-$(\alpha, t)$. Die Linie $AB$ lässt sich dann durch die folgende Formel darstellen:
+Die Grundlage der folgenden Ausführungen ist die Abbildung~\ref{fig:math_proj}. Als Beispiel dienen ein Objekt, hier als
+die Funktion $f(x, y)$, sowie Kurvenintegrale, hier das Parameterpaar $(\alpha, t)$. Die Linie $AB$ lässt sich dann
+durch die folgende Formel darstellen:
 
 \begin{equation*}
-    x \cdot \cos \alpha + y \cdot \sin \alpha  = t_1
+    x \cdot \cos \theta + y \cdot \sin \theta  = t_1
 \end{equation*}
 
 oder allgemein für beliebige, zu $AB$ parallele, Linien:
 
 \begin{equation}\label{eq:proj_obj}
-    x \cdot \cos \alpha + y \cdot \sin \alpha = t
+    x \cdot \cos \theta + y \cdot \sin \theta = t
 \end{equation}
 
 \begin{figure}[!htb]
@@ -55,10 +55,11 @@ oder allgemein für beliebige, zu $AB$ parallele, Linien:
 
     % Strahlen
     \draw[->] (3, -7) -- (0, 8) node[pos=0.9,above,sloped] {$A$} node[pos=0.2,above,sloped] {Strahl}
-              node[pos=0.2,below,sloped] {$x \cdot \cos \alpha + y \cdot \sin \alpha = t_1$} node[pos=0,right,sloped] {$B$};
+              node[pos=0.2,below,sloped] {$x \cdot \cos \theta + y \cdot \sin \theta = t_1$}
+              node[pos=0,right,sloped] {$B$};
 
     \draw[->] (6, -6.4) -- (3, 8.6) node[pos=0.2,above,sloped] {Strahl}
-              node[pos=0.2,below,sloped] {$x \cdot \cos \alpha + y \cdot \sin \alpha = t$};
+              node[pos=0.2,below,sloped] {$x \cdot \cos \theta + y \cdot \sin \theta = t$};
 
     % t
     \draw[<->] (-0.3, 1.5) -- (1.25, 1.81) node[pos=0.5,above,sloped] {$t_1$};
@@ -69,7 +70,7 @@ oder allgemein für beliebige, zu $AB$ parallele, Linien:
     \draw[dashed] (0.4, -2) -- (-0.4, 2);
 
     % Projektion
-    \draw[<->] (0, 8) -- (-0.4, 10) node[pos=0.5, sloped, above] {$P_{\alpha}(t)$};
+    \draw[<->] (0, 8) -- (-0.4, 10) node[pos=0.5, sloped, above] {$P_{\theta}(t)$};
     \draw[<->] (3, 8.6) -- (2.8, 9.6);
     \draw[thick] (-4, 7.2) .. controls (-3.8, 7.5) .. (-3, 8)
                  .. controls (-2.75, 8.5) and (-1.5, 9.25) .. (-1, 9.5)
@@ -83,41 +84,101 @@ oder allgemein für beliebige, zu $AB$ parallele, Linien:
     \draw[->] (-4, 10.5) -- (-1, 9.5) node[pos=0, left] {Projektion};
 
     % Winkel
-    \draw (2.5, 0) arc (0:23.5:12mm) node[pos=0.5,left] {$\alpha$};
+    \draw (2.5, 0) arc (0:23.5:12mm) node[pos=0.5,left] {$\theta$};
 \end{tikzpicture}
-\caption{Zusammenhang zwischen Linienintegral und Projektion}
+\caption{Zusammenhang zwischen Kurvenintegral und Projektion (Vorlage:~\cite{kak79})}
 \label{fig:math_proj}
 \end{figure}
 
-Das zu $f(x, y)$ gehörige Linienintegral ist $P_{\alpha}(t)$:
+Das zu $f(x, y)$ gehörige Kurvenintegral ist $P_{\theta}(t)$:
 
 \begin{equation}\label{eq:proj_int}
-    P_{\alpha}(t) = \int\limits_{(\alpha, t)} f(x, y) \mathrm{d}s
+    P_{\theta}(t) = \int\limits_{(\theta, t)\text{-Linie}} f(x, y)\ \mathrm{d}s
 \end{equation}
 
-Zusammen mit der aus Formel~\ref{eq:proj_obj} resultierenden Delta-Distribution lässt sich das Linienintegral wie folgt
+Zusammen mit der aus Formel~\ref{eq:proj_obj} resultierenden Delta-Distribution lässt sich das Kurvenintegral wie folgt
 umschreiben:
 
 \begin{equation}\label{eq:proj_radon}
-    P_{\alpha}(t) = \int\limits_{-\infty}^{\infty}\int\limits_{-\infty}^{\infty}f(x, y) \cdot \delta(x \cdot
-                    \cos \alpha + y \cdot \sin \alpha - t) \mathrm{d}x \mathrm{d}y
+    P_{\theta}(t) = \int\limits_{-\infty}^{\infty}\int\limits_{-\infty}^{\infty}f(x, y) \cdot \delta(x \cdot
+                    \cos \theta + y \cdot \sin \theta - t)\ \mathrm{d} x\ \mathrm{d} y
 \end{equation}
 
-Die Funktion $P_{\alpha}(t)$ ist die \textit{Radon-Transformation} der Funktion $f(x, y)$~\cite{radon}.
+Die Funktion $P_{\theta}(t)$ ist die \textit{Radon-Transformation} der Funktion $f(x, y)$ (vgl.~\cite{radon}).
 
 Eine Projektion lässt sich als die Kombination einer Menge von Radon-Transformationen verstehen. Die
-(mathematisch) einfachste Projektion ist eine Sammlung von Parallelstrahlintegralen $P_{\alpha}(t)$ unter einem
-konstanten Winkel $\alpha$. Man bezeichnet eine solche Projektion als \textit{Parallelstrahlprojektion} (siehe
+(mathematisch) einfachste Projektion ist eine Sammlung von Parallelstrahlintegralen $P_{\theta}(t)$ unter einem
+konstanten Winkel $\theta$. Man bezeichnet eine solche Projektion als \textit{Parallelstrahlprojektion} (siehe
 Abbildung~\ref{fig:par_proj}). In der Praxis kann eine Parallelstrahlprojektion durch die Bewegung einer
 Quelle-Detektor-Anordnung entlang paralleler Linien auf entgegengesetzten Seiten des Objekts aufgenommen werden.
 
 Eine zweite Aufnahmemöglichkeit ist der Einsatz einer Quelle auf einer festen Position sowie einer Reihe von Detektoren
 entlang einer Linie auf der anderen Seite des Objekts (siehe Abbildung~\ref{fig:fan_proj}). Solcherart erzeugte
-Projektionen nennt man aufgrund der fächerförmigen Strahlen \textit{Fächerstrahlprojektionen}~\cite{kakslan}.
+Projektionen nennt man aufgrund der fächerförmigen Strahlen \textit{Fächerstrahlprojektionen} (vgl.~\cite{kakslan}).
 
-\subsubsection{Das Fourier-Schichten-Theorem}
+\subsubsection{Das Fourier-Scheiben-Theorem}
 
-Betrachtet man die eindimensionale 
+Der Zusammenhang zwischen der Projektion und dem Objekt wird noch deutlicher, wenn man erstere einer eindimensionalen
+und letztere einer zweidimensionalen Fouriertransformation unterzieht. So stellt Kak in seiner Arbeit fest, dass die
+Fouriertransformation einer Parallelstrahlprojektion eines Objekts $f(x, y)$, die unter dem Winkel $\theta$
+aufgenommen wurde, einer Schicht des zweidimensional fouriertransformierten Objekts $F(u, v)$, entspricht. Mit anderen
+Worten ergibt die Fouriertransformation einer Projektion $P_{\theta}(t)$ die Werte von $F(u, v$) für ein bestimmtes
+$v$(vgl.~\cite{kak85}).
+
+Gemeinsam mit Slaney hat Kak diesen Zusammenhang mathematisch hergeleitet. Seien $F(u, v)$ die
+zweidimensionale Fouriertransformation des Objekts $f(x, y)$:
+
+\begin{equation}\label{eq:obj_2d_full}
+    F(u, v) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(x, y) \cdot e^{-2 \pi i \cdot(u x + v y)}\
+        \mathrm{d} x\ \mathrm{d} y
+\end{equation}
+
+und $S_{\theta}(w)$ die eindimensionale Fouriertransformation der Projektion unter dem Winkel $\theta$ $P_{\theta}(t)$:
+
+\begin{equation}\label{eq:proj_fft}
+    S_{\theta}(w) = \int\limits_{-\infty}^{\infty} P_{\theta}(t) \cdot e^{-2 \pi i \cdot w t}\ \mathrm{d} t
+\end{equation}
+
+Im Folgenden sei der Fall $\theta = 0$ betrachtet. Setzt man $v = 0$, so wird die Formel~\ref{eq:obj_2d_full}
+vereinfacht:
+
+\begin{equation}
+    F(u, 0) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(x, y) \cdot e^{-2 \pi i \cdot u x}\
+    \mathrm{d} x\ \mathrm{d} y
+\end{equation}
+
+Der Phasenfaktor ist nun nicht mehr von $y$ abhängig, wodurch das Integral in zwei Hälften geteilt werden kann:
+
+\begin{equation}\label{eq:obj_2d_split}
+    F(u, 0) = \int\limits_{-\infty}^{\infty} \left[\int\limits_{-\infty}^{\infty} f(x, y)\ \mathrm{d} y \right] \cdot
+    e^{-2 \pi i \cdot u x}\ \mathrm{d} x
+\end{equation}
+
+Der Term in eckigen Klammern entspricht der Gleichung für eine Projektion entlang konstanter $x$-Linien:
+
+\begin{equation}
+    P_{\theta = 0}(x) = \int\limits_{-\infty}^{\infty} f(x, y)\ \mathrm{d} y
+\end{equation}
+
+Durch Einsetzen in Gleichung~\ref{eq:obj_2d_split} erhält man:
+
+\begin{equation}
+    F(u, 0) = \int\limits_{-\infty}^{\infty} P_{\theta = 0}(x) \cdot e^{-2 \pi i \cdot u x}\ \mathrm{d} x
+\end{equation}
+
+Die rechte Seite dieser Gleichung stellt die eindimensional fouriertransformierte Projektion $P_{\theta = 0}$ dar (vgl.
+Gleichung~\ref{eq:proj_fft}), es ergibt sich also der folgende Zusammenhang zwischen der Projektion und dem
+zweidimensional fouriertransformierten Objekt:
+
+\begin{equation}
+    F(u, 0) = S_{\theta = 0}(u)
+\end{equation}
+
+Dieses Ergebnis ist die einfachste Form des Fourier-Scheiben-Theorems. Darüber hinaus ist es unabhängig von der
+konkreten Konstellation zwischen dem Objekt und dem Koordinatensystem der Projektion. Wird das
+$(t, s)$-Koordinatensystem um den Winkel $\theta$ rotiert, so ist die Fouriertransformation der Projektion gleich der
+zweidimensionalen Fouriertransformation des Objekts entlang einer radialen Linie, die um den Winkel $\theta$ rotiert
+wird (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{kakslan}).
 
 \subsubsection{Parallelstrahlen}
 
@@ -400,235 +461,213 @@ für die Projektionswinkel 90°, 180° und 270° und die entsprechenden \gls{vox
 
 \section{Die NVIDIA{\textregistered}-CUDA{\textregistered}-Plattform}
 
+In diesem Abschnitt wird die NVIDIA{\textregistered}-CUDA{\textregistered}-Plattform näher vorgestellt. Eingegangen wird
+zunächst auf die historische Entwicklung, die die Einführung von CUDA{\textregistered} begünstigte bzw.\ erforderte. Im
+Anschluss daran wird das CUDA{\textregistered}-Programmiermodell vorgestellt, das als technische Basis für die in
+Kapitel~\ref{chap:umsetzung} beschriebene Implementierung dient.
+
 \subsection{Programmierbare Grafikkarten}\label{ssec:cu_prog_gpu}
 
 Als NVIDIA{\textregistered} im Jahre 2006 seine \textit{Compute-Unified-Device-Architecture}-Plattform
 (CUDA{\textregistered}) vorstellte, die die direkte Programmierung der NVIDIA{\textregistered}-Grafikkarten ermöglichte,
-folgte die Firma damit einer Entwicklung, die in den ersten Jahren des neuen Jahrtausends begonnen hatte. Durch die
-Einführung von dezidierten Berechnungseinheiten für Gleitkommazahlen (\gls{fpu}) sowie den zunehmenden Funktionsumfang
-der auf den Grafikkarten verbauten Shader-Einheiten wurde es theoretisch möglich, Berechnungen, die vorher nur von
-\gls{cpu}s ausgeführt werden konnten, nun auch von \gls{gpu}s ausführen zu lassen. Dabei haben Grafikkarten gegenüber
-herkömmlichen Prozessoren den Vorteil, dass die auf ihnen ausgeführten Berechnungen aufgrund ihrer für die
-Computergrafik optimierten Bauweise -- also die Manipulation vieler \gls{pixel} zur gleichen Zeit -- automatisch
-\textit{datenparallel} sind. \textit{Datenparallelität} bezeichnet dabei die parallele Ausführung derselben Berechnung
-bzw.\ Anweisung auf verschiedenen Daten. Dem gegenüber steht die \textit{Taskparallelität}, mit der eine parallele
-Abarbeitung verschiedener Aufgaben gemeint ist. \textit{Taskparallelität} entspricht eher dem Programmiermodell der
-klassischen \gls{cpu}, ist auf \gls{gpu}s aufgrund der ihnen inhärenten datenparallelen Funktionsweise nur begrenzt
-anwendbar.
+folgte die Firma damit einer Entwicklung, die in den ersten Jahren des neuen Jahrtausends begonnen hatte. Mit der
+Einführung der NVIDIA{\textregistered} GeForce 3 im Jahre 2001 und der parallelen Veröffentlichung von \gls{directx} 8
+bzw.\ \gls{opengl} \textit{Vertex-Shader}-Erweiterungen hatten Anwendungsentwickler erstmals Zugriff auf die
+\textit{Shader}-Einheiten für die \textit{Vertex}- und \textit{Transform-\&-Lighting}-Berechnung. Spätere \gls{gpu}s,
+die mit \gls{directx} 9 kompatibel waren, gestatteten eine noch flexiblere Programmierung, indem sie Entwicklern Zugriff
+auf die \textit{Pixel-Shader} erlaubten und die Nutzung von Texturen im \textit{Vertex-Shader} zuließen. Die 2002
+vorgestellte \gls{gpu} ATI Radeon 9700 verfügte über einen programmierbaren
+24bit-Fließkommazahl-\textit{Pixel-Shader}-Prozessor, der mit \gls{directx} 9 und \gls{opengl} gesteuert werden
+konnte, die GeForce{\textregistered} FX bot sogar 32bit-Fließkommazahl-Pixel-Prozessoren. Diese programmierbaren
+Prozessoren waren Teil einer Entwicklung, die zu einer allmählichen Vereinheitlichung der auf der \gls{gpu} verbauten
+Funktionseinheiten führte: während es auf den GeForce{\textregistered}-Serien 6800 und 7800 noch getrennte Prozessoren
+für die \textit{Vertex}- und \textit{Pixel}-Berechnung gab, wurde in der 2005 erschienenen XBox 360 eine 
+{\glqq}vereinheitlichte{\grqq} Grafikkarte verbaut, deren Prozessoreinheiten sowohl für die \textit{Vertex}- als auch
+für die \textit{Pixel}-Berechnung geeignet waren (vgl.~\cite{kirkhwu}, S. 28 -- 29).
 
-Die \textit{datenparallele} Berechnung auf \gls{gpu}s, meistens \gls{gpgpu} genannt, bietet sich insbesondere
-für die Verarbeitung großer Datenmengen an, wie sie zum Beispiel in der Wissenschaft häufig vorkommt. Am Anfang der
-2000er Jahre gab es allerdings keine komfortable Möglichkeit, die erhältlichen Grafikkarten direkt zu programmieren;
-man war daher gezwungen, die zu berechnenden Daten zunächst in Objekte der Computergrafik umzuwandeln (beispielsweise 
-Texturen) und mit den Mitteln der bestehenden Computergrafik-Bibliotheken wie der \gls{opengl} oder \gls{directx} zu
-bearbeiten. Mit der Einführung von \gls{cuda} entfiel diese Beschränkung, da es nun möglich war, speziell für die
-Grafikkarte geschriebene Programme auf dieser auszuführen, ohne den Umweg über Computergrafik-Bibliotheken gehen zu
-müssen.
+Durch diese Vereinheitlichung der \gls{gpu}-Prozessoren glich die Hardware mehr und mehr den aus dem \gls{hpc} bekannten
+Parallelrechnern. Mit der Verfügbarkeit \gls{directx}-9-kompatibler \gls{gpu}s wurde diese Entwicklung zunehmend
+auch in Forschungskreisen bekannt und man begann zu untersuchen, inwiefern sich die neue Hardware zur Lösung von
+berechnungsintensiven Problemen aus den Bereichen der Natur- und Ingenieurswissenschaften einsetzen ließ. Die zu diesen
+Zwecken nicht konstruierten \gls{gpu}s ließen sich jedoch nur über die vorhandenen Schnittstellen zur
+Grafikprogrammierung ansteuern. Zur Nutzung der Hardwareressourcen musste ein Programmierer daher das zu lösende Problem
+zunächst auf computergrafische Operationen abbilden, sodass die Berechnung dann mit \gls{opengl} oder \gls{directx}
+durchgeführt werden konnte. Um beispielsweise eine mathematische Funktion mehrfach auszuführen, musste diese erst in
+ein \textit{Pixel-Shader}-Programm umgeschrieben werden, während die zugehörigen Eingabedaten als Texturen
+vorzuliegen hatten und die Ausgabedaten im der jeweiligen Grafikbibliothek eigenen Pixelformat zurückgegeben wurden.
+Die Umschreibung in einen für die Verwendung von \textit{Pixel-Shadern} geeigneten Algorithmus hatte außerdem den
+gravierenden Nachteil, dass Zugriffe auf beliebige Stellen im Speicher nicht möglich waren. Da ein \textit{Pixel-Shader}
+als Ausgabedatum die Farbe eines \gls{pixel}s zurückliefert, besteht dazu aus Sicht der Grafikbibliothek auch keine
+Notwendigkeit, da die Position des zugehörigen Pixels ja bereits bekannt ist (vgl.~\cite{kirkhwu}, S. 33).
 
-\subsection{Das \gls{cuda}-Programmier- und Ausführungsmodell}
+Diese Beschränkungen erwiesen sich für generische numerische Berechnungen bald als zu restriktiv. Erschwerend kam hinzu, 
+dass jeder Entwickler, der sich mit diesen technischen Limitierungen abfinden konnte, zusätzlich noch Wissen über die
+Funktionsweise von \gls{opengl} und \gls{directx} benötigte, um das zu lösende Problem mit Hilfe von \gls{gpu}s
+bewältigen zu lassen. Eine flächendeckende Akzeptanz von \gls{gpu}s als Beschleunigern war unter Forschern daher in den
+ersten Jahren des \gls{gpgpu} nicht gegeben (vgl.~\cite{sandkand}, S. 6).
 
-\subsubsection{\gls{kernel} und \gls{device}-Funktionen}
+Die Situation änderte sich, als NVIDIA{\textregistered} 2006 die GeForce{\textregistered} 8800 GTX der Öffentlichkeit
+präsentierte. Diese \gls{gpu} war nicht nur zum damals neuen \gls{directx} 10 kompatibel, sondern auch die erste
+Grafikkarte, die mit \gls{cuda} ohne den Umweg über \gls{directx} oder \gls{opengl} direkt programmierbar war
+(vgl.~\cite{sandkand}, S. 7). Programmierer hatten nun die Möglichkeit, \textit{datenparallele} Aspekte
+(vgl. Abschnitt~\ref{sssec:cu_data_par}) des zu lösenden Problems zu deklarieren und von der \gls{gpu} ausführen zu
+lassen. Die \textit{Shader}-Prozessoren hatten sich zu komplett programmierbaren Prozessoren entwickelt und verfügten
+über einen Instruktionsspeicher, einen Instruktions-Cache und eine Instruktionskontrollogik. Diesen zusätzlichen
+Hardwareoverhead konnte NVIDIA{\textregistered} dadurch reduzieren, dass mehrere Prozessoren sich den Instruktionscache
+und die -kontrolllogik teilten. Diese Struktur funktioniert aufgrund des Hardware-Fokus auf die parallele Berechnung von
+\gls{pixel}n für \gls{gpu}s gut. Zusätzlich war es nun möglich, auf beliebige Teile des Speichers zuzugreifen. Aus Sicht
+des Entwicklers lag nun ein Programmiermodell vor, das eine Hierarchie paralleler Threads, Synchronisierungsmechanismen
+und Barrieren sowie atomare Operationen bot und das Ganze in eine an C bzw.\ C++ angelehnte Sprache einbettete
+(vgl.~\cite{kirkhwu}, S. 35).
 
-Das Herzstück eines \gls{cuda}-Programms ist der \gls{kernel}, also ein speziell für die \gls{gpu} geschriebenes
-Programmstück. Ein \gls{kernel} wird in einem C- oder C++-Dialekt geschrieben und durch den \gls{cuda}-eigenen Compiler
-in den Maschinencode der jeweiligen Zielarchitektur übersetzt. Dieser \gls{kernel} kann dann, ähnlich einer normalen
-Funktion, aus einem in C oder C++ geschriebenen Programm (dem \gls{host}) aufgerufen werden. Der so gestartete
-\gls{kernel} wird dann durch die \gls{cuda}-Laufzeitumgebung auf der \gls{gpu} (dem \gls{device}) ausgeführt. Da der
-\gls{kernel} nicht auf der CPU ausgeführt wird, ist sein Aufruf in Bezug auf den \gls{host} asynchron, das Ende der
-Berechnung wird auf der \gls{host}seite also nicht abgewartet und erfordert eine manuelle Synchronisierung durch den
-\gls{host}:
+\subsection{Das \gls{cuda}-Programmiermodell}
 
+In diesem Abschnitt wird das der \gls{cuda}-Plattform zugrundeliegende Programmiermodell näher vorgestellt. Das
+gedankliche Fundament dieses Modell ist die \textit{Datenparallelität}, die in Abschnitt~\ref{sssec:cu_data_par}
+erläutert wird. Die konkreten Programmierkonzepte schließen sich in den danach folgenden Abschnitten an.
+
+\subsubsection{Datenparallelität}\label{sssec:cu_data_par}
+
+Moderne Programme bearbeiten häufig große Datenmengen und benötigen deswegen auf herkömmlichen Rechnern lange
+Ausführungszeiten. Viele Anwendungen arbeiten dabei mit Daten, die Vorgänge der echten Welt ab- oder nachbilden, wie
+beispielsweise einfache Bilder oder Filme oder die Bewegungen von Flüssigkeiten und Gasen unter bestimmten Umständen.
+Fluglinien müssen ihre Flüge planen, wozu die Daten einer Vielzahl anderer Flüge, Besatzungen und Flughäfen herangezogen
+werden, die voneinander unabhängig sind. Diese Unabhängigkeit der Daten ist die Voraussetzung für datenparallele
+Algorithmen.
+
+Als einfaches Beispiel für einen datenparallelen Algorithmus lässt sich die Addition zweier Vektoren $A$ und $B$
+betrachten:
+
+\begin{equation*}
+    \left(
+        \begin{array}{c}
+            a_1\\
+            a_2\\
+            a_3
+        \end{array}
+    \right)
+    +
+    \left(
+        \begin{array}{c}
+            b_1\\
+            b_2\\
+            b_3
+        \end{array}
+    \right)
+    =
+    \left(
+        \begin{array}{c}
+            a_1 + b_1 \\
+            a_2 + b_2 \\
+            a_3 + b_3
+        \end{array}
+    \right)
+    =
+    \left(
+        \begin{array}{c}
+            c_1 \\
+            c_2 \\
+            c_3
+        \end{array}
+    \right)
+\end{equation*}
+
+In diesem Beispiel wird $c_1$ berechnet, indem $a_1$ und $b_1$ addiert werden, und $c_3$ ergibt sich aus der Addition
+von $a_3$ und $b_3$. Die Additionen sind voneinander unabhängig und können parallel berechnet werden. Sehr große
+Vektoren führen in diesem Beispiel daher zu einem hohen Maß an Datenparallelität.
+
+Der Datenparallelität steht das Konzept der \textit{Task-Parallelität} gegenüber. Die Task-Parallelität kommt vor allem
+in komplexeren Programmen zur Anwendung, in denen es mehrere unterschiedliche Aufgaben gibt, die parallel bearbeitet
+werden können. Vorstellbar ist z.B.\ ein Programm zur Filterung von Bildern, in denen ein Task das die Bilder
+nacheinander lädt, der zweite die Bilder nacheinander filtert und ein weiterer die gefilterten Bilder wieder
+abspeichert (vgl.~\cite{kirkhwu}, S. 42 -- 43).
+
+\subsubsection{Parallele Ausführung}
+
+Die Ausführung eines \gls{cuda}-Programms beginnt auf dem \gls{host}. Wird ein \gls{kernel} aufgerufen, so wird auf dem
+\gls{device} eine Anzahl an Threads gestartet. Die Summe aller auf dem \gls{device} gestrateten Threads bezeichnet
+man als \textit{\gls{grid}}. Haben alle Threads eines \gls{kernel}s ihre Ausführung beendet, wird auch das \gls{grid}
+beendet.
+Das Starten eines \gls{kernel}s erzeugt typischerweise eine große Zahl von Threads. Im Gegensatz zur \gls{cpu}, auf der
+das Erzeugen eines Threads in der Regel mehrere tausend Takte benötigt, ist der gleiche Vorgang auf der \gls{gpu} in
+einigen wenigen Takten zu bewältigen (vgl.~\cite{kirkhwu}, S. 44 -- 45).
+
+Das Beispiel der Vektoraddition aus Abschnitt~\ref{sssec:cu_data_par} lässt sich in C++ wie in
+Quelltext~\ref{source:vec_add_cpp} dargestellt implementieren. 
+
+\begin{code}
 \begin{minted}[breaklines,breakafter=\,,fontsize=\small]{c++}
-    auto main(int argc, char** argv) -> int
-    {
-        kernel<<<...,...>>>(...);
-        // Host-Programm wird nach Kernelaufruf weiter ausgeführt
-        // Kernel-Ergebnis kann noch nicht verwendet werden
-        cudaDeviceSynchronize();
-        // Kernel-Ergebnis ab jetzt verwendbar
-    }
+auto vec_add(const std::int32_t* A, const std::int32_t* B,
+             std::int32_t* C, std::size_t size) -> void
+{
+    for(auto i = 0u; i < size; ++i)
+        C[i] = A[i] + B[i];
+}
 \end{minted}
+\captionof{listing}{Vektoraddition mit C++}
+\label{source:vec_add_cpp}
+\end{code}
 
-Auf dem \gls{device} werden mehrere \gls{kernel} in der Reihenfolge ihrer Aufrufe sequentiell abgearbeitet,
-sofern sie nicht auf mehrere \glspl{stream} aufgeteilt werden (siehe Abschnitt~\ref{sssec:cu_streams}):
+In \gls{cuda} würde dagegen jeder Thread ein Element des Ausgabevektors $C$ berechnen, wie in
+Quelltext~\ref{source:vec_add_cuda} gezeigt.
 
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{c++}
-    auto main(int argc, char** argv) -> int
-    {
-        kernel1<<<...,...>>>(...); // sofortige Ausführung
-        kernel2<<<...,...>>>(...); // Ausführung nach Ende von kernel1
-        kernel3<<<...,...>>>(...); // Ausführung nach Ende von kernel2
-    }
-\end{minted}
-
-Die Deklaration eines \gls{kernel}s ähnelt der Deklaration einer normalen C/C++-Funktion. Er muss allerdings stets
-den Rückgabetypen \texttt{void} haben, da der \gls{kernel} asynchron in Bezug auf den \gls{host} läuft und somit kein
-Ergebnis zurückgeben kann. Ein \gls{kernel} wird außerdem mit dem Schlüsselwort \texttt{\_\_global\_\_} als solcher
-markiert:
-
+\begin{code}
 \begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
-    __global__ void foo(int* bar) { ... }
+__global__ void vec_add(const std::int32_t* A, const std::int32_t* B,
+                        std::int32_t* C, std::size_t size)
+{
+    auto i = blockIdx.x * blockDim.x + threadIdx.x;
+    if(i < size)
+        C[i] = A[i] + B[i];
+}
 \end{minted}
+\captionof{listing}{Vektoraddition mit \gls{cuda}}
+\label{source:vec_add_cuda}
+\end{code}
 
-Neben dem \gls{kernel} gibt es Funktionen, die nur auf dem \gls{device} ausgeführt werden können, das heißt nur aus
-einem \gls{kernel} heraus. Diese \gls{device}-Funktionen können einen Rückgabetypen haben und müssen mit dem
-Schlüsselwort \texttt{\_\_device\_\_} markiert werden:
+Die Berechnung der Indices erfolgt in diesem Beispiel nicht über eine fortlaufend inkrementierte Variable, wie es in C++
+der Fall wäre, sondern über die Hilfsvariablen \texttt{blockIdx}, \texttt{blockDim} und \texttt{threadIdx}. Wird ein
+\gls{cuda}-\gls{kernel} ausgeführt, so entsteht auf dem \gls{device} ein Thread-\gls{grid}. Diese Threads werden in
+einer zweistufigen Hierarchie angeordnet. Jedes \gls{grid} besteht aus mehreren Thread-Blöcken, die der Einfachheit
+halber in der Folge als \textit{Blöcke} bezeichnet werden. Alle Blöcke innerhalb eines \gls{grid}s haben die gleiche
+Größe, können jedoch maximal 1024 Threads umfassen; die Thread-Zahl der Blöcke wird auf dem \gls{host} vor der
+Ausführung des \gls{kernel}s definiert. Für ein gegebenes \gls{grid} kann die Anzahl der Threads pro Block durch die 
+Variable \texttt{blockDim} abgefragt werden, während der individuelle Block, zu dem ein bestimmter Thread gehört, durch
+die Variable \texttt{blockIdx} identifiert werden kann. Innerhalb eines Blocks kann ein einzelner Thread über die
+Variable \texttt{threadIdx} bestimmt werden. Für den ersten Thread des Blocks \texttt{0} hat \texttt{threadIdx} also den
+Wert \texttt{0}, für den zweiten \texttt{1}, für den dritten \texttt{2}, usw. Durch die Kombination der drei Variablen,
+wie sie in Quelltext~\ref{source:vec_add_cuda} dargestellt ist, lässt sich somit jeder Thread innerhalb des \gls{grid}s
+eindeutig identifizieren. Da \gls{cuda} das Starten von zwei- und dreidimensionalen \gls{kernel}n unterstützt, kann über
+die Felder \texttt{x}, \texttt{y} und \texttt{z} die Zahl der Blöcke bzw.\ Threads in der jeweiligen Dimension bestimmt
+werden (vgl.~\cite{kirkhwu}, S. 54).
 
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
-    __device__ auto baz() -> foo { ... }
-\end{minted}
+Ein weiterer Unterschied zur herkömmlichen C++-Programmierung ist das Schlüsselwort \texttt{\_\_global\_\_} vor der
+Deklaration. Dieses Schlüsselwort dient zur Identifizierung einer Funktion als \gls{kernel}, also einer Funktion auf
+dem \gls{device}, die vom \gls{host} aus aufgerufen werden kann. Daneben verwendet \gls{cuda} die Schlüsselworte
+\texttt{\_\_device\_\_} und \texttt{\_\_host\_\_}, die anzeigen, auf welcher Hardware die jeweilige Funktion ausgeführt
+werden kann bzw.\ soll. Eine \texttt{\_\_device\_\_}-Funktion kann dabei nur innerhalb eines \gls{kernel}s oder einer
+weiteren \texttt{\_\_device\_\_}-Funktion aufgerufen werden, eine \texttt{\_\_host\_\_}-Funktion nur auf dem \gls{host}
+-- sie entspricht also einer normalen C++-Funktion (vgl. Tabelle~\ref{table:cu_func_keywords} und~\cite{kirkhwu}, S.55).
 
-\subsubsection{Parallelität}
-
-Jeder \gls{kernel}, der auf dem Host aufgerufen wird, wird gleichzeitig von mehreren \gls{cuda}-Threads ausgeführt.
-Dieses Ausführungsmodell, das in Anlehnung an das von der klassischen \gls{cpu}-Programmierung bekannte \gls{simd} von
-NVIDIA{\textregistered} als \gls{simt} bezeichnet wird, sieht eine \textit{datenparallele} (vgl.
-Abschnitt~\ref{ssec:cu_prog_gpu}) Abarbeitung der Aufgabe vor; mehrere Threads führen also parallel die selbe
-Operation auf verschiedenen Daten aus.
-
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{c++}
-    auto main(int argc, char** argv) -> int
-    {
-        kernel1<<<...,...>>>(...); // Ausführung durch mehrere Threads
-        kernel2<<<...,...>>>(...); // Ausführung durch mehrere Threads
-        kernel3<<<...,...>>>(...); // Ausführung durch mehrere Threads
-    }
-\end{minted}
-
-Die Nähe zu \gls{simd} wird insbesondere durch die bei Divergenzen entstehenden Probleme deutlich. Aufgrund
-architektonischer Besonderheiten (vgl. Abschnitt~\ref{sssec:cu_arch}) kann es dazu kommen, dass Verzweigungspfade
-sequentiell abgearbeitet werden müssen:
-
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
-    __global__ void kernel(...)
-    {
-        if(something)
-            // alle Threads führen erst diesen Zweig aus...
-        else
-            // ... und dann diesen
-    }
-\end{minted}
-
-Divergenzen können außerdem zu unterschiedlichen Thread-Laufzeiten führen, wenn die Abarbeitung der Verzweigungen
-unterschiedlich lange dauert. Die Laufzeit des \gls{kernel}s richtet sich immer nach dem langsamsten Thread. Es
-entstehen also Wartezeiten für die schnelleren Threads, die dadurch nicht von anderen \gls{kernel}n für weitere Aufgaben
-herangezogen werden können.
+\begin{table}
+    \centering
+    \begin{tabular}{| l | c | c |}
+        \hline
+        & Ausgeführt auf dem & Aufgerufen vom \\
+        \hline
+        \texttt{\_\_device\_\_ float device\_func()} & \gls{device} & \gls{device} \\
+        \hline
+        \texttt{\_\_global\_\_ void kernel\_func()} & \gls{device} & \gls{host} \\
+        \hline
+        \texttt{\_\_host\_\_ float host\_func()} & \gls{host} & \gls{host} \\
+        \hline
+    \end{tabular}
+    \caption{\gls{cuda}-Schlüsselworte für die Funktionsdeklaration}
+    \label{table:cu_func_keywords}
+\end{table}
 
 \subsubsection{Architektur}\label{sssec:cu_arch}
 
-Der Aufbau einer \gls{cuda}-fähigen \gls{gpu} unterscheidet sich stark von der Struktur klassischer Prozessoren. Die
-gröbste Organisationseinheit auf einer \gls{gpu} der neuesten Generation (Pascal{\texttrademark}) ist ein \gls{gpc}.
-Jeder \gls{gpc} lässt sich unterteilen in bis zu zehn Einheiten des \gls{sm}. Ein \gls{sm} besteht wiederum aus 64
-\gls{cuda}-Kernen, womit sich eine Gesamtkernzahl von bis zu 3840 Kernen pro Pascal{\texttrademark}-\gls{gpu} ergibt.
-Eine handelsübliche Intel{\textregistered}-Xeon{\textregistered}-\gls{cpu} ist dagegen aus maximal 32 Kernen aufgebaut.
-
-\subsubsection{Speicher}
-
-Im Gegensatz zu \gls{cpu}-Kernen verfügen \gls{cuda}-Kerne über keine eigenen Register oder Caches. Stattdessen verfügt
-jeder \gls{sm} über eine feste Registerzahl sowie eine gewisse Cache-Größe, die auf die benötigten Kerne pro
-\gls{kernel} aufgeteilt werden. Ferner verfügt
+\subsubsection{Speicher}\label{sssec:cu_mem}
 
 \subsubsection{\glspl{stream}}\label{sssec:cu_streams}
-
-\subsubsection{Beispiel}\label{sssec:cu_vec_add}
-
-Die Funktionsweise der \gls{cuda}-Plattform soll im Folgenden anhand eines kleinen Beispiels veranschaulicht werden. Die
-folgende, in C++ geschriebene Funktion summiert die Vektoren \texttt{A} und \texttt{B} der Länge \texttt{size} und
-speichert das Ergebnis im gleichlangen Vektor \texttt{C}:
-
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{c++}
-    auto vec_add(const std::int32_t* A, const std::int32_t* B, std::int32_t* C, std::size_t size) -> void
-    {
-        for(auto i = 0u; i < size; ++i)
-            C[i] = A[i] + B[i];
-    }
-\end{minted}
-
-Portiert man diese Funktion auf die \gls{cuda}-Plattform, so erhält man den folgenden \gls{kernel}:
-
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
-    __global__ void vec_add(const std::int32_t* A, const std::int32_t* B, std::int32_t* C, std::size_t size)
-    {
-        auto i = blockIdx.x * blockDim.x + threadIdx.x;
-        if(i < size)
-            C[i] = A[i] + B[i];
-    }
-\end{minted}
-
-\subsection{Alternativen zu \gls{cuda}}
-
-\subsubsection{OpenCL{\texttrademark}}
-
-Während \gls{cuda} ein großer Fortschritt im Bereich des \gls{gpgpu} war, so blieb es aufgrund der Tatsache, dass es
-ein proprietäres Produkt von NVIDIA{\textregistered} ist, stets auf Grafikkarten und Beschleuniger dieses Herstellers
-beschränkt. Der Computerhersteller Apple{\textregistered}, der in der zweiten Hälfte der 2000er Jahre Grafikkarten des
-NVIDIA{\textregistered}-Konkurrenten AMD verbaute und seinen Kunden ebenfalls einen einfachen Zugang zu
-\gls{gpgpu} ermöglichen wollte, entwickelte daher eine eigene, wenn auch stark an \gls{cuda} angelehnte,
-\gls{gpgpu}-Plattform, die \gls{opencl} genannt wurde, und übergab diese kurz darauf dem Industriekonsortium Khronos zur
-Standardisierung. Im Jahre 2009 wurde dann mit \gls{opencl} 1.0 die erste hardware- und herstellerunabhängige
-\gls{gpgpu}-Plattform herausgegeben, die unter anderem von den drei größten \gls{gpu}-Herstellern
-NVIDIA{\textregistered}, AMD und Intel{\textregistered} unterstützt wurde. Theoretisch konnte dasselbe Programm nun ohne
-Änderungen mit einer beliebigen \gls{gpu} beschleunigt werden. In der Praxis hinkte die Unterstützung sukzessiver
-Versionen des Standards seitens einiger Hersteller jedoch der Entwicklung der Hardware hinterher. Während das 2010
-erschienene \gls{opencl} 1.1 noch relativ zeitnah von allen Herstellern unterstützt wurde, wurde die 2011
-veröffentlichte Version \gls{opencl} 1.2 erst 2015 offiziell auf NVIDIA{\textregistered}-GPUs verfügbar; das 2013
-erschienene \gls{opencl} 2.0 wird von NVIDIA{\textregistered} erst seit Anfang 2017 zu Evaluierungszwecken unterstützt.
-Die Firma Apple{\textregistered}, die \gls{opencl} ursprünglich entwickelt hatte, unterstützt bis heute nur \gls{opencl}
-1.2. Für eine wirklich plattformunabhängige Programmierung ist man also gezwungen, die verwendeten \gls{opencl}-Befehle
-auf den kleinsten gemeinsamen Nenner der gewünschten Zielplattformen zu beschränken; bei \gls{gpu}s waren dies über
-einen langen Zeitraum die Befehle der Version \gls{opencl} 1.1.
-
-Neben der unterschiedlichen Versionsunterstützung durch die Hersteller ist die Portabilität außerdem durch
-unterschiedliche Leistungen der \gls{kernel} auf verschiedenen, aber technisch vergleichbaren Plattformen -- wie etwa
-\gls{gpu}s der gleichen Generation von NVIDIA{\textregistered} und AMD -- beschränkt~\cite{duweb}. Durch den Einsatz
-selbstoptimierender Techniken (\textit{auto-tuning}) ist dieses Problem aber möglicherweise
-lösbar~\cite{duweb}~\cite{fangvar}.
-
-Eine weitere Schwierigkeit beim Einsatz von \gls{opencl}  ist die unterschiedliche Leistung funktionsgleicher
-\gls{cuda}- und \gls{opencl}-\gls{kernel} auf NVIDIA{\textregistered}-Hardware. Fang et al.\ stellten fest, dass ein
-von \gls{cuda} zu \gls{opencl} übertragener \gls{kernel} ohne weitere Optimierungen bis zu 30\% mehr Zeit benötigte als
-das \gls{cuda}-Original~\cite{fangvar}. Karimi et al.\ kamen in ihrer Untersuchung zu dem Ergebnis, dass
-\gls{opencl}-Kernel auf dem gleichen Beschleuniger 13\% bis 63\% langsamer sind als ihre
-\gls{cuda}-Gegenstücke~\cite{karimdick}.
-
-% lange Zeile nötig, da das inline-Formatting sonst spinnt
-\begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{c}
-    |\textcolor{keyword-green}{\textbf{\_\_kernel}}| void vec_add(|\textcolor{keyword-green}{\textbf{\_\_constant}}| int* A, |\textcolor{keyword-green}{\textbf{\_\_constant}}| int* B, int* C, size_t size)
-    {
-        size_t i = |\textcolor{keyword-green}{get\_global\_id(}0\textcolor{keyword-green}{)}|;
-        if(i < size)
-            C[i] = A[i] + B[i];
-    }
-\end{minted}
-
-\subsubsection{OpenMP{\textregistered}}
-
-Parallel zu der Weiterentwicklung der Grafikkarten fand auch bei den herkömmlichen Prozessoren durch die allmähliche
-Erhöhung der Kernanzahl eine Hinwendung zu parallelen Ausführungsmodellen statt. Ein Ansatz zur Vereinfachung der
-Programmierung vieler \gls{cpu}-Kerne ist das seit 1997 gemeinschaftlich entwickelte \gls{openmp}. Im Gegensatz zu den
-Programmiermodellen von \gls{cuda} oder \gls{opencl}, die separate Programme auf den Beschleunigern starten, wird
-\gls{openmp} direkt mit Compiler-Direktiven in das eigentliche Programm eingebettet.
-
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{c++}
-    auto vec_add(const std::int32_t* A, const std::int32_t* B, std::int32_t* C, std::size_t size) -> void
-    {
-        #pragma omp parallel for simd
-        for(auto i = 0u; i < size; ++i)
-            C[i] = A[i] + B[i];
-    }
-\end{minted}
-
-\subsubsection{OpenACC{\textregistered}}
-
-An \gls{openmp} angelehnt ist \gls{openacc}, welches die \gls{gpgpu}-Programmierung mit Compiler-Direktiven
-ermöglicht. Syntax und Funktionsweise ähneln stark der von \gls{openmp}, haben jedoch den Nachteil, dass eine auf
-bestimmte Hardware zugeschnittene Optimierung nicht mehr so einfach möglich ist.
-
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{c++}
-    auto vec_add(const std::int32_t* A, const std::int32_t* B, std::int32_t* C, std::size_t size) -> void
-    {
-        #pragma acc parallel loop
-        for(auto i = 0u; i < size; ++i)
-            C[i] = A[i] + B[i];
-    }
-\end{minted}
