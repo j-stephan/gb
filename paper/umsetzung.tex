@@ -329,6 +329,32 @@ Ergebnisse bei gleichzeitiger Beschleunigung des Gesamtalgorithmus berechnet.
 
 \subsection{Optimierungsüberlegungen}
 
+Die Optimierung eines \gls{kernel}s fußt im Wesentlichen auf zwei Dingen:
+
+\begin{enumerate}
+    \item Die Auslastung der Grafikkarte muss möglichst hoch sein, um die vorhandenen Rechenkapazitäten effektiv nutzen
+          zu können. Bedingung für eine effektive Verteilung des \gls{kernel}s ist ein möglichst geringer
+          Registerverbrauch innerhalb eines \gls{sm}s, sodass die maximale Zahl an Kernen genutzt werden kann.
+    \item Die langsamen Zugriffe auf den globalen Speicher müssen möglichst effizient sein, um den Algorithmus nicht
+          auszubremsen.
+\end{enumerate}
+
+Da, wie wir gesehen haben, die gefilterte Rückprojektion von einer Reihe geometrischer Parameter abhängt, ist die Zahl
+der benötigten Register für die Übergabe dieser Parameter sowie zur Speicherung von Zwischenergebnissen potentiell hoch.
+Ein großer Teil dieser Parameter ist jedoch für die (teils komplette, teils projektionsweise) Rückprojektion konstant,
+wie zum Beispiel die Abstände zwischen dem Objekt, der Quelle und dem Detektor oder die geometrischen Eigenschaften
+des Detektors. Da sich diese Parameter auch während der Berechnung nicht ändern können, empfiehlt es sich, diese in
+den konstanten Speicher der Grafikkarte auszulagern, auf den verhältnismäßig schnell zugegriffen werden kann.
+
+Anders verhält es sich mit den Projektionen und dem Volumen. Da während der Ausführung auf beide Speicherbereiche
+schreibend zugegriffen werden muss, ist es sinnvoll, diese Zugriffe möglichst optimal zu gestalten. Da die Projektionen
+der Kegelstrahltomographie üblicherweise zweidimensional sind und das zu rekonstruierende Volumen dreidimensional ist,
+können die für zwei- bzw.\ dreidimensionale Operationen optimierten Speichervarianten der \gls{cuda}-Plattform verwendet
+werden, die man mit \texttt{cudaMallocPitch} bzw.\ \texttt{cudaMalloc3D} alloziiert. Zusätzlich ist es nach der Wichtung
+und der Filterung für die Rückprojektion nicht mehr erforderlich, die Projektionen zu verändern. Durch deren Umwandlung
+in Texturen bzw.\ deren Verschiebung in den für Texturzugriffe optimierten Teil des globalen Speichers, der einen
+speziellen Cache besitzt, kann der Zeitverlust beim lesenden Zugriff auf die Projektionen minimiert werden.
+
 \subsection{Einflüsse der realen Welt}
 
 Die in Kapitel~\ref{chap:grundlagen} gezeigten Überlegungen zur gefilterten Rückprojektion und dem \gls{fdk} sind in
@@ -667,10 +693,20 @@ __global__ void filter_application_kernel(
 
 \subsection{Implementierung der gefilterten Rückprojektion}
 
+Die Implementierung der gefilterten Rückprojektion soll möglichst optimal auf der \gls{gpu} laufen. Um dies zu
+erreichen, 
+
 \begin{itemize}
     \item welche Konstanten und Variablen gibt es
     \item welche Schwierigkeiten können auftreten
 \end{itemize}
+
+
+Die Rückprojektion erfolgt für jede Projektion $p$ einzeln und für ein auf dem \gls{device} erstelltes dreidimensionales
+Volumen (vgl. Abschnitt~\ref{sssec:cu_mem}). Der Implementierung (siehe Quelltext~\ref{source:impl_bp}) liegt dabei die
+in Abbildung~\ref{fig:fdk_geometrie} gezeigte Geometrie zugrunde. Für jedes \gls{voxel} im Volumen müssen zunächst die
+zugehörigen Projektionskoordinaten unter dem Winkel $\alpha_p$ bestimmt werden. 
+
 
 \begin{code}
 \begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{cuda}

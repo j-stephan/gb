@@ -3,22 +3,34 @@
 \section{Die Geschichte und Relevanz der Computertomographie}
 
 Die Geschichte der Computertomographie beginnt mit dem vom deutschen Physiker Wilhelm Conrad Röntgen entdeckten
-und später nach ihm benannten Verfahren der {\glqq}X-Strahlen{\grqq}~\cite{roentgen}. Es war nun möglich, die innere
-Beschaffenheit eines Objekts auf nichtinvasive Art und Weise -- also ohne es zu beschädigen -- festzustellen. Die
-Bedeutung dieses Verfahrens insbesondere für die Anwendung in der Medizin war bereits Röntgens Zeitgenossen klar.
-So druckte die Wiener Zeitung {\glqq}Die Presse{\grqq} am 05.\ Januar 1896 auf ihrer Titelseite unter der Überschrift
-{\glqq}Eine sensationelle Entdeckung{\grqq}: {\glqq}[Man hat es] mit einem in seiner Art epochemachenden Ergebnisse der
-exacten Forschung zu thun, das sowol[sic] auf physikalischem wie auf medicinischem Gebiete ganz merkwürdige Consequenzen
-bringen dürfte.{\grqq} Für seine Entdeckung wurde Röntgen in der Folge unter anderem mit dem ersten Nobelpreis für
-Physik ausgezeichnet. Bis heute ist das Röntgenverfahren ein wichtiger Bestandteil der medizinischen Diagnostik und der
-Werkstoffprüfung.
+und später nach ihm benannten Verfahren der {\glqq}X-Strahlen{\grqq} (vgl. ~\cite{roentgen}). Plötzlich war es möglich,
+die innere Beschaffenheit eines Objekts auf nichtinvasive Art und Weise zu untersuchen. Die Bedeutung dieses Verfahrens
+insbesondere für die Anwendung in der Medizin war bereits Röntgens Zeitgenossen klar. So druckte die Wiener Zeitung
+{\glqq}Die Presse{\grqq} am 05.\ Januar 1896 auf ihrer Titelseite unter der Überschrift {\glqq}Eine sensationelle
+Entdeckung{\grqq}: {\glqq}[Man hat es] mit einem in seiner Art epochemachenden Ergebnisse der exacten Forschung zu thun,
+das sowol [sic] auf physikalischem wie auf medicinischem Gebiete ganz merkwürdige Consequenzen bringen dürfte.{\grqq}
+Für seine Entdeckung wurde Röntgen in der Folge unter anderem mit dem ersten Nobelpreis für Physik ausgezeichnet. Bis
+heute ist das Röntgenverfahren ein wichtiger Bestandteil der medizinischen Diagnostik und der Werkstoffprüfung.
 
-\section{Der Einsatz der Computertomographie am Helmholtz-Zentrum Dresden-Rossendorf}
+Führt man die Vorwärtsprojektion genügend oft in aufeinanderfolgenden Winkelschritten aus, bis man (idealerweise) einen
+Vollkreis abgefahren hat, so lässt sich aus den dabei entstandenen \textit{Projektionen} der ursprünglich durchleuchtete
+Körper, den wir in der Folge als \textit{Volumen} bezeichnen, rekonstruieren. Für jeden Punkt im Volumen
+(\textit{\gls{voxel}}) kann anhand der Informationen aus den Projektionen der Absorptionsgrad berechnet und dadurch die
+innere Struktur des Volumens bestimmt werden. Dieser Zusammenhang wurde in den 60er Jahren des 20. Jahrhunderts durch
+den südafrikanisch-amerikanischen Physiker Allan McLeod Cormack festgestellt, der ebenfalls die dazu notwendigen
+mathematischen Grundlagen entwickelte (vgl.~\cite{cormack63} und~\cite{cormack64}); ihm war allerdings unbekannt, dass
+diese schon 1917 vom österreichischen Mathematiker Johann Radon gefunden wurden(vgl.~\cite{cormack79}). Mathematisch ist
+der Vorgang der \textit{Rückprojektion} eine Anwendung der nach Radon benannten \textit{Radon-Transformation}
+(vgl.~\cite{radon}).
 
-\begin{itemize}
-    \item Ausgangssituation am HZDR:\@ Uraltes FDK-Programm braucht mehrere Tage für eine Rekonstruktion (schlecht)
-    \item Gesamtziel: Dieses Programm soll durch ein schnelleres und möglichst gut optimiertes abgelöst werden
-\end{itemize}
+Da die gefilterte Rückprojektion für jedes \gls{voxel} einzeln berechnet werden muss, ist sie für einen Menschen nicht
+in sinnvoller Zeit lösbar. Aus diesem Grund ist man für die Lösung des Gesamtproblems auf einen Computer angewiesen,
+woraus sich der Name des Verfahrens ableitet: \textit{Computertomographie}. Die ersten bis zur Marktreife entwickelten
+Computertomographen wurden gegen Ende der 60er Jahre des 20. Jahrhunderts vom englischen Elektroingenieur Godfrey
+Hounsfield gebaut. Dieser entwickelte die für die Rückprojektion nötigen Algorithmen ebenfalls selbst, da ihm die
+Vorarbeiten von Cormack und Radon nicht bekannt waren. Für ihre voneinander unabhängigen Arbeiten
+erhielten Godfrey und Cormack 1979 den Nobelpreis für Physiologie oder Medizin, was die Bedeutung der
+Computertomographie insbesondere für die Medizin unterstreicht.
 
 \section{Aufgabenstellung}
 
@@ -31,3 +43,54 @@ Beleg soll untersucht werden:
     \item Variantenvergleich verschiedener Implementierungsstrategien
     \item Implementierung und Analyse einer dieser Strategien
 \end{itemize}
+
+\subsection{Forschungsstand}\label{ssec:forschungsstand}
+
+Aufgrund seiner geringen Komplexität und einfachen Implementierbarkeit ist der \gls{fdk} einer der beliebtesten
+Rückprojektionsalgorithmen für die Kegelstrahl-Computertomographie~\cite{xumuell}. Der Vorteil des \gls{fdk} liegt
+außerdem darin, dass die gefilterte Rückprojektion für jedes \gls{voxel} individuell berechnet werden kann, das heißt
+ohne Abhängigkeiten zu anderen \gls{voxel}n. Dieser Umstand ermöglicht für die maschinelle Berechnung den maximalen Grad
+an Parallelität, der im englischen Sprachraum auch als \textit{embarassingly parallel} bezeichnet wird, und macht den
+\gls{fdk} zu einem idealen Ziel für diverse Parallelisierungsansätze. Einige neuere Ansätze sollen im Folgenden
+vorgestellt werden.
+
+Seit seiner Einführung ist der \gls{fdk} ein beliebtes Untersuchungsobjekt diverser Forschungsgruppen, die sich mit
+seiner Beschleunigung bzw.\ Parallelisierung mittels einer großen Variation von Architekturen, Plattformen und
+Programmiermodellen beschäftigen. 
+
+Xu et al.\ untersuchten bereits 2004, inwieweit sich der \gls{fdk} durch den Einsatz handelsüblicher Grafikkarten
+(\textit{commodity graphics hardware}) beschleunigen lässt~\cite{xumuell}. Dabei wurden die Schritte \textit{Wichtung}
+und \textit{Filterung} aufgrund ihrer geringen Komplexität ($\mathcal{O}(n^2)$) auf der \gls{cpu} ausgeführt, während
+man die komplexere \textit{Rückprojektion} ($\mathcal{O}(n^4)$) auf der \gls{gpu} berechnete. Die Rückprojektion fand
+schichtweise statt, jeweils für eine \gls{voxel}ebene entlang der vertikalen Volumenachse. In ihrem Fazit stellten die
+Autoren die Vermutung auf, dass der Abstand zwischen den Leistungen von \gls{cpu}s und \gls{gpu}s in der Zukunft
+zugunsten der \gls{gpu}s immer größer werden würde: \textit{Since GPU performance has so far doubled every 6 months 
+(i.e., triple of Moore's law), we expect that the gap between CPU and GPU approaches will widen even further in the near
+future.}
+
+Li et al.\ beschäftigten sich 2005 damit, wie man den \gls{fdk} mit einem \gls{fpga} implementieren könnte. Dazu teilten
+sie das Ausgabevolumen, also die Zieldaten der Rückprojektion, in mehrere Würfel (\textit{bricks}) auf, um zu einer
+optimalen Cachenutzung zu kommen. Der verwendete deterministische Aufteilungsalgorithmus hatte zur Folge, dass bei der
+Berechnung auf dem \gls{fpga} kein Cache-Verfehlen (\textit{cache miss}) mehr auftrat.
+
+Knaup et al.\ gingen 2007 der Frage nach, ob der \gls{fdk} durch die Eigenschaften der Cell-Architektur profitieren
+könne~\cite{knaupsteck}.
+
+Scherl et al.\ unternahmen 2008 den Versuch, den \gls{fdk} mittels \gls{cuda} zu beschleunigen~\cite{scherlkeck}. Im
+Gegensatz zu der Gruppe um Xu et al.\ führten sie alle Schritte auf der \gls{gpu} aus und führten die Rückprojektion
+projektionsweise durch, das heißt, dass jede Projektion einzeln in das Gesamtvolumen zurückprojiziert wurde. Diese Art
+der Datenverarbeitung ermöglichte es, die Schritte \textit{Wichtung} und \textit{Filterung} parallel zur Rückprojektion
+auszuführen. Zur Ausnutzung dieser Eigenschaft und zur besseren Kapselung bzw.\ Modularisierung der Teilschritte
+entwickelten die Autoren daher eine Pipeline-Struktur zur parallelen Abarbeitung des Algorithmus, basierend auf dem von
+Mattson et al.\ vorgestellten Entwurfsmuster~\cite{mattsan}.
+
+Balász et al.\ versuchten 2009 das Gleiche mit der \gls{opencl}~\cite{balgab}.
+
+Hofmann et al.\ untersuchten eventuelle Vorteile durch den Einsatz der neuen Koprozessoren vom Typ 
+Intel{\textregistered} Xeon Phi{\texttrademark} {\glq}Knights Corner{\grq}~\cite{hoftrei}.
+
+Zhao et al.\ verfolgten die Absicht, eine Beschleunigung durch Ausnutzung geometrischer Zusammenhänge zu
+erreichen~\cite{zhao}. Sie setzten dabei auf die Tatsache, dass ein einmal bestimmtes, also auf den Detektor
+projiziertes, \gls{voxel} durch Rotation in 90°-Schritten die rotierten \gls{voxel} ebenfalls genau bestimmt. Ist also
+für ein \gls{voxel} im Projektionswinkel 0° die zugehörige Detektorkoordinate gefunden, so kann diese Detektorkoordinate
+für die Projektionswinkel 90°, 180° und 270° und die entsprechenden \gls{voxel} wiederverwendet werden.
