@@ -6,6 +6,38 @@
 
 \section{Implementierung und Optimierung}
 
+\subsection{Geometrische Berechnungen}
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+__device__ auto vol_centered_coordinate(unsigned int coord,
+                                        std::uint32_t dim,
+                                        float size)
+    -> float
+{
+    auto size2 = size / 2.f;
+    return -(dim * size2) + size2 + coord * size;
+}
+\end{minted}
+\captionof{listing}{Koordinatensystemtransformation im Volumen}
+\label{app:coord_vol}
+\end{code}
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+__device__ auto proj_pixel_coordinate(float coord, std::uint32_t dim,
+                                      float size, float offset)
+    -> float
+{
+    auto size2 = size / 2.f;
+    auto min = -(dim * size2) - offset;
+    return (coord - min) / size - (1.f / 2.f);
+}
+\end{minted}
+\captionof{listing}{Koordinatensystemtransformation auf dem Detektor}
+\label{app:coord_det}
+\end{code}
+
 \subsection{Implementierung der Vorstufen}
 
 \subsubsection{Filterung}
@@ -45,33 +77,87 @@ __global__ void filter_creation_kernel(float* __restrict__ r,
 \subsection{Implementierung der gefilterten Rückprojektion}
 
 \begin{code}
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
-__device__ auto vol_centered_coordinate(unsigned int coord,
-                                        std::uint32_t dim,
-                                        float size)
-    -> float
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{c++}
+struct backprojection_constants
 {
-    auto size2 = size / 2.f;
-    return -(dim * size2) + size2 + coord * size;
-}
+    /* Volumenkonstanten */
+    std::uint32_t vol_dim_x;    // Voxelzahl in x-Richtung
+    std::uint32_t vol_dim_y;    // Voxelzahl in y-Richtung
+    std::uint32_t vol_dim_z;    // Voxelzahl in z-Richtung
+
+    float l_vx_x;               // Voxelgröße in x-Richtung
+    float l_vx_y;               // Voxelgröße in y-Richtung
+    float l_vx_z;               // Voxelgröße in z-Richtung
+
+    /* Projektionskonstanten */
+    std::uint32_t proj_dim_x;   // Pixelzahl in x-Richtung
+    std::uint32_t proj_dim_y;   // Pixelzahl in y-Richtung
+
+    float l_px_x;               // Pixelgröße in x-Richtung
+    float l_px_y;               // Pixelgröße in y-Richtung
+
+    /* Detektorkonstanten */
+    float delta_s;              // horizontaler Offset
+    float delta_t;              // vertikaler Offset
+
+    float d_so;                 // Abstand Quelle - Objekt
+    float d_sd;                 // Abstand Quelle - Detektor
+};
 \end{minted}
-\captionof{listing}{Koordinatensystemtransformation im Volumen}
-\label{app:coord_vol}
+\caption{Struktur der Rückprojektions-Konstanten}
+\label{app:fdk_consts}
 \end{code}
 
 \begin{code}
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
-__device__ auto proj_pixel_coordinate(float coord, std::uint32_t dim,
-                                      float size, float offset)
-    -> float
+\begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{cuda}
+__global__ void backprojection_kernel(
+    float* vol, std::size_t vol_pitch, cudaTextureObject_t proj,
+    float angle_sin, float angle_cos)
 {
-    auto size2 = size / 2.f;
-    auto min = -(dim * size2) - offset;
-    return (coord - min) / size - (1.f / 2.f);
+    auto k = blockIdx.x * blockDim.x + threadIdx.x;
+    auto l = blockIdx.y * blockDim.y + threadIdx.y;
+    auto m = blockIdx.z * blockDim.z + threadIdx.z;
+
+    if((k < consts.vol_dim_x) && (l < consts.vol_dim_y) &&
+       (m < consts.vol_dim_z)) {
+        // berechne gegenwärtige Schicht und Zeile
+        auto slice_pitch = vol_pitch * consts.vol_dim_y;
+        auto slice = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(vol) + m * slice_pitch;
+        auto row = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<float*>(slice + l * vol_pitch);
+
+        // lade alten Wert aus dem globalen Speicher
+        auto old_val = row[k];
+
+        // Koordinatensystemursprung in Volumenmittelpunkt verschieben
+        auto x_k = vol_centered_coordinate(k, consts.vol_dim_x,
+                                           consts.l_vx_x);
+        auto y_l = vol_centered_coordinate(l, consts.vol_dim_y,
+                                           consts.l_vx_y);
+        auto z_m = vol_centered_coordinate(m, consts.vol_dim_z,
+                                           consts.l_vx_z);
+
+        // Koordinaten rotieren
+        auto s = x_k * angle_cos + y_l * angle_sin;
+        auto t = -x_k * angle_sin + y_l * angle_cos;
+
+        // projiziere rotierte Koordinaten auf Detektor
+        auto factor = consts.d_sd / (s + consts.d_so);
+        auto h = proj_pixel_coordinate(t * factor, consts.proj_dim_x,
+             consts.l_px_x, consts.delta_s) + 0.5f;
+        auto v = proj_pixel_coordinate(z_m * factor,
+             consts.proj_dim_y, consts.l_px_y, consts.delta_t) + 0.5f;
+
+        // lies Projektionswert an dieser Stelle
+        auto det = tex2D<float>(proj, h, v);
+
+        // Rückprojektion
+        auto u = -(consts.d_so / (s + consts.d_so));
+        row[k] = old_val + 0.5f * det * u * u;
+    }
 }
 \end{minted}
-\captionof{listing}{Koordinatensystemtransformation auf dem Detektor}
-\label{app:coord_det}
+\captionof{listing}{Vollständiger Rückprojektions-\gls{kernel}}
+\label{app:impl_bp}
 \end{code}
 
 \chapter{Analyse}

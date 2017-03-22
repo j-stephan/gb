@@ -513,7 +513,7 @@ Zusammenhänge:
     \end{minipage}
 \end{figure}
 
-\subsubsection{Verschiebungen}
+\subsubsection{Verschiebungen}\label{sssec:offset}
 
 In einem idealen Modell sind die Strahlungsquelle und der Detektor genau aufeinander ausgerichtet, das heißt, dass der
 Mittelpunkt der Strahlungsquelle und der Mittelpunkt des Detektors auf derselben Achse liegen. Durch den mechanischen
@@ -543,13 +543,75 @@ entstandenen Fehler durch Redundanzen zu minimieren.
 
 \subsection{Geometrische Berechnungen}\label{ssec:geometrie}
 
-\begin{itemize}
-    \item Berechnung der Volumengeometrie
-    \item Aufteilung in Teilvolumen
-\end{itemize}
+\subsubsection{Volumengeometrie}\label{sssec:vol_geometrie}
 
+Für die Berechnung der Rückprojektion ist notwendig, die Zahl der im Volumen enthaltenen \gls{voxel} sowie deren
+physische Ausdehnungen zu kennen. Da diese Informationen als Eingabeparameter des \gls{fdk} nicht zur Verfügung stehen,
+müssen sie aus den bekannten geometrischen Parametern errechnet werden.
+
+Betrachtet man die Abbildung~\ref{fig:fdk_geometrie}, so stellt man fest, dass zwischen den Volumendimensionen $x_k$ und
+$y_l$ sowie der Detektordimension $h$ ein Zusammenhang besteht.
+
+Die geschilderten Zusammenhänge sind für die Volumendimension $z_m$ und die Detektordimension $v$ äquivalent, sodass
+sich die gezeigten Formeln durch den Austausch der relevanten Parameter auf diese übertragen lassen.
+
+\subsubsection{Physische und nichtphysische Koordinatensysteme}\label{sssec:phys_coord}
+
+Die in Abschnitt~\ref{ssec:fdk} vorgestellten Formeln zur Wichtung, Filterung und Rückprojektion setzen voraus, dass
+sich die Ursprünge der Volumen- und Detektorkoordinatensysteme in den Zentren der zugehörigen Objekte befinden. Der für
+die mathematische Betrachtung der Rückprojektion vernünftige Ansatz führt jedoch zu Problemen, wenn es um die
+Adressierung des Speichers geht. Das erste Element eines reservierten Speicherbereichs mit $n$ Elementen hat stets den
+Index $0$, das Zentrum den Index $\frac{n - 1}{2}$. Übertragen auf das Volumenkoordinatensystem heißt das, dass der
+Ursprung mit den \textit{physischen} Koordinaten $(0, 0, 0)$ in einem dreidimensionalen Speicherbereich an der Stelle
+$(\frac{x - 1}{2}, \frac{y - 1}{2}, \frac{z - 1}{2})$ zu finden ist, wobei $x$, $y$ und $z$ die Zahl der Voxel in der
+jeweiligen Dimension angeben. Um die Formeln also bei der Implementierung der Rückprojektion nutzen zu können, ist eine
+Umrechnung in das jeweils andere Koordinatensystem erforderlich.
+
+Die Umrechnung eines Speicherindexes in eine physische Adresse lässt sich leicht durchführen. Ausgehend von $V$
+Elementen in einer beliebigen Dimension, die jeweils $d_v$ Millimeter breit sind, lässt sich die physische Größe $V'$
+des durch den Speicherbereich abgebildeten Objekts und damit auch dessen physischer Mittelpunkt $V'_M$ in dieser
+Dimension bestimmen:
+
+\begin{equation}
+    \begin{aligned}
+        V' &= V \cdot d_v\\
+        V'_M &= \frac{V'}{2}
+    \end{aligned}
+\end{equation}
+
+Stellt man sich die Elemente in horizontaler Anordnung vor und weist dem äußerst linken Element den Index $0$, also den
+Ursprung, zu, so lässt sich über die Multiplikation des Indexes mit $d_v$ die physische Grenze (Kante) zwischen zwei
+Elementen bestimmen. Der linke Rand des ersten Elements befindet sich also bei $0$ mm, die Kante zwischen dem ersten und
+dem zweiten Element bei $d_v$ mm, zwischen dem zweiten und dritten Element bei $2 \cdot d_v$ mm usw. Durch die
+Verschiebung des Ursprungs auf $V'_M$ ergibt sich nun das Problem, dass dieser nun für ungerade $V$ im Mittelpunkt eines
+Elements liegt, für gerade $V$ dagegen auf der Kante zwischen zwei Elementen. Es ist deswegen sinnvoll, die physische
+Koordinate $v'$ des Elements mit dem Index $v$ durch den Abstand des Elementzentrums vom Ursprung zu bestimmen:
+
+\begin{equation}\label{eq:mem_to_phys}
+    v' = -V_M' + \frac{d_v}{2} + v \cdot d_v
+\end{equation}
+
+Die Formel~\ref{eq:mem_to_phys} stellt die Umrechnung eines Indexes im Speicher in eine physische Koordinate dar. Durch
+die Anwendung dieser Formel auf jede betrachtete Dimension ($x$, $y$ und $z$ für das Volumen, $h$ und $v$ für den
+Detektor) lässt sich diese Umrechnung auch im Raum bzw.\ in der Ebene durchführen. Durch die Umstellung der Formel nach
+$v$ lässt sich auch der umgekehrte Weg gehen.
+
+Bei der Anwendung auf das Detektorkoordinatensystem sind die in Abschnitt~\ref{sssec:offset} genannten Verschiebungen zu
+beachten. Exemplarisch wird diese Berücksichtung in Formel~\ref{eq:phys_to_mem} gezeigt, die die Umrechnung einer
+der physischen Koordinate $p'$ in einen Speicherindex $p$ darstellt, wobei $P_M'$ dem physischen Mittelpunkt der
+\gls{pixel} in dieser Dimension entspricht, $d_p$ deren physischer Breite und $\Delta p$ der Verschiebung:
+
+\begin{equation}\label{eq:phys_to_mem}
+    p = \frac{p' + P_M' + \Delta p}{d_p} - \frac{1}{2}
+\end{equation}
+
+Die Implementierung dieser Formeln mit \gls{cuda} ist den angehängten Quelltexten~\ref{app:coord_vol}
+und~\ref{app:coord_det} zu entnehmen.
 
 \subsection{Implementierung der Vorstufen}
+
+Bevor die Rückprojektion erfolgen kann, müssen die individuellen Projektionen gewichtet und gefiltert werden. Die
+Implementierung mit \gls{cuda} wird in den folgenden beiden Abschnitten beschrieben.
 
 \subsubsection{Wichtung}
 
@@ -618,8 +680,7 @@ __global__ void matrix_generation_kernel(float* m,
 \end{code}
 
 Bei der Wichtung einer Projektion \texttt{p} kann der jeweilige Wichtungsfaktor aus der generierten Matrix \texttt{m}
-ausgelesen und auf das zugehörige \gls{pixel} angewendet werden (siehe Quelltext~\ref{source:impl_weighting}). Die so
-gewichtete Projektion wird dann im folgenden Schritt gefiltert.
+ausgelesen und auf das zugehörige \gls{pixel} angewendet werden (siehe Quelltext~\ref{source:impl_weighting}). 
 
 \begin{code}
 \begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{cuda}
@@ -694,68 +755,175 @@ __global__ void filter_application_kernel(
 \subsection{Implementierung der gefilterten Rückprojektion}
 
 Die Implementierung der gefilterten Rückprojektion soll möglichst optimal auf der \gls{gpu} laufen. Um dies zu
-erreichen, 
+erreichen, sind zwei Dinge erforderlich: eine hohe Auslastung und geringe Wartezeiten zwischen den Rückprojektionen
+der individuellen Projektionen.
 
-\begin{itemize}
-    \item welche Konstanten und Variablen gibt es
-    \item welche Schwierigkeiten können auftreten
-\end{itemize}
+Eine hohe Auslastung der \gls{gpu} für einen gegebenen \gls{kernel}, also die gleichzeitige Ausführung einer hohen
+Anzahl von Threads, ist dann möglich, wenn jeder Thread sehr wenige geteilte Ressourcen für seine Ausführung benötigt.
+Bei diesen Ressourcen handelt es sich vor allem um die Register und den \textit{shared memory}, die pro \gls{sm} und
+nicht pro Kern vorhanden sind.
 
+Der Registerverbrauch eines \gls{kernel}s ist vor allem von zwei Faktoren abhängig: der Zahl der an den \gls{kernel}
+übergebenen Funktionsparameter sowie der Zahl der lokalen Variablen pro Thread, die beispielsweise zur Speicherung der
+Zwischenergebnisse benötigt werden. Die Minimierung beider Zahlen führt daher zu einem geringeren Registerverbrauch und
+somit zu einer effizienteren Verteilung und Ausführung der Threads auf den Multiprozessoren. Da ein großer Teil der
+Berechnungen auf der Detektorgeometrie aufbaut (siehe Abbildung~\ref{fig:fdk_geometrie}) und diese für alle Projektionen
+unverändert bleibt, ist ein großer Teil der Parameter konstant. Indem man diese Konstanten nicht als Parameter übergibt,
+sondern im konstanten Speicher (siehe Abschnitt~\ref{sssec:cu_mem}) der Grafikkarte ablegt, können einige Register
+eingespart werden, sodass nur die in Quelltext~\ref{source:fdk_kernel_param} gezeigten Parameter übrig bleiben. Die
+Struktur der konstanten Parameter wird in Quelltext~\ref{app:fdk_consts} gezeigt.
 
-Die Rückprojektion erfolgt für jede Projektion $p$ einzeln und für ein auf dem \gls{device} erstelltes dreidimensionales
-Volumen (vgl. Abschnitt~\ref{sssec:cu_mem}). Der Implementierung (siehe Quelltext~\ref{source:impl_bp}) liegt dabei die
-in Abbildung~\ref{fig:fdk_geometrie} gezeigte Geometrie zugrunde. Für jedes \gls{voxel} im Volumen müssen zunächst die
-zugehörigen Projektionskoordinaten unter dem Winkel $\alpha_p$ bestimmt werden. 
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+__global__ void backprojection_kernel(
+    float* vol,                 // Zeiger auf das Volumen
+    std::size_t vol_pitch,      // Volumen-Pitch
+    cudaTextureObject_t proj,   // in Textur umgewandelte Projektion
+    float angle_sin,            // Sinus des Projektionswinkels
+    float angle_cos)            // Kosinus des Projektionswinkels
+{
+    /* ... */
+}
+\end{minted}
+\caption{FDK-\gls{kernel}-Deklaration}
+\label{source:fdk_kernel_param}
+\end{code}
 
+Schwieriger ist die Reduzierung der lokalen Variablen, die zur Speicherung von Zwischenergebnissen verwendet werden. Da
+jeder Thread ein \gls{voxel} bearbeitet und jedes \gls{voxel} je eine Koordinate in $x$-, $y$- und $z$-Richtung besitzt,
+sind wenigstens drei Variablen zur Speicherung dieser Koordinaten erforderlich. Hinzu kommen die von den
+\gls{voxel}-Koordinaten abhängigen weiteren Variablen, wie etwa die beiden zugehörigen Projektionskoordinaten ($h$ und
+$v$ im Projektionskoordinatensystem). Die Zwischenergebnisse erfüllen zudem einen bestimmten Zweck -- eine Entfernung
+der zugehörigen Variablen führt daher an anderer Stelle zu unübersichtlicherem Quelltext, da die Berechnungen dennoch
+durchgeführt werden müssen. Von einer manuellen Optimierung des Einsatzes lokaler Variablen ist aus diesen Gründen daher
+abzusehen; es erscheint sinnvoller, sich auf die im Compiler vorhandenen automatischen Algorithmen zur Optimierung zu
+verlassen.
+
+Jeder Thread arbeitet auf einem bestimmten \gls{voxel} und ist zu dessen Berechnung nicht auf benachbarte Threads
+angewiesen. Darüber hinaus ist dieses \gls{voxel} von genau einer Lese- und genau einer Schreiboperation betroffen. Der
+Einsatz von \textit{shared memory} bietet daher für die Rückprojektion keinen Mehrwert.
+
+Die Minimierung der Wartezeiten wird, wie in Abschnitt~\ref{ssec:loesungsvorschlag} erwähnt, durch die Ausführung der
+Rückprojektion in einem eigenen Thread und Stream erreicht. Die im Hauptthread gewichteten und gefilterten Projektionen
+werden in einer Warteschlange abgelegt und aus dieser nach dem FIFO-Prinzip vom Rückprojektionsthread entnommen. Der
+Rückprojektions-\gls{kernel} wird dann mit der entnommenen Projektion gestartet und in den Rückprojektions-Stream
+eingereiht.
+
+Ein weiterer Faktor, der die Ausführungszeit beeinflusst, ist der Zugriff auf den globalen Speicher, in welchem sich
+das Volumen und die Projektionen befinden. Die Projektionen müssen in diesem Schritt nicht mehr verändert werden und
+sind daher konstant. Aufgrund ihrer Datengröße, die üblicherweise mehrere Megabyte beträgt, sind sie für den konstanten
+Speicher zu groß. Es ist aber möglich, sie in eine \gls{cuda}-Textur umzuwandeln, um so von den auf der \gls{gpu}
+verbauten Textur-Caches Gebrauch zu machen. Diese sind insbesondere dann effizient, wenn häufig auf benachbarte
+\gls{pixel} zugegriffen werden muss. Für die Zwecke der Rückprojektion ist das ideal, da benachbarte Threads auf
+benachbarten \gls{voxel}n arbeiten und benachbarte \gls{voxel} wiederum auf benachbarte \gls{pixel} projiziert werden.
+Die \gls{cuda}-Texturroutinen bieten außerdem den Vorteil, dass eine lineare Interpolation beim Zugriff auf die
+\gls{pixel} direkt ausgeführt werden kann -- diese Funktion muss also nicht selbst implementiert werden, was einerseits
+die Komplexität des Quelltextes verringert und andererseits den von NVIDIA{\textregistered} optimierten Weg nutzt.
+
+Auf das Volumen selbst erfolgen lesende und schreibende Zugriffe, eine Verwendung von \gls{cuda}-Texturen ist hier daher
+nicht möglich. Da man sich innerhalb des Volumens im dreidimensionalen Raum bewegt, ist es sinnvoll, den für das Volumen
+benötigten globalen Speicher so zu reservieren, dass dreidimensionale Zugriffe optimal erfolgen können. Die in
+\gls{cuda} enthaltene Funktion \texttt{cudaMalloc3D} führt so eine Reservierung durch (vgl.
+Abschnitt~\ref{sssec:cu_mem}). Die Zuordnung eines Threads zu einem bestimmten Punkt innerhalb des Datenfeldes erfolgt
+auf ähnliche Weise wie bei einem zweidimensionalem Feld, nur dass hier noch die jeweilige Schicht des Volumens ermittelt
+werden muss, wie in Quelltext~\ref{source:vol_slice_row} dargestellt.
 
 \begin{code}
 \begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{cuda}
-__global__ void backprojection_kernel(
-    float* vol, std::size_t vol_pitch, cudaTextureObject_t proj,
-    float angle_sin, float angle_cos)
-{
     auto k = blockIdx.x * blockDim.x + threadIdx.x;
     auto l = blockIdx.y * blockDim.y + threadIdx.y;
     auto m = blockIdx.z * blockDim.z + threadIdx.z;
 
     if((k < consts.vol_dim_x) && (l < consts.vol_dim_y) &&
-       (m < consts.vol_dim_z)) {
-        // berechne gegenwärtige Schicht und Zeile
+       (z < consts.vol_dim_z))
+    {
         auto slice_pitch = vol_pitch * consts.vol_dim_y;
         auto slice = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(vol) + m * slice_pitch;
         auto row = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<float*>(slice + l * vol_pitch);
+        /* ... */
+    }    
+\end{minted}
+\caption{Zuordnung eines Threads zu einer Schicht und einer Zeile in der Schicht}
+\label{source:vol_slice_row}
+\end{code}
 
-        // lade alten Wert aus dem globalen Speicher
+Da der vorherige Wert des Voxels zum jeweils aktuellen Wert hinzu addiert wird -- am Anfang haben alle Voxel des
+Volumens den Wert 0 --, muss dieser vor der Addition aus dem globalen Speicher geladen werden. Trotz der bereits
+getroffenen Optimierungen ist dieser Zugriff immer noch mit einer hohen Latenzzeit verbunden, die allerdings maskiert
+werden kann. Zu diesem Zweck lädt man den alten Wert schon zu Beginn des \gls{kernel}s aus dem Speicher, sodass
+Berechnungen, die von diesem Wert unabhängig sind, während der Wartezeit ausgeführt werden können (siehe
+Quelltext~\ref{source:fdk_old_val}).
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
         auto old_val = row[k];
+\end{minted}
+\caption{\textit{Prefetch} des vorherigen Voxelwertes}
+\label{source:fdk_old_val}
+\end{code}
 
-        // Koordinatensystemursprung in Volumenmittelpunkt verschieben
+Die Berechnung der Rückprojektion erfolgt mittels der in Abschnitt~\ref{sssec:backprojection} vorgestellten Formeln. Der
+Implementierung liegt dabei die in Abbildung~\ref{fig:fdk_geometrie} gezeigte Geometrie zugrunde. Zunächst ist ein
+Wechsel des Koordinatensystems nötig, wie er in Quelltext~\ref{source:vol_coord_switch} zu sehen ist, da das Voxel
+$(0, 0, 0)$ des im Speicher gehaltenen Volumens in einer der Volumenecken liegt, die Berechnungsvorschriften dagegen von
+einem Ursprung ausgehen, der sich im Zentrum des Volumens befindet. Die Umrechnung einer Voxelkoordinate in eine
+physische Koordinate wurde in Abschnitt~\ref{ssec:geometrie} beschrieben.
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
         auto x_k = vol_centered_coordinate(k, consts.vol_dim_x,
                                            consts.l_vx_x);
         auto y_l = vol_centered_coordinate(l, consts.vol_dim_y,
                                            consts.l_vx_y);
         auto z_m = vol_centered_coordinate(m, consts.vol_dim_z,
                                            consts.l_vx_z);
+\end{minted}
+\caption{Wechsel des Volumenkoordinatensystems}
+\label{source:vol_coord_switch}
+\end{code}
 
+Die ermittelten physischen Volumenkoordinaten werden dann unter Berücksichtigung des Aufnahmewinkels der jeweiligen
+Projektion auf den Detektor projiziert (siehe Quelltext~\ref{source:vol_coord_rot}). Analog zum Vorgehen bei der
+Bestimmung der physischen Volumenkoordinaten müssen die physischen Projektionskoordinaten für den Zugriff auf das
+Projektionsdatenfeld wieder in Pixelkoordinaten umgerechnet werden, sodass der Punkt $(0, 0)$ in der oberen linken Ecke
+der Projektion liegt.
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
         // Koordinaten rotieren
         auto s = x_k * angle_cos + y_l * angle_sin;
         auto t = -x_k * angle_sin + y_l * angle_cos;
 
-        // projiziere rotierte Koordinaten auf Detektor
+        // projizierte Koordinaten auf Detektor
         auto factor = consts.d_sd / (s + consts.d_so);
         auto h = proj_pixel_coordinate(t * factor, consts.proj_dim_x,
              consts.l_px_x, consts.delta_s) + 0.5f;
         auto v = proj_pixel_coordinate(z_m * factor,
              consts.proj_dim_y, consts.l_px_y, consts.delta_t) + 0.5f;
+\end{minted}
+\caption{Projektion der Volumenkoordinaten auf den Detektor}
+\label{source:vol_coord_rot}
+\end{code}
 
-        // lies Projektionswert an dieser Stelle
+An der Stelle $(h, v)$ kann jetzt der Pixelwert ermittelt bzw.\ linear interpoliert und dann für die in
+Quelltext~\ref{source:vol_bp} dargestellte Rückprojektion herangezogen werden. Erst an diesem Punkt kommt der zu Beginn
+des \gls{kernel}s geladene vorherige Voxelwert zum Einsatz, dessen Ladezeit durch die vorangegangenen Berechnungen
+maskiert wurde.
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+        // Projektionswert interpolieren
         auto det = tex2D<float>(proj, h, v);
 
         // Rückprojektion
         auto u = -(consts.d_so / (s + consts.d_so));
         row[k] = old_val + 0.5f * det * u * u;
-    }
-}
 \end{minted}
-\captionof{listing}{Rückprojektion}
-\label{source:impl_bp}
+\caption{Detektorinterpolation und Rückprojektion}
+\label{source:vol_bp}
 \end{code}
+
+Der vollständige Rückprojektions-\gls{kernel} findet sich in Anhang~\ref{app:impl_bp}. Aufgerufen wird der beschriebene
+\gls{kernel} für jede Projektion einzeln. Durch die Aneinanderreihung der einzelnen \gls{kernel}-Instanzen im selben
+Stream wird sichergestellt, dass niemals zwei Rückprojektionen gleichzeitig auf einem \gls{device} ausgeführt werden,
+sodass weitere Synchronisierungsmechanismen nicht erforderlich sind.
