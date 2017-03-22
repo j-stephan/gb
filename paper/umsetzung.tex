@@ -46,12 +46,12 @@ creates a bottleneck for the aggregate throughput{\grqq} (\cite{mattsan}, S. 106
 Die Grenzen bei dem vorgeschlagenen Verfahren der Gruppe um Zhao et al.\ sind vor allem praktischer Natur. Das von ihnen
 vorgestellte Modell sieht vor, Symmetrien auszunutzen und dadurch Rechenzeit einzusparen (vgl.\
 Abbildung~\ref{fig:zhao}). Sie machen sich dabei den Umstand zunutze, dass die auf den Detektor projizierte Koordinate
-eines \gls{voxel}s der um 90° rotierten Projektionskoordinate des um den gleichen Betrag rotierten Voxels entspricht.
-Auf diese Weise lassen sich durch eine Berechnung die Detektorkoordinaten von vier \gls{voxel}n finden, was eine
-Verkürzung der Rechenzeit verspricht (vgl.~\cite{zhao}). In der Praxis scheitert dieses Verfahren an dem mechanischen
-Aufbau üblicher CT-Scanner. Da entweder Quelle und Detektor oder aber das Untersuchungsobjekt rotiert werden müssen,
-kommt es durch Fehler in der Mechanik häufig dazu, dass Aufnahmen doppelt gemacht oder übersprungen werden; auch kann es
-passieren, dass die Winkelschritte zwischen zwei Aufnahmen nicht immer einheitlich sind.
+eines \gls{voxel}s der um 90 Grad rotierten Projektionskoordinate des um den gleichen Betrag rotierten Voxels
+entspricht. Auf diese Weise lassen sich durch eine Berechnung die Detektorkoordinaten von vier \gls{voxel}n finden, was
+eine Verkürzung der Rechenzeit verspricht (vgl.~\cite{zhao}). In der Praxis scheitert dieses Verfahren an dem
+mechanischen Aufbau üblicher CT-Scanner. Da entweder Quelle und Detektor oder aber das Untersuchungsobjekt rotiert
+werden müssen, kommt es durch Fehler in der Mechanik häufig dazu, dass Aufnahmen doppelt gemacht oder übersprungen
+werden; auch kann es passieren, dass die Winkelschritte zwischen zwei Aufnahmen nicht immer einheitlich sind.
 
 \begin{figure}[!htb]
     \centering
@@ -327,14 +327,15 @@ Hardware in wenigen Minuten lösbar ist. Da die \gls{cuda}-Plattform den paralle
 unterstützt, ist die Implementierung so zu konzipieren, dass sie auf einer oder mehreren Grafikkarten korrekte
 Ergebnisse bei gleichzeitiger Beschleunigung des Gesamtalgorithmus berechnet.
 
-\subsection{Optimierungsüberlegungen}
+\subsection{Optimierungsüberlegungen}\label{ssec:opti_ueber}
 
-Die Optimierung eines \gls{kernel}s fußt im Wesentlichen auf zwei Dingen:
+Die Optimierung eines \gls{kernel}s fußt im Wesentlichen auf drei Dingen:
 
 \begin{enumerate}
     \item Die Auslastung der Grafikkarte muss möglichst hoch sein, um die vorhandenen Rechenkapazitäten effektiv nutzen
           zu können. Bedingung für eine effektive Verteilung des \gls{kernel}s ist ein möglichst geringer
           Registerverbrauch innerhalb eines \gls{sm}s, sodass die maximale Zahl an Kernen genutzt werden kann.
+    \item Die Zeit zwischen zwei \gls{kernel}-Aufrufen muss minimiert werden, um die Gesamtrechenzeit zu verkürzen.
     \item Die langsamen Zugriffe auf den globalen Speicher müssen möglichst effizient sein, um den Algorithmus nicht
           auszubremsen.
 \end{enumerate}
@@ -354,6 +355,8 @@ werden, die man mit \texttt{cudaMallocPitch} bzw.\ \texttt{cudaMalloc3D} allozii
 und der Filterung für die Rückprojektion nicht mehr erforderlich, die Projektionen zu verändern. Durch deren Umwandlung
 in Texturen bzw.\ deren Verschiebung in den für Texturzugriffe optimierten Teil des globalen Speichers, der einen
 speziellen Cache besitzt, kann der Zeitverlust beim lesenden Zugriff auf die Projektionen minimiert werden.
+
+Die Verringerung der Zeit zwischen zwei \gls{kernel}-Ausführungen dient der Verkürzung der gesamten Rechenzeit.
 
 \subsection{Einflüsse der realen Welt}
 
@@ -534,7 +537,7 @@ Formeln~\ref{eq:det_h} und~\ref{eq:det_v} wie folgt umgeschrieben werden:
 
 \subsubsection{Fehlende Projektionen}
 
-Es leuchtet ein, dass Projektionen, die im Abstand von 180° aufgenommen wurden, das durchleuchtete Objekt
+Es leuchtet ein, dass Projektionen, die im Abstand von 180 Grad aufgenommen wurden, das durchleuchtete Objekt
 spiegelverkehrt darstellen. In der Theorie würde es also ausreichen, einen Halbkreis um das Objekt abzufahren, um alle
 erforderlichen Informationen für die Rückprojektion zu gewinnen. In der Praxis kann es aufgrund mechanischer Fehler bei
 der Rotation des Quelle-Detektor-Aufbaus allerdings dazu kommen, dass einzelne Projektionen übersprungen werden oder die
@@ -755,8 +758,8 @@ __global__ void filter_application_kernel(
 \subsection{Implementierung der gefilterten Rückprojektion}
 
 Die Implementierung der gefilterten Rückprojektion soll möglichst optimal auf der \gls{gpu} laufen. Um dies zu
-erreichen, sind zwei Dinge erforderlich: eine hohe Auslastung und geringe Wartezeiten zwischen den Rückprojektionen
-der individuellen Projektionen.
+erreichen, sind drei Dinge erforderlich: eine hohe Auslastung, geringe Wartezeiten zwischen den Rückprojektionen
+der individuellen Projektionen und möglichst schnelle Zugriffe auf den globalen Speicher.
 
 Eine hohe Auslastung der \gls{gpu} für einen gegebenen \gls{kernel}, also die gleichzeitige Ausführung einer hohen
 Anzahl von Threads, ist dann möglich, wenn jeder Thread sehr wenige geteilte Ressourcen für seine Ausführung benötigt.
