@@ -1,0 +1,241 @@
+\chapter{Grundlagen der Programmierung mit CUDA{\textregistered}}\label{chap:grundlagen_cuda}
+
+In diesem Kapitel wird die NVIDIA{\textregistered}-CUDA{\textregistered}-Plattform näher vorgestellt. Eingegangen wird
+zunächst auf die historische Entwicklung, die die Einführung von CUDA{\textregistered} begünstigte bzw.\ erforderte. Im
+Anschluss daran wird das CUDA{\textregistered}-Programmiermodell vorgestellt, das als technische Basis für die in
+Kapitel~\ref{chap:umsetzung} beschriebene Implementierung dient.
+
+\section{Programmierbare Grafikkarten}\label{sec:cu_prog_gpu}
+
+Als NVIDIA{\textregistered} im Jahre 2006 seine \textit{Compute-Unified-Device-Architecture}-Plattform
+(CUDA{\textregistered}) vorstellte, die die direkte Programmierung der NVIDIA{\textregistered}-Grafikkarten ermöglichte,
+folgte die Firma damit einer Entwicklung, die in den ersten Jahren des neuen Jahrtausends begonnen hatte. Mit der
+Einführung der NVIDIA{\textregistered} GeForce 3 im Jahre 2001 und der parallelen Veröffentlichung von \gls{directx} 8
+bzw.\ \gls{opengl} \textit{Vertex-Shader}-Erweiterungen hatten Anwendungsentwickler erstmals Zugriff auf die
+\textit{Shader}-Einheiten für die \textit{Vertex}- und \textit{Transform-\&-Lighting}-Berechnung. Spätere \gls{gpu}s,
+die mit \gls{directx} 9 kompatibel waren, gestatteten eine noch flexiblere Programmierung, indem sie Entwicklern Zugriff
+auf die \textit{Pixel-Shader} erlaubten und die Nutzung von Texturen im \textit{Vertex-Shader} zuließen. Die 2002
+vorgestellte \gls{gpu} ATI Radeon 9700 verfügte über einen programmierbaren
+24bit-Fließkommazahl-\textit{Pixel-Shader}-Prozessor, der mit \gls{directx} 9 und \gls{opengl} gesteuert werden
+konnte, die GeForce{\textregistered} FX bot sogar 32bit-Fließkommazahl-Pixel-Prozessoren. Diese programmierbaren
+Prozessoren waren Teil einer Entwicklung, die zu einer allmählichen Vereinheitlichung der auf der \gls{gpu} verbauten
+Funktionseinheiten führte: während es auf den GeForce{\textregistered}-Serien 6800 und 7800 noch getrennte Prozessoren
+für die \textit{Vertex}- und \textit{Pixel}-Berechnung gab, wurde in der 2005 erschienenen XBox 360 eine 
+{\glqq}vereinheitlichte{\grqq} Grafikkarte verbaut, deren Prozessoreinheiten sowohl für die \textit{Vertex}- als auch
+für die \textit{Pixel}-Berechnung geeignet waren (vgl.~\cite{kirkhwu}, S. 28 -- 29).
+
+Durch diese Vereinheitlichung der \gls{gpu}-Prozessoren glich die Hardware mehr und mehr den aus dem \gls{hpc} bekannten
+Parallelrechnern. Mit der Verfügbarkeit \gls{directx}-9-kompatibler \gls{gpu}s wurde diese Entwicklung zunehmend
+auch in Forschungskreisen bekannt und man begann zu untersuchen, inwiefern sich die neue Hardware zur Lösung von
+berechnungsintensiven Problemen aus den Bereichen der Natur- und Ingenieurswissenschaften einsetzen ließ. Die zu diesen
+Zwecken nicht konstruierten \gls{gpu}s ließen sich jedoch nur über die vorhandenen Schnittstellen zur
+Grafikprogrammierung ansteuern. Zur Nutzung der Hardwareressourcen musste ein Programmierer daher das zu lösende Problem
+zunächst auf computergrafische Operationen abbilden, sodass die Berechnung dann mit \gls{opengl} oder \gls{directx}
+durchgeführt werden konnte. Um beispielsweise eine mathematische Funktion mehrfach auszuführen, musste diese erst in
+ein \textit{Pixel-Shader}-Programm umgeschrieben werden, während die zugehörigen Eingabedaten als Texturen
+vorzuliegen hatten und die Ausgabedaten im der jeweiligen Grafikbibliothek eigenen Pixelformat zurückgegeben wurden.
+Die Umschreibung in einen für die Verwendung von \textit{Pixel-Shadern} geeigneten Algorithmus hatte außerdem den
+gravierenden Nachteil, dass Zugriffe auf beliebige Stellen im Speicher nicht möglich waren. Da ein \textit{Pixel-Shader}
+als Ausgabedatum die Farbe eines \gls{pixel}s zurückliefert, besteht dazu aus Sicht der Grafikbibliothek auch keine
+Notwendigkeit, da die Position des zugehörigen Pixels ja bereits bekannt ist (vgl.~\cite{kirkhwu}, S. 33).
+
+Diese Beschränkungen erwiesen sich für generische numerische Berechnungen bald als zu restriktiv. Erschwerend kam hinzu, 
+dass jeder Entwickler, der sich mit diesen technischen Limitierungen abfinden konnte, zusätzlich noch Wissen über die
+Funktionsweise von \gls{opengl} und \gls{directx} benötigte, um das zu lösende Problem mit Hilfe von \gls{gpu}s
+bewältigen zu lassen. Eine flächendeckende Akzeptanz von \gls{gpu}s als Beschleunigern war unter Forschern daher in den
+ersten Jahren des \gls{gpgpu} nicht gegeben (vgl.~\cite{sandkand}, S. 6).
+
+Die Situation änderte sich, als NVIDIA{\textregistered} 2006 die GeForce{\textregistered} 8800 GTX der Öffentlichkeit
+präsentierte. Diese \gls{gpu} war nicht nur zum damals neuen \gls{directx} 10 kompatibel, sondern auch die erste
+Grafikkarte, die mit \gls{cuda} ohne den Umweg über \gls{directx} oder \gls{opengl} direkt programmierbar war
+(vgl.~\cite{sandkand}, S. 7). Programmierer hatten nun die Möglichkeit, \textit{datenparallele} Aspekte
+(vgl. Abschnitt~\ref{sssec:cu_data_par}) des zu lösenden Problems zu deklarieren und von der \gls{gpu} ausführen zu
+lassen. Die \textit{Shader}-Prozessoren hatten sich zu komplett programmierbaren Prozessoren entwickelt und verfügten
+über einen Instruktionsspeicher, einen Instruktions-Cache und eine Instruktionskontrollogik. Diesen zusätzlichen
+Hardwareoverhead konnte NVIDIA{\textregistered} dadurch reduzieren, dass mehrere Prozessoren sich den Instruktionscache
+und die -kontrolllogik teilten. Diese Struktur funktioniert aufgrund des Hardware-Fokus auf die parallele Berechnung von
+\gls{pixel}n für \gls{gpu}s gut. Zusätzlich war es nun möglich, auf beliebige Teile des Speichers zuzugreifen. Aus Sicht
+des Entwicklers lag nun ein Programmiermodell vor, das eine Hierarchie paralleler Threads, Synchronisierungsmechanismen
+und Barrieren sowie atomare Operationen bot und das Ganze in eine an C bzw.\ C++ angelehnte Sprache einbettete
+(vgl.~\cite{kirkhwu}, S. 35).
+
+\section{Das \gls{cuda}-Programmiermodell}
+
+In diesem Abschnitt wird das der \gls{cuda}-Plattform zugrundeliegende Programmiermodell näher vorgestellt. Das
+gedankliche Fundament dieses Modell ist die \textit{Datenparallelität}, die in Abschnitt~\ref{sssec:cu_data_par}
+erläutert wird. Die konkreten Programmierkonzepte schließen sich in den danach folgenden Abschnitten an.
+
+\subsection{Datenparallelität}\label{ssec:cu_data_par}
+
+Moderne Programme bearbeiten häufig große Datenmengen und benötigen deswegen auf herkömmlichen Rechnern lange
+Ausführungszeiten. Viele Anwendungen arbeiten dabei mit Daten, die Vorgänge der echten Welt ab- oder nachbilden, wie
+beispielsweise einfache Bilder oder Filme oder die Bewegungen von Flüssigkeiten und Gasen unter bestimmten Umständen.
+Fluglinien müssen ihre Flüge planen, wozu die Daten einer Vielzahl anderer Flüge, Besatzungen und Flughäfen herangezogen
+werden, die voneinander unabhängig sind. Diese Unabhängigkeit der Daten ist die Voraussetzung für datenparallele
+Algorithmen.
+
+Als einfaches Beispiel für einen datenparallelen Algorithmus lässt sich die Addition zweier Vektoren $A$ und $B$
+betrachten:
+
+\begin{equation*}
+    \left(
+        \begin{array}{c}
+            a_1\\
+            a_2\\
+            a_3
+        \end{array}
+    \right)
+    +
+    \left(
+        \begin{array}{c}
+            b_1\\
+            b_2\\
+            b_3
+        \end{array}
+    \right)
+    =
+    \left(
+        \begin{array}{c}
+            a_1 + b_1 \\
+            a_2 + b_2 \\
+            a_3 + b_3
+        \end{array}
+    \right)
+    =
+    \left(
+        \begin{array}{c}
+            c_1 \\
+            c_2 \\
+            c_3
+        \end{array}
+    \right)
+\end{equation*}
+
+In diesem Beispiel wird $c_1$ berechnet, indem $a_1$ und $b_1$ addiert werden, und $c_3$ ergibt sich aus der Addition
+von $a_3$ und $b_3$. Die Additionen sind voneinander unabhängig und können parallel berechnet werden. Sehr große
+Vektoren führen in diesem Beispiel daher zu einem hohen Maß an Datenparallelität.
+
+Der Datenparallelität steht das Konzept der \textit{Task-Parallelität} gegenüber. Die Task-Parallelität kommt vor allem
+in komplexeren Programmen zur Anwendung, in denen es mehrere unterschiedliche Aufgaben gibt, die parallel bearbeitet
+werden können. Vorstellbar ist z.B.\ ein Programm zur Filterung von Bildern, in denen ein Task das die Bilder
+nacheinander lädt, der zweite die Bilder nacheinander filtert und ein weiterer die gefilterten Bilder wieder
+abspeichert (vgl.~\cite{kirkhwu}, S. 42 -- 43).
+
+\subsection{Parallele Ausführung}
+
+Die Ausführung eines \gls{cuda}-Programms beginnt auf dem \gls{host}. Wird ein \gls{kernel} aufgerufen, so wird auf dem
+\gls{device} eine Anzahl an Threads gestartet. Die Summe aller auf dem \gls{device} gestrateten Threads bezeichnet
+man als \textit{\gls{grid}}. Haben alle Threads eines \gls{kernel}s ihre Ausführung beendet, wird auch das \gls{grid}
+beendet.
+Das Starten eines \gls{kernel}s erzeugt typischerweise eine große Zahl von Threads. Im Gegensatz zur \gls{cpu}, auf der
+das Erzeugen eines Threads in der Regel mehrere tausend Takte benötigt, ist der gleiche Vorgang auf der \gls{gpu} in
+einigen wenigen Takten zu bewältigen (vgl.~\cite{kirkhwu}, S. 44 -- 45).
+
+Das Beispiel der Vektoraddition aus Abschnitt~\ref{sssec:cu_data_par} lässt sich in C++ wie in
+Quelltext~\ref{source:vec_add_cpp} dargestellt implementieren. 
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{c++}
+auto vec_add(const std::int32_t* A, const std::int32_t* B,
+             std::int32_t* C, std::size_t size) -> void
+{
+    for(auto i = 0u; i < size; ++i)
+        C[i] = A[i] + B[i];
+}
+\end{minted}
+\captionof{listing}{Vektoraddition mit C++}
+\label{source:vec_add_cpp}
+\end{code}
+
+In \gls{cuda} würde dagegen jeder Thread ein Element des Ausgabevektors $C$ berechnen, wie in
+Quelltext~\ref{source:vec_add_cuda} gezeigt.
+
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+__global__ void vec_add(const std::int32_t* A, const std::int32_t* B,
+                        std::int32_t* C, std::size_t size)
+{
+    auto i = blockIdx.x * blockDim.x + threadIdx.x;
+    if(i < size)
+        C[i] = A[i] + B[i];
+}
+\end{minted}
+\captionof{listing}{Vektoraddition mit \gls{cuda}}
+\label{source:vec_add_cuda}
+\end{code}
+
+Die Berechnung der Indices erfolgt in diesem Beispiel nicht über eine fortlaufend inkrementierte Variable, wie es in C++
+der Fall wäre, sondern über die Hilfsvariablen \texttt{blockIdx}, \texttt{blockDim} und \texttt{threadIdx}. Wird ein
+\gls{cuda}-\gls{kernel} ausgeführt, so entsteht auf dem \gls{device} ein Thread-\gls{grid}. Diese Threads werden in
+einer zweistufigen Hierarchie angeordnet. Jedes \gls{grid} besteht aus mehreren Thread-Blöcken, die der Einfachheit
+halber in der Folge als \textit{Blöcke} bezeichnet werden. Alle Blöcke innerhalb eines \gls{grid}s haben die gleiche
+Größe, können jedoch maximal 1024 Threads umfassen; die Thread-Zahl der Blöcke wird auf dem \gls{host} vor der
+Ausführung des \gls{kernel}s definiert. Für ein gegebenes \gls{grid} kann die Anzahl der Threads pro Block durch die 
+Variable \texttt{blockDim} abgefragt werden, während der individuelle Block, zu dem ein bestimmter Thread gehört, durch
+die Variable \texttt{blockIdx} identifiert werden kann. Innerhalb eines Blocks kann ein einzelner Thread über die
+Variable \texttt{threadIdx} bestimmt werden. Für den ersten Thread des Blocks \texttt{0} hat \texttt{threadIdx} also den
+Wert \texttt{0}, für den zweiten \texttt{1}, für den dritten \texttt{2}, usw. Durch die Kombination der drei Variablen,
+wie sie in Quelltext~\ref{source:vec_add_cuda} dargestellt ist, lässt sich somit jeder Thread innerhalb des \gls{grid}s
+eindeutig identifizieren. Da \gls{cuda} das Starten von zwei- und dreidimensionalen \gls{kernel}n unterstützt, kann über
+die Felder \texttt{x}, \texttt{y} und \texttt{z} die Zahl der Blöcke bzw.\ Threads in der jeweiligen Dimension bestimmt
+werden (vgl.~\cite{kirkhwu}, S. 54).
+
+Ein weiterer Unterschied zur herkömmlichen C++-Programmierung ist das Schlüsselwort \texttt{\_\_global\_\_} vor der
+Deklaration. Dieses Schlüsselwort dient zur Identifizierung einer Funktion als \gls{kernel}, also einer Funktion auf
+dem \gls{device}, die vom \gls{host} aus aufgerufen werden kann. Daneben verwendet \gls{cuda} die Schlüsselworte
+\texttt{\_\_device\_\_} und \texttt{\_\_host\_\_}, die anzeigen, auf welcher Hardware die jeweilige Funktion ausgeführt
+werden kann bzw.\ soll. Eine \texttt{\_\_device\_\_}-Funktion kann dabei nur innerhalb eines \gls{kernel}s oder einer
+weiteren \texttt{\_\_device\_\_}-Funktion aufgerufen werden, eine \texttt{\_\_host\_\_}-Funktion nur auf dem \gls{host}
+-- sie entspricht also einer normalen C++-Funktion (vgl. Tabelle~\ref{table:cu_func_keywords} und~\cite{kirkhwu}, S.55).
+
+\begin{table}
+    \centering
+    \begin{tabular}{| l | c | c |}
+        \hline
+        & Ausgeführt auf dem & Aufgerufen vom \\
+        \hline
+        \texttt{\_\_device\_\_ float device\_func()} & \gls{device} & \gls{device} \\
+        \hline
+        \texttt{\_\_global\_\_ void kernel\_func()} & \gls{device} & \gls{host} \\
+        \hline
+        \texttt{\_\_host\_\_ float host\_func()} & \gls{host} & \gls{host} \\
+        \hline
+    \end{tabular}
+    \caption{\gls{cuda}-Schlüsselworte für die Funktionsdeklaration}
+    \label{table:cu_func_keywords}
+\end{table}
+
+\subsection{Architektur}\label{sssec:cu_arch}
+
+\subsection{Speicher}\label{sssec:cu_mem}
+
+Wie auf einem klassischen Rechner mit seinem Hauptspeicher, diversen Caches und Prozessorregistern gibt es auch auf
+einer \gls{cuda}-fähigen \gls{gpu} verschiedene Möglichkeiten zur Zwischenspeicherung von Daten.
+
+Die verschiedenen Speichervarianten sind in Tabelle~\ref{table:cu_mem_hierarchie} zusammengefasst.
+
+\begin{table}
+    \centering
+    \begin{tabular}{| l | c | c | c |}
+        \hline
+        Bezeichnung & Ort & Sichtbarkeit & Zugriff\\
+        \hline
+        \hline
+        Register & On-Chip & pro Thread & lesen / schreiben \\
+        \hline
+        \texttt{\_\_shared\_\_} & On-Chip & pro Block & lesen / schreiben \\
+        \hline
+        \texttt{\_\_global\_\_} & Off-Chip & pro Kernel & lesen / schreiben \\
+        \hline
+        \texttt{\_\_constant\_\_} & Off-Chip & pro Kernel & nur lesen \\
+        \hline
+        \texttt{\_\_local\_\_} & Off-Chip & pro Thread & lesen / schreiben\\
+        \hline
+        Textur & Off-Chip & pro Kernel & nur lesen\\
+        \hline
+    \end{tabular}
+    \caption{Die verschiedenen Varianten des \gls{cuda}-Speichers}
+    \label{table:cu_mem_hierarchie}
+\end{table}
+
+\subsection{\glspl{stream}}\label{ssec:cu_streams}

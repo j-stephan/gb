@@ -5,6 +5,7 @@
 \usepackage{etoolbox}
 \usepackage[acronyms,nonumberlist,toc,xindy]{glossaries}
 \usepackage[chapter,newfloat]{minted}
+\usepackage{pgfplots}
 \usepackage{tcolorbox}
 \usepackage{tikz}
 
@@ -21,7 +22,7 @@
 \definecolor{keyword-green}{RGB}{0, 128, 0}
 
 \author{Jan Stephan}
-\title{Untersuchung der Parallelisierung des Feldkamp-Davis-Kress-Algorithmus mittels CUDA{\textregistered}}
+\title{Untersuchung der Parallelisierung des Feldkamp-Davis-Kress-Algorithmus mittels CUDA}
 \matno{3755136}
 \betreuer{\hspace{0.15mm}Dr.-Ing. André Bieberle \\
           \qquad \qquad Dr.-Ing. Guido Juckeland \\
@@ -33,71 +34,12 @@
                      
                      Ich versichere ferner, diese Arbeit eigenständig angefertigt und aus anderen Werken übernommene
                      Zitate und Gedankengänge entsprechend kenntlich gemacht zu haben.}
-\acknowledgments{Für die fachliche Betreuung bei der Erstellung dieser Arbeit bedanke ich mich recht herzlich bei Herrn
-                 Dr.-Ing.\ Stephan Boden von der AREVA-Stiftungsprofessur für bildgebende Messverfahren für die
-                 Energie- und Verfahrenstechnik.}
+\acknowledgments{Für die fachliche Betreuung bei der Erstellung dieser Arbeit bedanke ich mich recht herzlich bei Frau
+                 Dr.-Ing.\ Martina Bieberle vom Helmholtz-Zentrum Dresden-Rossendorf sowie Herrn Dr.-Ing.\ Stephan Boden
+                 von der AREVA-Stiftungsprofessur für bildgebende Messverfahren für die Energie- und Verfahrenstechnik.}
 \bibfiles{bibliography.bib}
 
-\makeglossaries
-\newglossaryentry{kernel}{name=Kernel,
-                          description={Programm, das auf einem Beschleuniger, wie etwa einer GPU, ausgeführt wird},
-                          plural=Kernel}
-\newglossaryentry{cuda}{name={CUDA{\textregistered}},
-                        description={NVIDIA{\textregistered} CUDA{\textregistered},
-                                     proprietäre Plattform für die Programmierung von Grafikkarten}}
-\newglossaryentry{directx}{name={DirectX{\textregistered}},
-                           description={Microsoft{\textregistered} DirectX{\textregistered},
-                                        proprietäre Plattform für u.a. Grafikprogrammierung}}
-\newglossaryentry{pixel}{name=Pixel,
-                         description={Punkt in einem zweidimensionalen Koordinatensystem, z.B.\ einem Bild oder einem
-                                      Detektor},
-                         plural=Pixel}
-\newglossaryentry{voxel}{name=Voxel,
-                         description={Punkt in einem dreidimensionalen Koordinatensystem, z.B.\ einem Volumen},
-                         plural=Voxel}
-\newglossaryentry{host}{name=Host,
-                        description={Gerät, das einen Kernel auf dem Device ausführt. Üblicherweise ist dies das Gerät,
-                                     auf dem auch das Betriebssystem läuft, etwa ein Rechner oder ein Knoten auf einem
-                                     Superrechner},
-                        plural=Hosts}
-\newglossaryentry{device}{name=Device,
-                          description={Beschleuniger, der einen Kernel ausführt. Im Zusammenhang mit
-                                       CUDA{\textregistered} ist dieser typischerweise eine GPU},
-                          plural=Devices}
-\newglossaryentry{stream}{name=Stream,
-                          description={Warteschlange auf einem \gls{cuda}-\gls{device}. Operationen, wie z.B.\
-                                       \gls{kernel}aufrufe, werden innerhalb eines Streams sequentiell ausgeführt.
-                                       Mehrere Streams können vom gleichen \gls{device} parallel abgearbeitet werden},
-                          plural=Streams}
-\newglossaryentry{race-condition}{name=Race Condition,
-                                  description={Paralleler, nicht (ausschließlich) lesender Zugriff mehrerer Threads auf
-                                               das gleiche Datum. Da die Reihenfolge der Schreib- und Lesezugriffe ohne
-                                               weitere Synchronisierungsmechanismen nicht definiert ist, besteht die
-                                               Möglichkeit der Datenkorruption},
-                                  plural=race conditions}
-\newglossaryentry{grid}{name=Grid,
-                        description={Menge aller auf dem \gls{device} durch einen \gls{kernel} gestarteten Threads},
-                        plural=Grids}
-
-\newacronym{fdk}{FDK-Algorithmus}{Feldkamp-Davis-Kress-Algorithmus}
-\newacronym{hzdr}{HZDR}{Helmholtz-Zentrum Dresden-Rossendorf}
-\newacronym{paris}{PARIS}{\textit{Portable and Accelerated 3D Reconstruction tool for radiation based Imaging
-                                  Systems}}
-\newacronym{fpga}{FPGA}{\textit{Field Programmable Gate Array}}
-\newacronym{opencl}{OpenCL{\texttrademark}}{\textit{Open Computing Language}}
-\newacronym{fpu}{FPU}{\textit{floating point unit}}
-\newacronym{gpgpu}{GPGPU}{\textit{General Purpose Computation on Graphics Processing Unit}}
-\newacronym{opengl}{OpenGL{\texttrademark}}{\textit{Open Graphics Library}}
-\newacronym{openmp}{OpenMP{\textregistered}}{\textit{Open Multi-Processing}}
-\newacronym{openacc}{OpenACC{\textregistered}}{\textit{Open Accelerators}}
-\newacronym{gpu}{GPU}{\textit{Graphics Processing Unit}}
-\newacronym{cpu}{CPU}{\textit{Central Processing Unit}}
-\newacronym{simd}{SIMD}{\textit{Single Instruction, Multiple Data}}
-\newacronym{simt}{SIMT}{\textit{Single Instruction, Multiple Threads}}
-\newacronym{sm}{SM}{\textit{Streaming Multiprocessor}}
-\newacronym{gpc}{GPC}{\textit{Graphics Processing Cluster}}
-\newacronym{cufft}{cuFFT}{NVIDIA{\textregistered} CUDA{\textregistered} \textit{Fast Fourier Transform}}
-\newacronym{hpc}{HPC}{\textit{High Performance Computing}}
+\input{glossar}
 
 % Germanisiere LaTeX
 \deftranslation[to=German]{Acronyms}{Abkürzungsverzeichnis}
@@ -112,7 +54,8 @@
 \listoftables
 
 \include{einleitung}
-\include{grundlagen}
+\include{grundlagen_bp}
+\include{grundlagen_cuda}
 \include{umsetzung}
 \include{leistungsanalyse}
 \include{fazit}

@@ -46,4 +46,4 @@ all: $(PAPER_TARGET)
 
 .PHONY: clean
 clean:
-	@rm -f *.out *.aux *.log *.pdf *.bbl *.blg *.dvi *.toc *.lof *.lol *.lot *.acn *.acr *.alg *.glg *.glo *.gls *.ist *.xdy
+	@rm -f *.out *.aux *.log *.pdf *.bbl *.blg *.dvi *.toc *.lof *.lol *.lot *.acn *.acr *.alg *.glg *.glo *.gls *.ist *.xdy *.nco *.ncg *.ncs

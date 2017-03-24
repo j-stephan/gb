@@ -1,0 +1,66 @@
+% \newglossary{nomencl}{ncs}{nco}{Nomenklatur}
+
+\makeglossaries
+
+\newglossaryentry{kernel}{name=Kernel,
+                          description={Programm, das auf einem Beschleuniger, wie etwa einer GPU, ausgeführt wird},
+                          plural=Kernel}
+\newglossaryentry{cuda}{name={CUDA},
+                        description={NVIDIA CUDA, proprietäre Plattform für die Programmierung von Grafikkarten}}
+\newglossaryentry{directx}{name={DirectX},
+                           description={Microsoft DirectX, proprietäre Plattform für u.a. Grafikprogrammierung}}
+\newglossaryentry{pixel}{name=Pixel,
+                         description={Punkt in einem zweidimensionalen Koordinatensystem, z.B.\ einem Bild oder einem
+                                      Detektor},
+                         plural=Pixel}
+\newglossaryentry{voxel}{name=Voxel,
+                         description={Punkt in einem dreidimensionalen Koordinatensystem, z.B.\ einem Volumen},
+                         plural=Voxel}
+\newglossaryentry{host}{name=Host,
+                        description={Gerät, das einen Kernel auf dem Device ausführt. Üblicherweise ist dies das Gerät,
+                                     auf dem auch das Betriebssystem läuft, etwa ein Rechner oder ein Knoten auf einem
+                                     Superrechner},
+                        plural=Hosts}
+\newglossaryentry{device}{name=Device,
+                          description={Beschleuniger, der einen Kernel ausführt. Im Zusammenhang mit \gls{cuda} ist
+                                       dieser typischerweise eine \gls{gpu}},
+                          plural=Devices}
+\newglossaryentry{stream}{name=Stream,
+                          description={Warteschlange auf einem \gls{cuda}-\gls{device}. Operationen, wie z.B.\
+                                       \gls{kernel}aufrufe, werden innerhalb eines Streams sequentiell ausgeführt.
+                                       Mehrere Streams können vom gleichen \gls{device} parallel abgearbeitet werden},
+                          plural=Streams}
+\newglossaryentry{race-condition}{name=Race Condition,
+                                  description={Paralleler, nicht (ausschließlich) lesender Zugriff mehrerer Threads auf
+                                               das gleiche Datum. Da die Reihenfolge der Schreib- und Lesezugriffe ohne
+                                               weitere Synchronisierungsmechanismen nicht definiert ist, besteht die
+                                               Möglichkeit der Datenkorruption},
+                                  plural=race conditions}
+\newglossaryentry{grid}{name=Grid,
+                        description={Menge aller auf dem \gls{device} durch einen \gls{kernel} gestarteten Threads},
+                        plural=Grids}
+
+\newacronym{fdk}{FDK-Algorithmus}{Feldkamp-Davis-Kress-Algorithmus}
+\newacronym{hzdr}{HZDR}{Helmholtz-Zentrum Dresden-Rossendorf}
+\newacronym{paris}{PARIS}{\textit{Portable and Accelerated 3D Reconstruction tool for radiation based Imaging
+                                  Systems}}
+\newacronym{fpga}{FPGA}{\textit{Field Programmable Gate Array}}
+\newacronym{opencl}{OpenCL}{\textit{Open Computing Language}}
+\newacronym{fpu}{FPU}{\textit{floating point unit}}
+\newacronym{gpgpu}{GPGPU}{\textit{General Purpose Computation on Graphics Processing Unit}}
+\newacronym{opengl}{OpenGL}{\textit{Open Graphics Library}}
+\newacronym{openmp}{OpenMP}{\textit{Open Multi-Processing}}
+\newacronym{openacc}{OpenACC}{\textit{Open Accelerators}}
+\newacronym{gpu}{GPU}{\textit{Graphics Processing Unit}}
+\newacronym{cpu}{CPU}{\textit{Central Processing Unit}}
+\newacronym{simd}{SIMD}{\textit{Single Instruction, Multiple Data}}
+\newacronym{simt}{SIMT}{\textit{Single Instruction, Multiple Threads}}
+\newacronym{sm}{SM}{\textit{Streaming Multiprocessor}}
+\newacronym{gpc}{GPC}{\textit{Graphics Processing Cluster}}
+\newacronym{cufft}{cuFFT}{NVIDIA \gls{cuda} \textit{Fast Fourier Transform}}
+\newacronym{hpc}{HPC}{\textit{High Performance Computing}}
+
+%\newglossaryentry{proj}{name=Projektion,
+%                         description={Formelzeichen einer Projektion},
+%                         symbol={$p$},
+%                         type=nomencl}

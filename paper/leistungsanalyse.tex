@@ -70,4 +70,24 @@ Eliminierung der Wartezeit keinen besonders hervorzuhebenden Mehrwert.
 
 \subsection{Einsatz mehrerer \gls{gpu}s}
 
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[width=\textwidth,
+                     xlabel={Volumengröße},
+                     symbolic x coords={133 x 133 x 129,267 x 267 x 258,535 x 535 x 516, 1070 x 1070 x 1033},
+                     xtick=data,
+            %                     x tick label style={rotate=45,anchor=east},
+                     ylabel={Laufzeit [s]}]
+
+             \addplot table[x=Volumengroesse,y=GTX1080,col sep=comma] {data/mehreregpus.csv};
+             \addplot table[x=Volumengroesse,y=K20c,col sep=comma] {data/mehreregpus.csv};
+             \addplot table[x=Volumengroesse,y=GTX1080K20c,col sep=comma] {data/mehreregpus.csv};
+             \legend{GTX 1080,Tesla K20c,GTX+Tesla};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Laufzeit mit mehreren \gls{gpu}s}
+    \label{fig:laufzeit_gpus}
+\end{figure}
+
 \section{Vergleich mit der Literatur}
