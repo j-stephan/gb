@@ -11,12 +11,12 @@ Anschließend wird das Prinzip der daraus abgeleiteten gefilterte Rückprojektio
 
 \subsection{Projektionen}
 
-Schießt man einen Röntgenstrahl durch ein festes Objekt, wie beispielsweise biologisches Gewebe oder ein Metall, so wird
-dieser Strahl je nach Dichte des Materials entlang seiner Bahn abgeschwächt bzw.\ absorbiert. Mathematisch lässt sich
-ein Objekt daher als zwei- oder dreidimensionale Verteilung von Absorptionskonstanten verstehen, während die gesamte
-Abschwächung entlang einer Strahlbahn als Kurvenintegral dargestellt werden kann.
+Durchquert ein Röntgenstrahl ein festes Objekt, wie beispielsweise biologisches Gewebe oder ein Metall, so wird dieser
+Strahl je nach Dichte des Materials entlang seiner Bahn abgeschwächt bzw.\ absorbiert. Mathematisch lässt sich ein
+Objekt daher als zwei- oder dreidimensionale Verteilung von linearen Röntgenschwächungskoeffizienten verstehen, während
+die gesamte Abschwächung entlang einer Strahlbahn als Kurvenintegral dargestellt werden kann.
 
-Die Grundlage der folgenden Ausführungen ist die Abbildung~\ref{fig:math_proj}. Als Beispiel dienen ein Objekt, hier
+Die Grundlage der folgenden Ausführungen ist die Abbildung~\ref{fig:math_proj}. Als Beispiel dienen ein \gls{obj}, hier
 durch die Funktion $f(x, y)$ repräsentiert, sowie Kurvenintegrale, hier das Parameterpaar $(\alpha, t)$. Die Linie $AB$
 lässt sich dann durch die folgende Formel darstellen:
 
@@ -65,7 +65,7 @@ oder allgemein für beliebige, zu $AB$ parallele, Linien:
     \draw[dashed] (0.4, -2) -- (-0.4, 2);
 
     % Projektion
-    \draw[<->] (0, 8) -- (-0.4, 10) node[pos=0.5, sloped, above] {$P_{\theta}(t)$};
+    \draw[<->] (0, 8) -- (-0.4, 10) node[pos=0.5, sloped, above] {$p_{\theta}(t)$};
     \draw[<->] (3, 8.6) -- (2.8, 9.6);
     \draw[thick] (-4, 7.2) .. controls (-3.8, 7.5) .. (-3, 8)
                  .. controls (-2.75, 8.5) and (-1.5, 9.25) .. (-1, 9.5)
@@ -85,31 +85,31 @@ oder allgemein für beliebige, zu $AB$ parallele, Linien:
 \label{fig:math_proj}
 \end{figure}
 
-Das zu $f(x, y)$ gehörige Kurvenintegral ist $P_{\theta}(t)$:
+Das zu $f(x, y)$ gehörige Kurvenintegral ist $p_{\theta}(t)$:
 
 \begin{equation}\label{eq:proj_int}
-    P_{\theta}(t) = \int\limits_{(\theta, t)\text{-Linie}} f(x, y)\ \mathrm{d}s
+    p_{\theta}(t) = \int\limits_{(\theta, t)\text{-Linie}} f(x, y)\ \mathrm{d}s
 \end{equation}
 
 Zusammen mit der aus Formel~\ref{eq:proj_obj} resultierenden Delta-Distribution lässt sich das Kurvenintegral wie folgt
 umschreiben:
 
 \begin{equation}\label{eq:proj_radon}
-    P_{\theta}(t) = \int\limits_{-\infty}^{\infty}\int\limits_{-\infty}^{\infty}f(x, y) \cdot \delta(x \cdot
+    p_{\theta}(t) = \int\limits_{-\infty}^{\infty}\int\limits_{-\infty}^{\infty}f(x, y) \cdot \delta(x \cdot
                     \cos \theta + y \cdot \sin \theta - t)\ \mathrm{d} x\ \mathrm{d} y
 \end{equation}
 
-Die Funktion $P_{\theta}(t)$ ist die \textit{Radon-Transformation} der Funktion $f(x, y)$ (vgl.~\cite{radon}).
+Die Funktion $p_{\theta}(t)$ ist die \textit{Radon-Transformation} der Funktion $f(x, y)$ (vgl.~\cite{radon}).
 
-Eine Projektion lässt sich als die Kombination einer Menge von Radon-Transformationen verstehen. Die
-(mathematisch) einfachste Projektion ist eine Sammlung von Parallelstrahlintegralen $P_{\theta}(t)$ unter einem
-konstanten Winkel $\theta$. Man bezeichnet eine solche Projektion als \textit{Parallelstrahlprojektion} (siehe
-Abbildung~\ref{fig:par_proj}). In der Praxis kann eine Parallelstrahlprojektion durch die Bewegung einer
-Quelle-Detektor-Anordnung entlang paralleler Linien auf entgegengesetzten Seiten des Objekts aufgenommen werden.
+Eine \gls{proj} lässt sich als die Kombination einer Menge von Strahlen verstehen. Die (mathematisch) einfachste
+\gls{proj} ist eine Sammlung von Parallelstrahlintegralen $p_{\theta}(t)$ unter einem konstanten Winkel $\theta$. Man
+bezeichnet eine solche \gls{proj} als \textit{Parallelstrahlprojektion} (siehe Abbildung~\ref{fig:par_proj}). In der
+Praxis kann eine Parallelstrahlprojektion durch die Bewegung einer Quelle-Detektor-Anordnung entlang paralleler Linien
+auf entgegengesetzten Seiten des \gls{obj}s aufgenommen werden.
 
 Eine zweite Aufnahmemöglichkeit ist der Einsatz einer Quelle auf einer festen Position sowie einer Reihe von Detektoren
-entlang einer Linie auf der anderen Seite des Objekts (siehe Abbildung~\ref{fig:fan_proj}). Solcherart erzeugte
-Projektionen nennt man aufgrund der fächerförmigen Strahlen \textit{Fächerstrahlprojektionen} (vgl.~\cite{kakslan},
+entlang einer Linie auf der anderen Seite des \gls{obj}s (siehe Abbildung~\ref{fig:fan_proj}). Solcherart erzeugte
+\glspl{proj} nennt man aufgrund der fächerförmigen Strahlen \textit{Fächerstrahlprojektionen} (vgl.~\cite{kakslan},
 S. 49 -- 51).
 
 \begin{figure}
@@ -137,7 +137,7 @@ S. 49 -- 51).
                                   to [bend left] (-5.1, 5.8) to [bend right] (-4.4, 5.95)
                                   to [bend left] (-4.2, 6) to [bend right] (-3.85, 6)
                                   to [bend left] (-3.7, 5.9);
-        \node at (-5.25, 6.5) {$P_{\theta_1}(t)$};
+        \node at (-5.25, 6.5) {$p_{\theta_1}(t)$};
 
         % Strahlen zu Detektor 1
         \foreach \w in {0,...,12}
@@ -151,7 +151,7 @@ S. 49 -- 51).
                                    to [bend left] (-2.05, 7.35) to [bend right] (-1.5, 7)
                                    to [bend left] (-0.85, 7.4) to [bend left] (-0.35, 6.85)
                                    to [bend right] (-0.15, 6.7);
-        \node at (-1.75, 8) {$P_{\theta_2}(t)$};
+        \node at (-1.75, 8) {$p_{\theta_2}(t)$};
 
         % Strahlen zu Detektor 2
         \foreach \w in {0,...,12}
@@ -192,7 +192,7 @@ S. 49 -- 51).
         \draw[thick] (-6.1, 2.1) to [bend left] (-6.05, 2.5) to [bend left] (-6, 3.5) to [bend right] (-6, 4.2)
                                  to [bend left] (-5.7, 4.9) to [bend right] (-4.9, 5.7) to [bend left] (-4.4, 5.8)
                                  to (-2.7, 5.8);
-        \node at (-4.5, 6.5) {$P(t, \beta_1)$};
+        \node at (-4.5, 6.5) {$p(t, \beta_1)$};
 
         % Strahlen zu Detektor 1
         \foreach \w in {0,...,12}
@@ -204,7 +204,7 @@ S. 49 -- 51).
         \draw[thick] (-1.05, 6.2) to [bend left] (-0.3, 6.4) to [bend right] (1, 6.5) to [bend left] (1.5, 6.6)
                                   to [bend right] (2.1, 6.8) to [bend left] (2.35, 6.8) to [bend left] (2.8, 6.3)
                                   to [bend right] (3.2, 5.6) to [bend left] (3.7, 5.05);
-        \node at(1.75, 7.5) {$P(t, \beta_2)$};
+        \node at(1.75, 7.5) {$p(t, \beta_2)$};
 
         % Strahlen zu Detektor 2
         \foreach \w in {0,...,13}
@@ -218,82 +218,28 @@ S. 49 -- 51).
     \label{fig:fan_proj}
 \end{figure}
 
-\subsection{Das Fourier-Scheiben-Theorem}\label{sssec:fourier_scheibe}
+\subsection{Das Fourier-Scheiben-Theorem}\label{ssec:fourier_scheibe}
 
-Der Zusammenhang zwischen der Projektion und dem Objekt wird noch deutlicher, wenn man erstere einer eindimensionalen
+Der Zusammenhang zwischen der \gls{proj} und dem \gls{obj} wird noch deutlicher, wenn man erstere einer eindimensionalen
 und letztere einer zweidimensionalen Fouriertransformation unterzieht. So stellten Rosenfeld und Kak in ihrer Arbeit
-fest, dass die Fouriertransformation einer Parallelstrahlprojektion eines Objekts $f(x, y)$, die unter dem Winkel
-$\theta$ aufgenommen wurde, einer Schicht des zweidimensional fouriertransformierten Objekts $F(u, v)$, entspricht. Mit
-anderen Worten ergibt die Fouriertransformation einer Projektion $P_{\theta}(t)$ die Werte von $F(u, v$) entlang einer
-radialen Linie $BB$ (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{rosenkak}, S.366).
+fest, dass die Fouriertransformation einer Parallelstrahlprojektion eines \gls{obj}s $f(x, y)$, die unter dem Winkel
+$\theta$ aufgenommen wurde, einer Schicht des zweidimensional fouriertransformierten \gls{obj}s $F(u, v)$, entspricht.
+Mit anderen Worten ergibt die Fouriertransformation einer \gls{proj} $p_{\theta}(t)$ die Werte von $F(u, v$) entlang
+einer radialen Linie $BB$ (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{rosenkak}, S.366).
 
-Rosenfeld und Kak haben diesen Zusammenhang auch mathematisch hergeleitet. Seien $F(u, v)$ die zweidimensionale
-Fouriertransformation des Objekts $f(x, y)$:
-
-\begin{equation}\label{eq:obj_2d_full}
-    F(u, v) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(x, y) \cdot e^{-2 \pi i \cdot(u x + v y)}\
-        \mathrm{d} x\ \mathrm{d} y
-\end{equation}
-
-und $S_{\theta}(w)$ die eindimensionale Fouriertransformation der Projektion unter dem Winkel $\theta$ $P_{\theta}(t)$:
-
-\begin{equation}\label{eq:proj_fft}
-    S_{\theta}(w) = \int\limits_{-\infty}^{\infty} P_{\theta}(t) \cdot e^{-2 \pi i \cdot w t}\ \mathrm{d} t
-\end{equation}
-
-Im Folgenden sei der Fall $\theta = 0$ betrachtet. Setzt man $v = 0$, so wird die Formel~\ref{eq:obj_2d_full}
-vereinfacht:
-
-\begin{equation}
-    F(u, 0) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(x, y) \cdot e^{-2 \pi i \cdot u x}\
-    \mathrm{d} x\ \mathrm{d} y
-\end{equation}
-
-Der Phasenfaktor ist nun nicht mehr von $y$ abhängig, wodurch das Integral in zwei Hälften geteilt werden kann:
-
-\begin{equation}\label{eq:obj_2d_split}
-    F(u, 0) = \int\limits_{-\infty}^{\infty} \left[\int\limits_{-\infty}^{\infty} f(x, y)\ \mathrm{d} y \right] \cdot
-    e^{-2 \pi i \cdot u x}\ \mathrm{d} x
-\end{equation}
-
-Der Term in eckigen Klammern entspricht der Gleichung für eine Projektion entlang konstanter $x$-Linien:
-
-\begin{equation}
-    P_{\theta = 0}(x) = \int\limits_{-\infty}^{\infty} f(x, y)\ \mathrm{d} y
-\end{equation}
-
-Durch Einsetzen in Gleichung~\ref{eq:obj_2d_split} erhält man:
-
-\begin{equation}
-    F(u, 0) = \int\limits_{-\infty}^{\infty} P_{\theta = 0}(x) \cdot e^{-2 \pi i \cdot u x}\ \mathrm{d} x
-\end{equation}
-
-Die rechte Seite dieser Gleichung stellt die eindimensional fouriertransformierte Projektion $P_{\theta = 0}$ dar (vgl.
-Gleichung~\ref{eq:proj_fft}), es ergibt sich also der folgende Zusammenhang zwischen der transformierten Projektion und
-dem zweidimensional fouriertransformierten Objekt:
-
-\begin{equation}
-    F(u, 0) = S_{\theta = 0}(u)
-\end{equation}
-
-Dieses Ergebnis ist die einfachste Form des Fourier-Scheiben-Theorems. Darüber hinaus ist es unabhängig von der
-konkreten Konstellation zwischen dem Objekt und dem Koordinatensystem der Projektion. Wird das
-$(t, s)$-Koordinatensystem um den Winkel $\theta$ rotiert, so ist die Fouriertransformation der Projektion gleich der
-zweidimensionalen Fouriertransformation des Objekts entlang einer radialen Linie, die um den Winkel $\theta$ rotiert
-wird (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{rosenkak}, S. 366).
-
-Aus den obigen Ergebnissen folgt, dass sich die Werte von $F(u, v)$ entlang radialer Linien dadurch bestimmen lassen,
-dass man die Projektionen des Objekts unter mehreren Winkeln $\theta_1$, $\theta_2$, \ldots, $\theta_k$ aufnimmt und
-diese fouriertransformiert. Für eine unendliche Anzahl von Projektionen wäre $F(u, v)$ somit in allen Punkten der
-$uv$-Ebene bestimmt, sodass die Objektfunktion $f(x, y)$ durch die inverse Fouriertransformation bestimmt werden kann.
-In der Praxis können allerdings nur endlich viele Projektionen aufgenommen werden, sodass $F(u, v)$ ebenfalls nur
-entlang einer endlichen Anzahl radialer Linien bestimmt ist (siehe Abbildung~\ref{fig:fourier_scheibe_endlich}). Um
-$f(x, y)$ dennoch näherungsweise bestimmen zu können, müssen die restlichen Punkte anhand der bekannten Werte
-interpoliert werden, was typischerweise durch eine \textit{nearest neighbour} oder eine lineare Interpolation geschieht.
-Da die Dichte der vorhandenen Punkte immer geringer wird, je weiter man sich vom Ursprung entfernt, nimmt der
-Interpolationsfehler bei größerer Distanz zu. Die Komponenten eines Bildes mit hoher Frequenz sind somit stärker von
-Fehlern betroffen als die niederfrequenten Anteile, was einen Qualitätsverlust des rekonstruierten Bildes zur Folge hat
-(vgl.~\cite{kakslan}, S. 59 -- 60).
+Rosenfeld und Kak haben diesen Zusammenhang auch mathematisch hergeleitet (siehe Anhang~\ref{app:fourier_scheibe}). 
+Aus diesem folgt, dass sich die Werte von $F(u, v)$ entlang radialer Linien dadurch bestimmen lassen, dass man die
+\glspl{proj} des \gls{obj}s unter mehreren Winkeln $\theta_1$, $\theta_2$, \ldots, $\theta_k$ aufnimmt und diese
+fouriertransformiert. Für eine unendliche Anzahl von \glspl{proj} wäre $F(u, v)$ somit in allen Punkten der $uv$-Ebene
+bestimmt, sodass die Objektfunktion $f(x, y)$ durch die inverse Fouriertransformation bestimmt werden kann. In der
+Praxis können allerdings nur endlich viele Projektionen aufgenommen werden, sodass $F(u, v)$ ebenfalls nur entlang einer
+endlichen Anzahl radialer Linien bestimmt ist (siehe Abbildung~\ref{fig:fourier_scheibe_endlich}). Um $f(x, y)$ dennoch
+näherungsweise bestimmen zu können, müssen die restlichen Punkte anhand der bekannten Werte interpoliert werden, was
+typischerweise durch eine \textit{nearest neighbour} oder eine lineare Interpolation geschieht. Da die Dichte der
+vorhandenen Punkte immer geringer wird, je weiter man sich vom Ursprung entfernt, nimmt der Interpolationsfehler bei
+größerer Distanz zu. Die Komponenten eines Bildes mit hoher Frequenz sind somit stärker von Fehlern betroffen als die
+niederfrequenten Anteile, was einen Qualitätsverlust des rekonstruierten Bildes zur Folge hat (vgl.~\cite{kakslan},
+S. 59 -- 60).
 
 \begin{figure}
     \centering
@@ -404,61 +350,62 @@ Fehlern betroffen als die niederfrequenten Anteile, was einen Qualitätsverlust 
     \label{fig:fourier_scheibe_endlich}
 \end{figure}
 
-\subsection{Die gefilterte Rückprojektion}\label{sssec:filter_bp}
+\subsection{Die gefilterte Rückprojektion}\label{ssec:filter_bp}
 
-Das Fourier-Scheiben-Theorem stellt den Zusammenhang zwischen der fouriertransformierten Projektion und dem
-fouriertransformierten Objekt entlang einer radialen Linie her. Daraus folgt, dass man mit genügend vielen
-fouriertransformierten Projektionen, die unter unterschiedlichen Winkeln aufgenommen wurden, eine Annäherung an das
-zweidimensional fouriertransformierte Objekt und damit (durch die inverse Fouriertransformation) an das Objekt selbst
-erreichen kann. Dieses einfache Modell der Tomographie lässt sich jedoch nicht ohne Weiteres in dieser Form
-implementieren (vgl.~\cite{kakslan}, S. 60).
+Durch das Fourier-Scheiben-Theorem lassen sich ein \gls{fourobj} und eine \gls{fourproj} entlang einer radialen Linie in
+einen Zusammenhang stellen. Daraus folgt, dass man mit genügend vielen fouriertransformierten \glspl{proj}, die unter
+unterschiedlichen Winkeln aufgenommen wurden, eine Annäherung an das zweidimensional fouriertransformierte \gls{obj} und
+damit (durch die inverse Fouriertransformation) an das \gls{obj} selbst erreichen kann. Dieses einfache Modell der
+Tomographie lässt sich jedoch nur mit viel Aufwand in dieser Form implementieren (vgl.~\cite{kakslan}, S. 60).
 
-Ein bekannter Ansatz zur Lösung dieses Problems ist die gefilterte Rückprojektion, die sehr genau und schnell zu
-implementieren ist und sich aus dem Fourier-Scheiben-Theorem herleiten lässt (zur mathematischen Herleitung
-siehe~\cite{kakslan}, S. 63 -- 68). Es ist dieser Schritt, der eine effiziente Implementierung der Rekonstruktion für
-Computer ermöglicht; Kak und Slaney stellen fest: {\glqq}The derivation of this algorithm is perhaps one of the most
-illustrative examples of how we can obtain a radically different computer implementation by simply rewriting the
-fundamental expressions for the underlying theory{\grqq} (siehe~\cite{kakslan}, S. 60).
+Ein bekannter Ansatz, der weniger Aufwand erfordert, ist die gefilterte Rückprojektion, die sehr genau und schnell zu
+implementieren ist und sich aus dem Fourier-Scheiben-Theorem herleiten lässt. Dazu wird die inverse
+Fouriertransformation in einem polaren Koordinatensystem durchgeführt und die Grenzen der zugehörigen Integrale
+entsprechend angepasst (zur mathematischen Herleitung siehe~\cite{kakslan}, S. 63 -- 68). Es ist dieser Schritt, der
+eine effiziente Implementierung der Rekonstruktion für Computer ermöglicht; Kak und Slaney stellen fest: {\glqq}The
+derivation of this algorithm is perhaps one of the most illustrative examples of how we can obtain a radically different
+computer implementation by simply rewriting the fundamental expressions for the underlying theory{\grqq}
+(siehe~\cite{kakslan}, S. 60).
 
-Die Grundlage der gefilterten Rückprojektion ist der Umstand, dass jede Projektion eine nahezu unabhängige Aufnahme
-des Objekts darstellt. Die einzige Gemeinsamkeit der unter verschiedenen Winkeln aufgenommenen Projektionen ist die
-Gleichheit im Punkt $F(0, 0)$. Transformiert man eine einzelne Projektion und nimmt an, dass es keine anderen
-Projektionen gibt, so lässt sich durch die zweidimensionale inverse Fouriertransformation ein (verzerrtes) Objekt
-rekonstruieren. Durch das Aufsummieren mehrerer transformierter Projektionen nimmt die Qualität des rekonstruierten
-Objekts zu. Da die Fouriertransformation eine lineare Operation ist, lässt sich dieses Aufsummieren der Projektionen
+Die Grundlage der gefilterten Rückprojektion ist der Umstand, dass jede \gls{proj} eine nahezu unabhängige Aufnahme des
+\gls{obj}s darstellt. Die einzige Gemeinsamkeit der unter verschiedenen Winkeln aufgenommenen \glspl{proj} ist die
+Gleichheit im Punkt $F(0, 0)$. Transformiert man eine einzelne \gls{proj} und nimmt an, dass es keine anderen
+\glspl{proj} gibt, so lässt sich durch die zweidimensionale inverse Fouriertransformation ein (verzerrtes) \gls{obj}
+rekonstruieren. Durch das Aufsummieren mehrerer transformierter \glspl{proj} nimmt die Qualität des rekonstruierten
+\gls{obj}s zu. Da die Fouriertransformation eine lineare Operation ist, lässt sich dieses Aufsummieren der \glspl{proj}
 auch im Ortsraum durchführen. In diesem Fall spricht man von der Rückprojektion (vgl.~\cite{kakslan}, S. 61).
 
-Die Filterung lässt sich als Wichtung der Projektionen im Frequenzraum betrachten. Wie bereits in
-Abschnitt~\ref{sssec:fourier_scheibe} erwähnt, nimmt die Anzahl der durch die (in endlicher Zahl vorliegenden) bekannten
-Punkte im Frequenzraum mit steigender Distanz zum Ursprung ab. Durch die Wichtung der höheren Frequenzen der
-Projektionen lassen sich die fehlenden Punkte approximieren, durch eine möglichst hohe Projektionszahl lässt sich der 
-durch die fehlenden Informationen hervorgerufene Effekt weiter verringern (vgl.~\cite{kakslan}, S. 61).
+Die Filterung lässt sich als Wichtung der \glspl{proj} im Frequenzraum betrachten. Wie bereits in
+Abschnitt~\ref{ssec:fourier_scheibe} erwähnt, nimmt die Anzahl der durch die (in endlicher Zahl vorliegenden) bekannten
+Punkte im Frequenzraum mit steigender Distanz zum Ursprung ab. Durch die stärkere Wichtung der höheren Frequenzen der
+\glspl{proj} lassen sich die fehlenden Punkte approximieren, durch eine möglichst hohe Projektionszahl lässt sich die
+durch die fehlenden Informationen hervorgerufene Abweichung weiter verringern (vgl.~\cite{kakslan}, S. 61).
 
-Die gewichteten Projektionen lassen sich (nach der inversen Fouriertransformation) aufsummieren, um das Objekt zu
-rekonstruieren. Zusammengefasst ergibt sich für die gefilterte Rückprojektion der folgende Algorithmus:
+Die gewichteten \glspl{proj} lassen sich (im Anschluss an die inverse Fouriertransformation) aufsummieren, um das
+\gls{obj} zu rekonstruieren. Zusammengefasst ergibt sich für die gefilterte Rückprojektion der folgende Algorithmus:
 
 Für alle Winkel $\theta$:
 \begin{enumerate}
-    \item Projektion $P_{\theta}(t)$ aufnehmen
-    \item $P_{\theta}(t)$ zu $S_{\theta}(w)$ fouriertransformieren
-    \item $S_{\theta}(w)$ filtern
-    \item $S_{\theta}(w)$ invers fouriertransformieren und zum bisherigen Ergebnis hinzu addieren
+    \item \gls{proj} $p_{\theta}(t)$ aufnehmen
+    \item $p_{\theta}(t)$ zu $P_{\theta}(w)$ fouriertransformieren
+    \item $P_{\theta}(w)$ filtern
+    \item $P_{\theta}(w)$ invers fouriertransformieren und zurückprojizieren (Addition zum bisherigen Ergebnis)
 \end{enumerate}
 
-Gegenüber der in Abschnitt~\ref{sssec:fourier_scheibe} erwähnten Interpolationsmethode bietet dieser Algorithmus den
-Vorteil, dass direkt nach dem Aufnehmen der ersten Projektion begonnen werden kann. Daneben ist es einfacher, im
+Gegenüber der in Abschnitt~\ref{ssec:fourier_scheibe} erwähnten Interpolationsmethode bietet dieser Algorithmus den
+Vorteil, dass direkt nach dem Aufnehmen der ersten \gls{proj} begonnen werden kann. Daneben ist es einfacher, im
 Ortsraum zu interpolieren, als wenn man dies im Frequenzraum täte, da im Ortsraum eine lineare Interpolation häufig
 genügt (vgl.~\cite{kakslan}, S. 62).
 
-\section{Der Feldkamp-Davis-Kress-Algorithmus}\label{ssec:fdk}
+\section{Der Feldkamp-Davis-Kress-Algorithmus}\label{sec:fdk}
 
 Der 1984 entwickelte \gls{fdk}~\cite{fdk} ist eine spezielle Ausprägung der gefilterten Rückprojektion für die
 Computertomographie mit Kegelstrahlen. In diesem Abschnitt wird zunächst die zugrundeliegende Mathematik näher
 erläutert, bevor die einzelnen Schritte des \gls{fdk} detaillierter betrachtet werden.
 
-\subsection{Grundlagen}\label{sssec:fdk_math}
+\subsection{Grundlagen}\label{ssec:fdk_math}
 
-Die Idee des \gls{fdk} ist die Erweiterung der in Abschnitt~\ref{sssec:filter_bp} vorgestellten gefilterten
+Die Idee des \gls{fdk} ist die Erweiterung der in Abschnitt~\ref{ssec:filter_bp} vorgestellten gefilterten
 Rückprojektion auf die dritte Dimension. Ausgangspunkt ist eine Fächerstrahlprojektion (siehe
 Abbildung~\ref{fig:fan_proj}), die jetzt im dreidimensionalen Raum betrachtet wird, wie in
 Abbildung~\ref{fig:fdk_schema} dargestellt. Ausgehend von der Schnittgeraden der mittleren Ebene ($z = 0$) mit der
@@ -477,8 +424,10 @@ siehe~\cite{fdk}, S. 614 -- 615). Aufgrund der Kegelform der von der Quelle ausg
 als \textit{Kegelstrahlen} (englisch \textit{cone-beam}; vgl.\ den Titel der Arbeit von Feldkamp, Davis und Kress,
 \textit{Practical cone-beam algorithm}).
 
-Es ist zu beachten, dass der \gls{fdk} keine exakte, sondern nur eine näherungsweise Lösung bietet: {\glqq}No rigorous
-proof exists [\ldots], since the result is approximate{\grqq} (siehe~\cite{fdk}, S. 614).
+Es ist zu beachten, dass die Kegelstrahltomographie, sofern sie nur auf einer Kreisbahn um das Objekt herum erfolgt,
+mathematisch unterbestimmt ist. Infolgedessen ist bietet der von diesem Fall ausgehende \gls{fdk} keine exakte, sondern
+nur eine näherungsweise Lösung: {\glqq}No rigorous proof exists [\ldots], since the result is approximate{\grqq}
+(siehe~\cite{fdk}, S. 614).
 
 \begin{figure}
     \centering
@@ -494,8 +443,8 @@ proof exists [\ldots], since the result is approximate{\grqq} (siehe~\cite{fdk},
 
         % mittlere Achse
         \draw (-3, 0, 0) -- (6, 0, 0);
-        \draw[fill=black] (-3, 0, 0) circle (1pt) node [below left] {$(-d, 0, 0)$};
-        \draw[fill=black] (6, 0, 0) circle (1pt) node [above right] {$(d', 0, 0)$};
+        \draw[fill=black] (-3, 0, 0) circle (1pt) node [below left] {$(-d_{src}, 0, 0)$};
+        \draw[fill=black] (6, 0, 0) circle (1pt) node [above right] {$(d_{det}, 0, 0)$};
         
         % Volumen oben
         \draw[fill=white] (0, 1, -1) -- (-1, 1, -1) -- (0, 1, 1) -- (1, 1, 1) -- (0, 1, -1);
@@ -534,14 +483,16 @@ proof exists [\ldots], since the result is approximate{\grqq} (siehe~\cite{fdk},
     \label{fig:fdk_schema}
 \end{figure}
 
-\subsection{Geometrie}\label{sssec:fdk_geometrie}
+\subsection{Geometrie}\label{ssec:fdk_geometrie}
 
 Basierend auf den oben genannten Faktoren lässt sich ein dreidimensionales Tomographiesystem wie in
-Abbildung~\ref{fig:fdk_geometrie} darstellen. Der Ausgangspunkt der Strahlung ist eine Quelle $S$ (\textit{source}), die
-das Volumen $O$ (\textit{object}) unter einem Drehwinkel $\alpha_p$ mit einem \textit{kegelförmigen} Strahl
-durchleuchtet und auf einem Detektor mit $N_h \cdot N_v$ \gls{pixel}n abbildet. Dabei stellt $d_{src}$ den Abstand
-zwischen der Quelle und dem Rotationsmittelpunkt, also dem Zentrum des durchleuchteten Volumens, dar, während $d_{det}$
-den Abstand zwischen dem Rotationsmittelpunkt und dem Detektor.
+Abbildung~\ref{fig:fdk_geometrie} darstellen. Der Ausgangspunkt der Strahlung ist eine Quelle $S$, die das Objekt $f$
+unter einem Drehwinkel $\theta$ mit einem Kegelstrahl durchleuchtet und auf einem Detektor mit $N_h \cdot N_v$
+\gls{pixel}n abbildet. Dabei ist \glssymbol{dsrc} der Abstand zwischen der Quelle und dem Rotationsmittelpunkt, also
+dem Zentrum des durchleuchteten Volumens, während \glssymbol{ddet} den Abstand zwischen dem Rotationsmittelpunkt und dem
+Detektor darstellt. \glssymbol{dh} und \glssymbol{dv} geben den physischen horizontalen bzw.\ vertikalen Abstand zweier
+benachbarter Detektorpixelzentren an, die Breite und Höhe des Detektors lassen sich daher mit $N_h \cdot d_h$ und
+$N_v \cdot d_v$ bestimmen.
 
 \begin{figure}[!htb]
 \begin{tikzpicture}[
@@ -551,16 +502,16 @@ den Abstand zwischen dem Rotationsmittelpunkt und dem Detektor.
     % Quelle
     \coordinate (1) at (0, 0, 0);
     \filldraw[fill=black,draw=black] (1) circle (0.15cm) node[below left] {$S$};
-    \draw[axis] (-2, 0.5, 0) -- (2, -0.5, 0) node[right] {$x_s$};
-    \draw[axis] (2, 0.5, 0) -- (-2, -0.5, 0) node[left] {$y_s$};
+    \draw[axis] (-2, 0.5, 0) -- (2, -0.5, 0) node[right] {$s$};
+    \draw[axis] (2, 0.5, 0) -- (-2, -0.5, 0) node[left] {$t$};
     \draw[axis] (0, -4, 0) -- (0, 3, 0) node[above] {$z_s$};
 
     % Volumen
     \coordinate (2) at (8, 2, 0);
-    \filldraw[fill=black,draw=black] (2) circle (0.15cm) node[below left] {$O$};
-    \draw[axis] (5, 2, -3) -- (11, 2, 3) node[right] {$x_k$};
-    \draw[axis] (10, 2, 0) -- (4, 2, 0) node[left] {$y_l$};
-    \draw[axis] (8, -2, 0) -- (8, 4, 0) node[above] {$z_m$};
+    \filldraw[fill=black,draw=black] (2) circle (0.15cm) node[below left] {$f$};
+    \draw[axis] (5, 2, -3) -- (11, 2, 3) node[right] {$x$};
+    \draw[axis] (10, 2, 0) -- (4, 2, 0) node[left] {$y$};
+    \draw[axis] (8, -2, 0) -- (8, 4, 0) node[above] {$z$};
 
     \draw (8, 1, 1) -- (10, 1, 1);
     \draw (8, 1, 1) -- (8, 3, 1);
@@ -585,8 +536,8 @@ den Abstand zwischen dem Rotationsmittelpunkt und dem Detektor.
     \draw[axis] (14, -0.5, 0) -- (14, 7.5, 0) node[above] {$v$};
     \draw[fill=black!60!white,opacity=0.3] (10.75, 7, -2.16666) -- (17.25, 7, 2.16666) -- (17.25, 1, 2.16666)
                                            -- (10.75, 1, -2.16666) -- (10.75, 7, -2.16666);
-    \draw[<->] (10.5, 1, -2.33333) -- (10.5, 7, -2.33333) node[pos=0.5, left] {$N_v$};
-    \draw[<->] (10.75, 0.75, -2.16666) -- (17.25, 0.75, 2.16666) node[pos=0.5, below right] {$N_h$};
+    \draw[<->] (10.5, 1, -2.33333) -- (10.5, 7, -2.33333) node[pos=0.5, left] {$N_v \cdot d_v$};
+    \draw[<->] (10.75, 0.75, -2.16666) -- (17.25, 0.75, 2.16666) node[pos=0.5,sloped,below right] {$N_h \cdot d_h$};
 
     % Abstände
     \draw (1) -- (3);
@@ -603,13 +554,13 @@ den Abstand zwischen dem Rotationsmittelpunkt und dem Detektor.
     \draw[dotted] (16, 2, 2) -- (16, 6, 2) -- (12, 6, -2) -- (12, 2, -2) -- (16, 2, 2);
 
     % Winkel
-    \draw (5, 2, 0) arc (180:195:2.8cm) node[pos=0.5, left] {$\alpha_p$};
+    \draw (5, 2, 0) arc (180:195:2.8cm) node[pos=0.5, left] {$\theta$};
 \end{tikzpicture}
 \caption{Geometrie der gefilterten Rückprojektion}
 \label{fig:fdk_geometrie}
 \end{figure}
 
-\subsection{Wichtung}\label{sssec:fdk_wichtung}
+\subsection{Wichtung}\label{ssec:fdk_wichtung}
 
 Aufgrund der Kegelform der Strahlung hat jeder Strahl, der das Volumen durchleuchtet, beim Auftreffen auf den Detektor
 einen im Vergleich zu den restlichen Strahlen unterschiedlich langen Weg zurückgelegt. Um die durch die
@@ -623,32 +574,30 @@ Ursprung des Detektorkoordinatensystems basiert:
     w_{ij} = \frac{d_{det} - d_{src}}{\sqrt{(d_{det} - d_{src})^2 + h_j^2 + v_i^2}}
 \end{equation}
 
-\subsection{Filterung}\label{sssec:fdk_filter}
+\subsection{Filterung}\label{ssec:fdk_filter}
 
-Aufgrund der in Abschnitt~\ref{filter_bp} genannten Gründe müssen die gewichteten Projektionen vor der Rückprojektion
+Aufgrund der in Abschnitt~\ref{ssec:filter_bp} genannten Gründe müssen die gewichteten Projektionen vor der Rückprojektion
 gefiltert werden. Da es sich bei der Kegelstrahltomographie im Wesentlichen um eine erweiterte Fächerstrahltomographie
 handelt, genügt es, die Projektionen zeilenweise zu filtern, wie man es bei einem {\glqq}Stapel{\grqq} von
 Fächerstrahlprojektionen tun würde. Zu diesem Zweck müssen die Projektionen und der zum Einsatz kommende Filter
-fouriertransformiert werden; zum Einsatz kommt dabei das Verfahren der schnellen Fouriertransformation (\textit{fast
-Fourier transform}, FFT) nach Cooley und Tukey (vgl.~\cite{cooltuk}). Da dieses Verfahren nur mit einer Menge von
-Elementen funktioniert, die einer Zweierpotenz entspricht, müssen die Projektionszeilen und der Filter auf die nächste
-Zweierpotenz {\glqq}aufgerundet{\grqq} werden. Dazu wird, ausgehend von der Länge einer Projektionszeile $N_h$, die
-Filterlänge $N_{hFFT}$ berechnet:
+fouriertransformiert werden. Da dieses Verfahren nur mit einer Menge von Elementen funktioniert, die einer Zweierpotenz
+entspricht, müssen die Projektionszeilen- und die Filtergröße auf die nächste Zweierpotenz erweitert werden. Dazu wird,
+ausgehend von der Länge einer Projektionszeile $N_h$, die Filterlänge $N_{hFFT}$ berechnet:
 
 \begin{equation}
     N_{hFFT} = 2 \cdot 2^{\left\lceil \log_{2} N_h \right\rceil}
 \end{equation}
 
-Mit der so bestimmten Filterlänge lässt sich der Filter $r$ erzeugen:
+Mit der so bestimmten Filterlänge lässt sich ein einfacher Rampenfilter $r$ erzeugen:
 
 \begin{equation}\label{eq:filter_gen}
     \begin{aligned}
         r(j) \text{ mit } j &\in \left[-\frac{N_{hFFT} - 2}{2}, \frac{N_{hFFT}}{2}\right]\\
         r(j) &=
             \begin{cases}
-                \frac{1}{8} \cdot \frac{1}{\tau^2} & \quad \text{wenn } j = 0\\
+                \frac{1}{8} \cdot \frac{1}{d_h^2} & \quad \text{wenn } j = 0\\
                 0 & \quad \text{wenn } j \text{ gerade}\\
-                -\frac{1}{2j^2\pi^2\tau^2} & \quad \text{wenn } j \text{ ungerade}\\
+                -\frac{1}{2j^2\pi^2d_h^2} & \quad \text{wenn } j \text{ ungerade}\\
             \end{cases}
     \end{aligned}
 \end{equation}
@@ -657,71 +606,69 @@ Nun wird die zu filternde Zeile so lange mit $0$ aufgefüllt, bis die erweiterte
 
 \begin{equation}
     \begin{aligned}
-        p &: \text{ mit Nullen aufgefüllte Projektionszeile}\\
-        p(0 \dots N_{h - 1}) &= \text{det}(0 \dots N_{h - 1})\\
-        p(N_{h} \dots N_{hFFT}) &= 0
+        p_0 &: \text{ mit Nullen aufgefüllte Projektionszeile}\\
+        p_0(0 \dots N_{h - 1}) &= p(0 \dots N_{h - 1})\\
+        p_0(N_{h} \dots N_{hFFT}) &= 0
     \end{aligned}
 \end{equation}
 
-Im Anschluss werden sowohl der Filter $r$ als auch die erweiterte Projektionszeile $p$ in den komplexen Raum
+Im Anschluss werden sowohl der Filter $r$ als auch die erweiterte Projektionszeile $p_0$ in den Frequenzraum
 transformiert und dort miteinander multipliziert:
 
 \begin{equation}
     \begin{aligned}
         R &= \text{FFT}(r)\\
-        P &= \text{FFT}(p)\\
-        F &= P \cdot R \quad \text{sowohl für den reellen als auch den imaginären Teil}
+        P &= \text{FFT}(p_0)\\
+        P_F &= P \cdot R \quad \text{sowohl für den realen als auch den imaginären Teil}
     \end{aligned}
 \end{equation}
 
-Die so gefilterte Projektionszeile $F$ wird dann mit der inversen schnellen Fouriertransformation (IFFT) in den
-reellen Raum zurücktransformiert und von den {\glqq}aufgefüllten{\grqq} Elementen bereinigt:
+Die gefilterte Projektionszeile $P_F$ wird dann mit der inversen schnellen Fouriertransformation (IFFT) in den Ortsraum
+zurücktransformiert und von den {\glqq}aufgefüllten{\grqq} Elementen bereinigt:
 
 \begin{equation}
     \begin{aligned}
-        f &= \text{IFFT}(F)\\
-        \text{gefilterte Projektionszeile} &: f(0 \dots N_{h - 1})
+        p_F &= \text{IFFT}(P_F)\\
+        \text{gefilterte Projektionszeile} &: p_F(0 \dots N_{h - 1})
     \end{aligned}
 \end{equation}
 
 \subsection{Rückprojektion}\label{sssec:backprojection}
 
 Die gefilterten Projektionen können nun für die Rückprojektion verwendet werden. Dazu werden für jede vorhandene
-Projektion $p$, die unter dem Drehwinkel $\alpha_p$ aufgenommen wurde, die folgenden Schritte ausgeführt:
+Projektion $p_F$, die unter dem Drehwinkel $\theta$ aufgenommen wurde, die folgenden Schritte ausgeführt:
 
 \begin{itemize}
-    \item berechne für jede \gls{voxel}koordinate $(x_k, y_l, z_m)$ deren rotierte Position $(s, t, z)$:
+    \item berechne für jede \gls{voxel}koordinate $(x, y, z)$ deren Position im rotierten Koordinatensystem
+          $(s, t, z)$:
         \begin{equation}
             \begin{aligned}
-                s &= x_k \cos \alpha_p + y_l \sin \alpha_p\\
-                t &= -x_k \sin \alpha_p + y_l \cos \alpha_p\\
-                z &= z_m
+                s &= x \cos \theta + y \sin \theta\\
+                t &= -x \sin \theta + y \cos \theta\\
+                z &= z
             \end{aligned}
         \end{equation}
 
     \item projiziere die rotierte \gls{voxel}koordinate $(s, t, z)$ auf den Detektor:
         \begin{equation}
             \begin{aligned}
-                h' &= y' = t \cdot \frac{d_{det} - d_{src}}{s - d_{src}}\\
-                v' &= z' = z \cdot \frac{d_{det} - d_{src}}{s - d_{src}}
+                h &= t \cdot \frac{d_{det} - d_{src}}{s - d_{src}}\\
+                v &= z \cdot \frac{d_{det} - d_{src}}{s - d_{src}}
             \end{aligned}
         \end{equation}
 
-    \item interpoliere das Detektorsignal bei $(h', v')$:
+    \item interpoliere das Detektorsignal bei $(h, v)$:
         \begin{equation}
             \begin{aligned}
-                det' = det(h', v')
+                det = p_F(h, v)
             \end{aligned}
         \end{equation}
 
-    \item führe die Rückprojektion für jedes \gls{voxel} $vol_{klm}$ aus:
+    \item führe die Rückprojektion für jedes \gls{voxel} $vol_{xyz}$ aus:
         \begin{equation}
             \begin{aligned}
-                vol_{klm} &= vol_{klm} + 0,5 \cdot det' \cdot u^2\\
+                vol_{xyz} &= vol_{xyz} + 0,5 \cdot det \cdot u^2\\
                 \text{mit } u &= \frac{d_{src}}{s - d_{src}}
             \end{aligned}
         \end{equation}
 \end{itemize}
-
-Nach dem Abschluss der Rückprojektion erhält man ein Volumen, dessen \gls{voxel} Aufschluss über seine innere Struktur
-geben.

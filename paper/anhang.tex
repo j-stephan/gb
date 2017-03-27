@@ -1,6 +1,63 @@
 \appendix
 
-\chapter{Grundlagen}
+\chapter{Grundlagen der Computertomographie}
+
+\section{Herleitung des Fourier-Scheiben-Theorems}\label{app:fourier_scheibe}
+
+Seien $F(u, v)$ die zweidimensionale
+Fouriertransformation des Objekts $f(x, y)$:
+
+\begin{equation}\label{eq:obj_2d_full}
+    F(u, v) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(x, y) \cdot e^{-2 \pi i \cdot(u x + v y)}\
+        \mathrm{d} x\ \mathrm{d} y
+\end{equation}
+
+und $S_{\theta}(w)$ die eindimensionale Fouriertransformation der Projektion unter dem Winkel $\theta$ $P_{\theta}(t)$:
+
+\begin{equation}\label{eq:proj_fft}
+    S_{\theta}(w) = \int\limits_{-\infty}^{\infty} P_{\theta}(t) \cdot e^{-2 \pi i \cdot w t}\ \mathrm{d} t
+\end{equation}
+
+Im Folgenden sei der Fall $\theta = 0$ betrachtet. Setzt man $v = 0$, so wird die Formel~\ref{eq:obj_2d_full}
+vereinfacht:
+
+\begin{equation}
+    F(u, 0) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(x, y) \cdot e^{-2 \pi i \cdot u x}\
+    \mathrm{d} x\ \mathrm{d} y
+\end{equation}
+
+Der Phasenfaktor ist nun nicht mehr von $y$ abhängig, wodurch das Integral in zwei Hälften geteilt werden kann:
+
+\begin{equation}\label{eq:obj_2d_split}
+    F(u, 0) = \int\limits_{-\infty}^{\infty} \left[\int\limits_{-\infty}^{\infty} f(x, y)\ \mathrm{d} y \right] \cdot
+    e^{-2 \pi i \cdot u x}\ \mathrm{d} x
+\end{equation}
+
+Der Term in eckigen Klammern entspricht der Gleichung für eine Projektion entlang konstanter $x$-Linien:
+
+\begin{equation}
+    P_{\theta = 0}(x) = \int\limits_{-\infty}^{\infty} f(x, y)\ \mathrm{d} y
+\end{equation}
+
+Durch Einsetzen in Gleichung~\ref{eq:obj_2d_split} erhält man:
+
+\begin{equation}
+    F(u, 0) = \int\limits_{-\infty}^{\infty} P_{\theta = 0}(x) \cdot e^{-2 \pi i \cdot u x}\ \mathrm{d} x
+\end{equation}
+
+Die rechte Seite dieser Gleichung stellt die eindimensional fouriertransformierte Projektion $P_{\theta = 0}$ dar (vgl.
+Gleichung~\ref{eq:proj_fft}), es ergibt sich also der folgende Zusammenhang zwischen der transformierten Projektion und
+dem zweidimensional fouriertransformierten Objekt:
+
+\begin{equation}
+    F(u, 0) = S_{\theta = 0}(u)
+\end{equation}
+
+Dieses Ergebnis ist die einfachste Form des Fourier-Scheiben-Theorems. Darüber hinaus ist es unabhängig von der
+konkreten Konstellation zwischen dem Objekt und dem Koordinatensystem der Projektion. Wird das
+$(t, s)$-Koordinatensystem um den Winkel $\theta$ rotiert, so ist die Fouriertransformation der Projektion gleich der
+zweidimensionalen Fouriertransformation des Objekts entlang einer radialen Linie, die um den Winkel $\theta$ rotiert
+wird (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{rosenkak}, S. 366).
 
 \chapter{Umsetzung}
 

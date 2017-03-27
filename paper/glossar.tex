@@ -1,4 +1,23 @@
-% \newglossary{nomencl}{ncs}{nco}{Nomenklatur}
+\newglossary{nomencl}{ncs}{nco}{Nomenklatur}
+
+\newglossarystyle{nomenclstyle}{
+    % Umgebung
+    \renewenvironment{theglossary}
+        {\begin{longtable}{llc}}
+        {\end{longtable}}
+    % Tabellenkopf
+    \renewcommand*{\glossaryheader}{\bfseries Name & \bfseries Beschreibung & \bfseries Symbol \\\hline\endhead}
+    % kein Abstand zwischen Gruppen
+    \renewcommand*{\glsgroupheading}[1]{}
+    \renewcommand*{\glossaryentryfield}[5]{
+    \glstarget{##1}{##2}% Name
+            & ##3 % Beschreibung
+            & ##4 % Symbol
+            \\ % Zeilenende
+    }
+    % Was zwischen den einzelnen Glossar-Gruppen zu tun ist
+    \renewcommand*{\glsgroupskip}{\relax}
+}
 
 \makeglossaries
 
@@ -60,7 +79,79 @@
 \newacronym{cufft}{cuFFT}{NVIDIA \gls{cuda} \textit{Fast Fourier Transform}}
 \newacronym{hpc}{HPC}{\textit{High Performance Computing}}
 
-%\newglossaryentry{proj}{name=Projektion,
-%                         description={Formelzeichen einer Projektion},
-%                         symbol={$p$},
-%                         type=nomencl}
+\newglossaryentry{proj}{name=Projektion,
+                        description={Röntgenaufnahme eines Objekts},
+                        symbol={$p$},
+                        plural=Projektionen,
+                        type=nomencl}
+\newglossaryentry{fourproj}{name={fouriertransformierte Projektion},
+                            description={in den Frequenzraum überführte Projektion},
+                            symbol={$P$},
+                            plural={fouriertransformierte Projektionen},
+                            sort={Projektion, fouriertransformiert},
+                            type=nomencl}
+\newglossaryentry{filtproj}{name={gefilterte Projektion},
+                            description={im Frequenzraum gewichtete Projektion},
+                            symbol={$p_F$},
+                            plural={gefilterte Projektionen},
+                            sort={Projektion, gefiltert},
+                            type=nomencl}
+\newglossaryentry{obj}{name=Objekt,
+                       description={von Röntgenstrahlen durchleuchtetes Objekt},
+                       symbol={$f$},
+                       plural=Objekte,
+                       type=nomencl}
+\newglossaryentry{fourobj}{name={fouriertransformiertes Objekt},
+                           description={in den Frequenzraum überführtes Objekt},
+                           symbol={$F$},
+                           plural={fouriertransformierte Objekte},
+                           sort={Objekt, fouriertransformiert},
+                           type=nomencl}
+\newglossaryentry{vol}{name=Volumen,
+                       description={aus Projektionen rekonstruiertes Objekt},
+                       symbol={$v$},
+                       plural=Volumina,
+                       type=nomencl}
+\newglossaryentry{dsrc}{name=Quelle-Objekt-Abstand,
+                        description={Abstand zwischen Quelle und Objektmittelpunkt},
+                        symbol={$d_{src}$},
+                        sort={Abstand, Quelle-Objekt},
+                        type=nomencl}
+\newglossaryentry{ddet}{name=Objekt-Detektor-Abstand,
+                        description={Abstand zwischen Objektmittelpunkt und Detektor},
+                        symbol={$d_{det}$},
+                        sort={Abstand, Objekt-Detektor},
+                        type=nomencl}
+\newglossaryentry{dsd}{name=Quelle-Detektor-Abstand,
+                       description={Abstand zwischen Quelle und Detektor},
+                       symbol={$d_{sd}$},
+                       sort={Abstand, Quelle-Detektor},
+                       type=nomencl}
+\newglossaryentry{nh}{name=Zeilenlänge,
+                      description={Pixelzahl pro Projektionszeile},
+                      symbol={$N_h$},
+                      sort={Länge, Zeile},
+                      type=nomencl}
+\newglossaryentry{nv}{name=Spaltenlänge,
+                      description={Pixelzahl pro Projektionsspalte},
+                      symbol={$N_v$},
+                      sort={Länge, Spalte},
+                      type=nomencl}
+\newglossaryentry{dh}{name={Pixelbreite},
+                      description={physische Breite eines Detektorpixels},
+                      symbol={$d_h$},
+                      sort={Pixelabstand, horizontal},
+                      type=nomencl}
+\newglossaryentry{dv}{name={Pixelhöhe},
+                      description={physische Höhe eines Detektorpixels},
+                      symbol={$d_v$},
+                      sort={Pixelabstand, vertikal},
+                      type=nomencl}
+
+\glsadd{filtproj}
+\glsadd{vol}
+\glsadd{dsd}
+\glsadd{nh}
+\glsadd{nv}
+\glsadd{dh}
+\glsadd{dv}

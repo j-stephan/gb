@@ -13,22 +13,21 @@ gemeine Problem des begrenzten \gls{gpu}-Speichers erläutert, woran sich dessen
 
 \subsection{Bestehende Parallelisierungsstrategien und ihre Grenzen}\label{ssec:par_strat}
 
-Von den in Abschnitt~\ref{ssec:par} genannten Ansätzen in der Literatur sind aufgrund ihrer Umsetzung für \gls{gpu}s die
-Strategien von Xu et al. (vgl.~\cite{xumuell}), Scherl et al. (vgl.~\cite{scherlkeck}) und Zhao et al.
+Von den in Abschnitt~\ref{sec:forschungsstand} genannten Ansätzen in der Literatur sind aufgrund ihrer Umsetzung für
+\gls{gpu}s die Strategien von Xu et al. (vgl.~\cite{xumuell}), Scherl et al. (vgl.~\cite{scherlkeck}) und Zhao et al.
 (vgl.~\cite{zhao}) von besonderem Interesse für diese Arbeit.
 
 Da Xu et al. 2004 mit ihrer Arbeit Neuland betraten, standen ihnen viele Methoden und Technologien, die seitdem 
 entwickelt wurden, noch nicht zur Verfügung. Die 2004 erschienenen \gls{gpu}s hatten im Vergleich zu heutigen
-Grafikkarten sehr viel weniger Speicher; das damals beste verfügbare Produkt von NVIDIA{\textregistered}, die
-GeForce{\textregistered} 6800 Ultra, konnte lediglich mit 512 MiB Speicher aufwarten und war nur über \gls{opengl} oder
-\gls{directx} indirekt programmierbar (vgl.~\cite{geforce6800}). Den begrenzten Speicher versuchte die Gruppe durch eine
-Aufteilung des Volumens und eine schichtweise Rekonstruktion desselben unter Einbeziehung aller Projektionen möglichst
-effizient zu nutzen (vgl.~\cite{xumuell}). Aufgrund des technischen Fortschritts stehen uns heute andere Möglichkeiten
-zur Lösung dieses Problems offen; so bietet etwa die NVIDIA{\textregistered} GeForce{\textregistered} GTX 1080 mit 8 GiB
-Speicher und der Möglichkeit der direkten Programmierung mittels \gls{cuda} oder \gls{opencl} ganz andere Nutzungs- und
-Berechnungsmöglichkeiten als ihre frühen Vorgänger (vgl.~\cite{gtx1080}). Insbesondere ist es möglich, das ganze Volumen
-oder größere Teile davon während der Berechnung im Speicher zu halten und dadurch häufige Kopien zwischen
-\gls{cpu}-Speicher und \gls{gpu}-Speicher zu vermeiden.
+Grafikkarten sehr viel weniger Speicher; das damals beste verfügbare Produkt von NVIDIA, die GeForce 6800 Ultra, konnte
+lediglich mit 512 MiB Speicher aufwarten und war nur über \gls{opengl} oder \gls{directx} indirekt programmierbar
+(vgl.~\cite{geforce6800}). Den begrenzten Speicher versuchte die Gruppe durch eine Aufteilung des Volumens und eine
+schichtweise Rekonstruktion desselben unter Einbeziehung aller Projektionen möglichst effizient zu nutzen
+(vgl.~\cite{xumuell}). Aufgrund des technischen Fortschritts gibt es heute andere Möglichkeiten zur Lösung dieses
+Problems; so bietet etwa die NVIDIA GeForce GTX 1080 mit 8 GiB Speicher und der Möglichkeit der direkten Programmierung
+mittels \gls{cuda} oder \gls{opencl} ganz andere Nutzungs- und Berechnungsmöglichkeiten als ihre frühen Vorgänger
+(vgl.~\cite{gtx1080}). Insbesondere ist es möglich, das ganze Volumen oder größere Teile davon während der Berechnung im
+Speicher zu halten und dadurch häufige Kopien zwischen \gls{cpu}-Speicher und \gls{gpu}-Speicher zu vermeiden.
 
 Die Forschungsgruppe um Scherl baute auf der Idee, das Volumen im Speicher zu halten, auf und ging im Gegensatz zu Xu et
 al.\ den Weg, jede Projektion einzeln in dieses Volumen zu projizieren (vgl.~\cite{scherlkeck}). Zur Trennung bzw.\
@@ -51,7 +50,7 @@ entspricht. Auf diese Weise lassen sich durch eine Berechnung die Detektorkoordi
 eine Verkürzung der Rechenzeit verspricht (vgl.~\cite{zhao}). In der Praxis scheitert dieses Verfahren an dem
 mechanischen Aufbau üblicher CT-Scanner. Da entweder Quelle und Detektor oder aber das Untersuchungsobjekt rotiert
 werden müssen, kommt es durch Fehler in der Mechanik häufig dazu, dass Aufnahmen doppelt gemacht oder übersprungen
-werden; auch kann es passieren, dass die Winkelschritte zwischen zwei Aufnahmen nicht immer einheitlich sind.
+werden.
 
 \begin{figure}[!htb]
     \centering
@@ -327,7 +326,7 @@ Hardware in wenigen Minuten lösbar ist. Da die \gls{cuda}-Plattform den paralle
 unterstützt, ist die Implementierung so zu konzipieren, dass sie auf einer oder mehreren Grafikkarten korrekte
 Ergebnisse bei gleichzeitiger Beschleunigung des Gesamtalgorithmus berechnet.
 
-\subsection{Optimierungsüberlegungen}\label{ssec:opti_ueber}
+\subsection{Vorüberlegungen}\label{ssec:opti_ueber}
 
 Die Optimierung eines \gls{kernel}s fußt im Wesentlichen auf drei Dingen:
 
@@ -546,8 +545,6 @@ entstandenen Fehler durch Redundanzen zu minimieren.
 
 \subsection{Geometrische Berechnungen}\label{ssec:geometrie}
 
-\subsubsection{Volumengeometrie}\label{sssec:vol_geometrie}
-
 Für die Berechnung der Rückprojektion ist notwendig, die Zahl der im Volumen enthaltenen \gls{voxel} sowie deren
 physische Ausdehnungen zu kennen. Da diese Informationen als Eingabeparameter des \gls{fdk} nicht zur Verfügung stehen,
 müssen sie aus den bekannten geometrischen Parametern errechnet werden.
@@ -558,59 +555,6 @@ $y_l$ sowie der Detektordimension $h$ ein Zusammenhang besteht.
 Die geschilderten Zusammenhänge sind für die Volumendimension $z_m$ und die Detektordimension $v$ äquivalent, sodass
 sich die gezeigten Formeln durch den Austausch der relevanten Parameter auf diese übertragen lassen.
 
-\subsubsection{Physische und nichtphysische Koordinatensysteme}\label{sssec:phys_coord}
-
-Die in Abschnitt~\ref{ssec:fdk} vorgestellten Formeln zur Wichtung, Filterung und Rückprojektion setzen voraus, dass
-sich die Ursprünge der Volumen- und Detektorkoordinatensysteme in den Zentren der zugehörigen Objekte befinden. Der für
-die mathematische Betrachtung der Rückprojektion vernünftige Ansatz führt jedoch zu Problemen, wenn es um die
-Adressierung des Speichers geht. Das erste Element eines reservierten Speicherbereichs mit $n$ Elementen hat stets den
-Index $0$, das Zentrum den Index $\frac{n - 1}{2}$. Übertragen auf das Volumenkoordinatensystem heißt das, dass der
-Ursprung mit den \textit{physischen} Koordinaten $(0, 0, 0)$ in einem dreidimensionalen Speicherbereich an der Stelle
-$(\frac{x - 1}{2}, \frac{y - 1}{2}, \frac{z - 1}{2})$ zu finden ist, wobei $x$, $y$ und $z$ die Zahl der Voxel in der
-jeweiligen Dimension angeben. Um die Formeln also bei der Implementierung der Rückprojektion nutzen zu können, ist eine
-Umrechnung in das jeweils andere Koordinatensystem erforderlich.
-
-Die Umrechnung eines Speicherindexes in eine physische Adresse lässt sich leicht durchführen. Ausgehend von $V$
-Elementen in einer beliebigen Dimension, die jeweils $d_v$ Millimeter breit sind, lässt sich die physische Größe $V'$
-des durch den Speicherbereich abgebildeten Objekts und damit auch dessen physischer Mittelpunkt $V'_M$ in dieser
-Dimension bestimmen:
-
-\begin{equation}
-    \begin{aligned}
-        V' &= V \cdot d_v\\
-        V'_M &= \frac{V'}{2}
-    \end{aligned}
-\end{equation}
-
-Stellt man sich die Elemente in horizontaler Anordnung vor und weist dem äußerst linken Element den Index $0$, also den
-Ursprung, zu, so lässt sich über die Multiplikation des Indexes mit $d_v$ die physische Grenze (Kante) zwischen zwei
-Elementen bestimmen. Der linke Rand des ersten Elements befindet sich also bei $0$ mm, die Kante zwischen dem ersten und
-dem zweiten Element bei $d_v$ mm, zwischen dem zweiten und dritten Element bei $2 \cdot d_v$ mm usw. Durch die
-Verschiebung des Ursprungs auf $V'_M$ ergibt sich nun das Problem, dass dieser nun für ungerade $V$ im Mittelpunkt eines
-Elements liegt, für gerade $V$ dagegen auf der Kante zwischen zwei Elementen. Es ist deswegen sinnvoll, die physische
-Koordinate $v'$ des Elements mit dem Index $v$ durch den Abstand des Elementzentrums vom Ursprung zu bestimmen:
-
-\begin{equation}\label{eq:mem_to_phys}
-    v' = -V_M' + \frac{d_v}{2} + v \cdot d_v
-\end{equation}
-
-Die Formel~\ref{eq:mem_to_phys} stellt die Umrechnung eines Indexes im Speicher in eine physische Koordinate dar. Durch
-die Anwendung dieser Formel auf jede betrachtete Dimension ($x$, $y$ und $z$ für das Volumen, $h$ und $v$ für den
-Detektor) lässt sich diese Umrechnung auch im Raum bzw.\ in der Ebene durchführen. Durch die Umstellung der Formel nach
-$v$ lässt sich auch der umgekehrte Weg gehen.
-
-Bei der Anwendung auf das Detektorkoordinatensystem sind die in Abschnitt~\ref{sssec:offset} genannten Verschiebungen zu
-beachten. Exemplarisch wird diese Berücksichtung in Formel~\ref{eq:phys_to_mem} gezeigt, die die Umrechnung einer
-der physischen Koordinate $p'$ in einen Speicherindex $p$ darstellt, wobei $P_M'$ dem physischen Mittelpunkt der
-\gls{pixel} in dieser Dimension entspricht, $d_p$ deren physischer Breite und $\Delta p$ der Verschiebung:
-
-\begin{equation}\label{eq:phys_to_mem}
-    p = \frac{p' + P_M' + \Delta p}{d_p} - \frac{1}{2}
-\end{equation}
-
-Die Implementierung dieser Formeln mit \gls{cuda} ist den angehängten Quelltexten~\ref{app:coord_vol}
-und~\ref{app:coord_det} zu entnehmen.
-
 \subsection{Implementierung der Vorstufen}
 
 Bevor die Rückprojektion erfolgen kann, müssen die individuellen Projektionen gewichtet und gefiltert werden. Die
@@ -618,18 +562,19 @@ Implementierung mit \gls{cuda} wird in den folgenden beiden Abschnitten beschrie
 
 \subsubsection{Wichtung}
 
-Die Grundlage der Wichtungsoperation ist die in Abschnitt~\ref{sssec:fdk_wichtung} vorgestellte
+Die Grundlage der Wichtungsoperation ist die in Abschnitt~\ref{ssec:fdk_wichtung} vorgestellte
 Formel~\ref{eq:wichtung}:
 
 \begin{equation*}
     w_{ij} = \frac{d_{det} - d_{src}}{\sqrt{(d_{det} - d_{src})^2 + h_j^2 + v_i^2}}
 \end{equation*}
 
-Es ist leicht zu sehen, dass sich der Wichtungsfaktor $w_{ij}$ zwar pro \gls{pixel} ändert, aber nicht von der konkreten
-Projektion abhängig ist. Es ist daher möglich, die Berechnung der Wichtungsfaktoren am Anfang des Programms genau einmal
+Es ist leicht zu sehen, dass der Wichtungsfaktor $w_{ij}$ zwar von geometrischen Parametern abhängt, jedoch nicht von
+konkreten Messwerten. Es ist daher möglich, die Berechnung der Wichtungsfaktoren am Anfang des Programms genau einmal
 durchzuführen und in einer Wichtungsmatrix \texttt{m} zu speichern (siehe Quelltext~\ref{source:impl_gen_mat}). Die
 Berechnung der Wichtungsmatrix hängt von mehreren geometrischen Parametern ab (vgl.\
-Abschnitt~\ref{sssec:fdk_geometrie} und Abbildungen~\ref{fig:det_geometrie},~\ref{fig:det_pixel},~\ref{fig:det_koord},~\ref{fig:off_geometrie}):
+Abschnitt~\ref{sssec:fdk_geometrie} und
+Abbildungen~\ref{fig:det_geometrie},~\ref{fig:det_pixel},~\ref{fig:det_koord},~\ref{fig:off_geometrie}):
 
 \begin{itemize}
     \item \texttt{dim\_x}: Anzahl der \gls{pixel} in horizontaler Richtung. Entspricht der Anzahl der Detektorpixel in

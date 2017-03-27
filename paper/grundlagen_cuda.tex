@@ -124,7 +124,7 @@ abspeichert (vgl.~\cite{kirkhwu}, S. 42 -- 43).
 \subsection{Parallele Ausführung}
 
 Die Ausführung eines \gls{cuda}-Programms beginnt auf dem \gls{host}. Wird ein \gls{kernel} aufgerufen, so wird auf dem
-\gls{device} eine Anzahl an Threads gestartet. Die Summe aller auf dem \gls{device} gestrateten Threads bezeichnet
+\gls{device} eine Anzahl an Threads gestartet. Die Summe aller auf dem \gls{device} gestarteten Threads bezeichnet
 man als \textit{\gls{grid}}. Haben alle Threads eines \gls{kernel}s ihre Ausführung beendet, wird auch das \gls{grid}
 beendet.
 Das Starten eines \gls{kernel}s erzeugt typischerweise eine große Zahl von Threads. Im Gegensatz zur \gls{cpu}, auf der
@@ -173,11 +173,10 @@ Größe, können jedoch maximal 1024 Threads umfassen; die Thread-Zahl der Blöc
 Ausführung des \gls{kernel}s definiert. Für ein gegebenes \gls{grid} kann die Anzahl der Threads pro Block durch die 
 Variable \texttt{blockDim} abgefragt werden, während der individuelle Block, zu dem ein bestimmter Thread gehört, durch
 die Variable \texttt{blockIdx} identifiert werden kann. Innerhalb eines Blocks kann ein einzelner Thread über die
-Variable \texttt{threadIdx} bestimmt werden. Für den ersten Thread des Blocks \texttt{0} hat \texttt{threadIdx} also den
-Wert \texttt{0}, für den zweiten \texttt{1}, für den dritten \texttt{2}, usw. Durch die Kombination der drei Variablen,
-wie sie in Quelltext~\ref{source:vec_add_cuda} dargestellt ist, lässt sich somit jeder Thread innerhalb des \gls{grid}s
-eindeutig identifizieren. Da \gls{cuda} das Starten von zwei- und dreidimensionalen \gls{kernel}n unterstützt, kann über
-die Felder \texttt{x}, \texttt{y} und \texttt{z} die Zahl der Blöcke bzw.\ Threads in der jeweiligen Dimension bestimmt
+Variable \texttt{threadIdx} bestimmt werden. Durch die Kombination der drei Variablen, wie sie in
+Quelltext~\ref{source:vec_add_cuda} dargestellt ist, lässt sich somit jeder Thread innerhalb des \gls{grid}s eindeutig
+identifizieren. Da \gls{cuda} das Starten von zwei- und dreidimensionalen \gls{kernel}n unterstützt, kann über die
+Felder \texttt{x}, \texttt{y} und \texttt{z} die Zahl der Blöcke bzw.\ Threads in der jeweiligen Dimension bestimmt
 werden (vgl.~\cite{kirkhwu}, S. 54).
 
 Ein weiterer Unterschied zur herkömmlichen C++-Programmierung ist das Schlüsselwort \texttt{\_\_global\_\_} vor der

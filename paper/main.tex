@@ -3,11 +3,13 @@
 \usepackage{caption}
 \usepackage{datetime}
 \usepackage{etoolbox}
-\usepackage[acronyms,nonumberlist,toc,xindy]{glossaries}
+\usepackage[acronyms,nonumberlist,toc,savewrites,xindy]{glossaries}
 \usepackage[chapter,newfloat]{minted}
 \usepackage{pgfplots}
 \usepackage{tcolorbox}
 \usepackage{tikz}
+
+\input{glossar}
 
 \newenvironment{code}{\captionsetup{type=listing}}{}
 \SetupFloatingEnvironment{listing}{name=Quelltext}
@@ -39,8 +41,6 @@
                  von der AREVA-Stiftungsprofessur für bildgebende Messverfahren für die Energie- und Verfahrenstechnik.}
 \bibfiles{bibliography.bib}
 
-\input{glossar}
-
 % Germanisiere LaTeX
 \deftranslation[to=German]{Acronyms}{Abkürzungsverzeichnis}
 \deftranslation[to=German]{Glossary}{Glossar}
@@ -48,7 +48,9 @@
 
 \begin{document}
 
-\printglossaries
+\printglossary
+\printglossary[type=\acronymtype]
+\printglossary[type=nomencl,style=nomenclstyle]
 \listoffigures
 \listoflistings
 \listoftables
