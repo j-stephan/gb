@@ -20,7 +20,7 @@ Ressourcen erforderlich. Da der \textit{Shared Memory} in der Implementierung ni
 Umsetzung dieser Forderung auf einen möglichst geringen Registerverbrauch ab.
 
 Wie in Abbildung~\ref{fig:kernel_props} zu sehen ist, benötigt der Rückprojektions-\gls{kernel} 19 Register
-(grün markiert). Auf der hier verwendeten GTX 1080 ist somit eine theoretische Auslastung der gesamten \gls{gpu}
+(grün markiert). Auf der hier verwendeten GeForce GTX 1080 ist somit eine theoretische Auslastung der gesamten \gls{gpu}
 möglich, praktisch wird die \gls{gpu} durch die Rückprojektion zu 88,5\% ausgelastet (rot markiert).
 
 Ein weiteres der drei Optimierungsziele, die in Abschnitt~\ref{ssec:opti_ueber} genannt wurden, ist die Verkürzung der
@@ -36,18 +36,16 @@ Abbildung~\ref{fig:kernel_wait} zeigt allerdings auch, dass diese Wartezeit noch
 und die Filterung, die durch die kleineren, bunten Balken repräsentiert werden, parallel zur Rückprojektion
 durchzuführen, konnte nicht erreicht werden. Der Grund dafür ist vermutlich die Anzahl der Threads, die vom
 Rückprojektions-\gls{kernel} gestartet werden. Bei einem Volumen mit 1070 x 1070 x 1033 \gls{voxel}n, denen jeweils ein
-Thread zugeordnet wird, werden 1.182.681.700 Threads benötigt. Die hier verwendete Grafikkarte, die
-GeForce{\textregistered} GTX 1080, verfügt über 20 \gls{sm}s, von denen jeder bis zu 2.048 Threads gleichzeitig
-ausführen kann und kann somit bis zu 40.960 Threads gleichzeitig verwalten. Die \gls{gpu} ist daher gezwungen, der
-Rückprojektion alle verfügbaren Threads zuzuweisen, was zur Folge hat, dass keine weiteren \gls{kernel} ausgeführt
-werden können. Wenn auch die parallele Ausführung der Rückprojektion und der vorherigen Schritte nicht gelungen ist, ist
-auf der Abbildung jedoch zu sehen, dass die Ausführung der \gls{kernel} mit geringerem Ressourcenbedarf sich
-stellenweise überlappt.
+Thread zugeordnet wird, werden 1.182.681.700 Threads benötigt. Die GTX 1080 verfügt über 20 \gls{sm}s, von denen jeder
+bis zu 2.048 Threads gleichzeitig ausführen kann und kann somit bis zu 40.960 Threads gleichzeitig verwalten. Die
+\gls{gpu} ist daher gezwungen, der Rückprojektion alle verfügbaren Threads zuzuweisen, was zur Folge hat, dass keine
+weiteren \gls{kernel} ausgeführt werden können. Wenn auch die parallele Ausführung der Rückprojektion und der vorherigen
+Schritte nicht gelungen ist, ist auf der Abbildung jedoch zu sehen, dass die Ausführung der \gls{kernel} mit geringerem
+Ressourcenbedarf sich stellenweise überlappt.
 
 Die Wartezeit zwischen zwei Rückprojektionen, die über die gesamte Laufzeit akkumuliert ca. 3 Sekunden einnimmt, hat
-einen akzeptablen Wert, der dem alltäglichen Gebrauch nicht im Wege steht. Auch wenn an dieser Stelle noch
-Optimierungspotential vorhanden ist, brächte selbst eine vollständige Eliminierung der Wartezeit keinen besonders
-hervorzuhebenden Mehrwert.
+also einen akzeptablen Wert erreicht, der dem alltäglichen Gebrauch nicht im Wege steht. Auch wenn an dieser Stelle noch
+Optimierungspotential vorhanden ist, wäre selbst eine vollständige Eliminierung der Wartezeit vernachlässigbar.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{img/kernel_properties}
@@ -112,3 +110,36 @@ ermittelt wird.
 \end{figure}
 
 \section{Vergleich mit der Literatur}
+
+Der Vergleich mit den oben vorgestellten Ansätzen der Literatur ist ebenfalls von Interesse. Da Zhao et al.\ in ihrer
+Arbeit nur Zeiten für die Rückprojektion angeben, werden im Vergleich mit der von ihnen vorgestellten Variante ebenfalls
+nur die Zeiten der Rückprojektion berücksichtigt. Scherl et al.\ beziehen dagegen auch die Datenein- und -ausgabe mit
+ein. Zur Messung wurde von Zhao et al.\ die 2007 erschienene NVIDIA Quadro FX4600 eingesetzt, die über 768 MiB Speicher
+verfügt; Scherl et al.\ verwendeten die 2006 vorgestellte NVIDIA GeForce 8800 GTX, die ebenfalls mit 768 MiB Speicher
+ausgerüstet ist. Für den Vergleich fand in dieser Arbeit die 2016 präsentierte NVIDIA GeForce GTX 1080 Verwendung, die
+mit 8 GiB Speicher ausgestattet ist.
+
+Wie die obere Hälfte der Tabelle~\ref{table:paris_vs_scherl_zhao} zeigt, kann die vorgestellte Implementierung die von
+Scherl et al.\ erreichten Werte, inklusive der Datenein- und Ausgabe, auf modernerer Hardware um ein Viertel
+unterbieten. Es ist ebenfalls gelungen, die von Zhao et al.\ vorgestellten Zeitangaben auf bis zu ein Drittel der Zeit
+zu reduzieren.
+
+\begin{table}
+    \centering
+    \begin{tabular}{llccc}
+        \hline
+        & GPU & Volumengröße [Voxel] & Projektionszahl & Zeitbedarf [s]\\
+        \hline
+        Scherl et al. & GeForce 8800 GTX & 512 x 512 x 512 & 414 & 12\\
+        Stephan & GeForce GTX 1080 & 512 x 512 x 512 & 360 & 9\\
+        Stephan & GeForce GTX 1080 & 512 x 512 x 512 & 480 & 9\\
+        \hline
+        Zhao et al. & Quadro FX4600 & 512 x 512 x 512 & 360 & 7,7\\
+        Stephan & GeForce GTX 1080 & 512 x 512 x 512 & 360 & 2\\
+        Zhao et al. & Quadro FX4600 & 1024 x 1024 x 1024 & 720 & 101,9\\
+        Stephan & GeForce GTX 1080 & 1024 x 1024 x 1024 & 720 & 34\\
+        \hline
+    \end{tabular}
+    \caption{Vergleich mit denen von Scherl et al.\ und Zhao et al.\ vorgestellten Ansätzen}
+    \label{table:paris_vs_scherl_zhao}
+\end{table}
