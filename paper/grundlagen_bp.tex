@@ -1,4 +1,4 @@
-\chapter{Grundlagen der Computertomographie}\label{chap:grundlagen_bp}
+\chapter{Grundlagen der Computertomographie}\label{grundlagen_bp}
 
 Dieses Kapitel erläutert die für diese Arbeit relevanten theoretischen Grundlagen der Computertomographie. Es werden
 zunächst die mathematischen Voraussetzungen gezeigt, darauf aufbauend schließt sich die Beschreibung des \gls{fdk} an.
@@ -13,12 +13,12 @@ Anschließend wird das Prinzip der daraus abgeleiteten gefilterte Rückprojektio
 
 Durchquert ein Röntgenstrahl ein festes Objekt, wie beispielsweise biologisches Gewebe oder ein Metall, so wird dieser
 Strahl je nach Dichte des Materials entlang seiner Bahn abgeschwächt bzw.\ absorbiert. Mathematisch lässt sich ein
-Objekt daher als zwei- oder dreidimensionale Verteilung von linearen Röntgenschwächungskoeffizienten verstehen, während
-die gesamte Abschwächung entlang einer Strahlbahn als Kurvenintegral dargestellt werden kann.
+Objekt daher als zwei- oder dreidimensionale Verteilung von linearen Röntgenschwächungskoeffizienten verstehen. Die
+Schwächung entlang eines Röntgenstrahls kann als Kurvenintegral dargestellt werden.
 
 Die Grundlage der folgenden Ausführungen ist die Abbildung~\ref{fig:math_proj}. Als Beispiel dienen ein \gls{obj}, hier
-durch die Funktion $f(x, y)$ repräsentiert, sowie Kurvenintegrale, hier das Parameterpaar $(\alpha, t)$. Die Linie $AB$
-lässt sich dann durch die folgende Formel darstellen:
+durch die Funktion $f(x, y)$ repräsentiert, sowie Kurvenintegrale mit dem Parameterpaar $(\theta, t)$. Die Linie $AB$
+lässt sich dann wie folgt darstellen:
 
 \begin{equation*}
     x \cdot \cos \theta + y \cdot \sin \theta  = t_1
@@ -91,8 +91,8 @@ Das zu $f(x, y)$ gehörige Kurvenintegral ist $p_{\theta}(t)$:
     p_{\theta}(t) = \int\limits_{(\theta, t)\text{-Linie}} f(x, y)\ \mathrm{d}s
 \end{equation}
 
-Zusammen mit der aus Formel~\ref{eq:proj_obj} resultierenden Delta-Distribution lässt sich das Kurvenintegral wie folgt
-umschreiben:
+Wird die Objektfunktion $f(x, y)$ entlang einer Linie nach Gleichung~\ref{eq:proj_obj} abgetastet, dann lässt sich das
+Kurvenintegral wie folgt umschreiben:
 
 \begin{equation}\label{eq:proj_radon}
     p_{\theta}(t) = \int\limits_{-\infty}^{\infty}\int\limits_{-\infty}^{\infty}f(x, y) \cdot \delta(x \cdot
@@ -101,7 +101,7 @@ umschreiben:
 
 Die Funktion $p_{\theta}(t)$ ist die \textit{Radon-Transformation} der Funktion $f(x, y)$ (vgl.~\cite{radon}).
 
-Eine \gls{proj} lässt sich als die Kombination einer Menge von Strahlen verstehen. Die (mathematisch) einfachste
+Eine \gls{proj} lässt sich als eine Menge von Radon-Transformationen verstehen. Die (mathematisch) einfachste
 \gls{proj} ist eine Sammlung von Parallelstrahlintegralen $p_{\theta}(t)$ unter einem konstanten Winkel $\theta$. Man
 bezeichnet eine solche \gls{proj} als \textit{Parallelstrahlprojektion} (siehe Abbildung~\ref{fig:par_proj}). In der
 Praxis kann eine Parallelstrahlprojektion durch die Bewegung einer Quelle-Detektor-Anordnung entlang paralleler Linien
@@ -220,27 +220,18 @@ S. 49 -- 51).
 
 \subsection{Das Fourier-Scheiben-Theorem}\label{ssec:fourier_scheibe}
 
-Der Zusammenhang zwischen der \gls{proj} und dem \gls{obj} wird noch deutlicher, wenn man erstere einer eindimensionalen
-und letztere einer zweidimensionalen Fouriertransformation unterzieht. So stellten Rosenfeld und Kak in ihrer Arbeit
-fest, dass die Fouriertransformation einer Parallelstrahlprojektion eines \gls{obj}s $f(x, y)$, die unter dem Winkel
-$\theta$ aufgenommen wurde, einer Schicht des zweidimensional fouriertransformierten \gls{obj}s $F(u, v)$, entspricht.
+Das Fourier-Scheiben-Theorem beschreibt den mathematischen Zusammenhang zwischen der Menge der Projektionen und der
+zweidimensionalen Objektfunktion im Ortsraum. Die Fouriertransformation einer Parallelstrahlprojektion eines
+\gls{obj}s $f(x, y)$, die unter dem Winkel $\theta$ aufgenommen wurde, entspricht einer Schicht des zweidimensional
+fouriertransformierten \gls{obj}s $F(u, v)$.
 Mit anderen Worten ergibt die Fouriertransformation einer \gls{proj} $p_{\theta}(t)$ die Werte von $F(u, v$) entlang
-einer radialen Linie $BB$ (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{rosenkak}, S.366).
+einer radialen Linie $BB$ (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{rosenkak}, S.366). 
 
-Rosenfeld und Kak haben diesen Zusammenhang auch mathematisch hergeleitet (siehe Anhang~\ref{app:fourier_scheibe}). 
-Aus diesem folgt, dass sich die Werte von $F(u, v)$ entlang radialer Linien dadurch bestimmen lassen, dass man die
-\glspl{proj} des \gls{obj}s unter mehreren Winkeln $\theta_1$, $\theta_2$, \ldots, $\theta_k$ aufnimmt und diese
-fouriertransformiert. Für eine unendliche Anzahl von \glspl{proj} wäre $F(u, v)$ somit in allen Punkten der $uv$-Ebene
-bestimmt, sodass die Objektfunktion $f(x, y)$ durch die inverse Fouriertransformation bestimmt werden kann. In der
-Praxis können allerdings nur endlich viele Projektionen aufgenommen werden, sodass $F(u, v)$ ebenfalls nur entlang einer
-endlichen Anzahl radialer Linien bestimmt ist (siehe Abbildung~\ref{fig:fourier_scheibe_endlich}). Um $f(x, y)$ dennoch
-näherungsweise bestimmen zu können, müssen die restlichen Punkte anhand der bekannten Werte interpoliert werden, was
-typischerweise durch eine \textit{nearest neighbour} oder eine lineare Interpolation geschieht. Da die Dichte der
-vorhandenen Punkte immer geringer wird, je weiter man sich vom Ursprung entfernt, nimmt der Interpolationsfehler bei
-größerer Distanz zu. Die Komponenten eines Bildes mit hoher Frequenz sind somit stärker von Fehlern betroffen als die
-niederfrequenten Anteile, was einen Qualitätsverlust des rekonstruierten Bildes zur Folge hat (vgl.~\cite{kakslan},
-S. 59 -- 60).
-
+Dieser Zusammenhang lässt sich auch mathematisch herleiten (siehe Anhang~\ref{app:fourier_scheibe}). Aus ihm folgt, dass
+sich die Werte von $F(u, v)$ entlang radialer Linien dadurch bestimmen lassen, dass man die \glspl{proj} des \gls{obj}s
+unter mehreren Winkeln $\theta_1$, $\theta_2$, \ldots, $\theta_k$ aufnimmt und diese fouriertransformiert. Für eine
+unendliche Anzahl von \glspl{proj} wäre $F(u, v)$ somit in allen Punkten der $uv$-Ebene bestimmt, sodass die
+Objektfunktion $f(x, y)$ durch die inverse Fouriertransformation bestimmt werden kann. 
 \begin{figure}
     \centering
     \begin{tikzpicture}[axis/.style={thick,->}]
@@ -354,29 +345,30 @@ S. 59 -- 60).
 
 Durch das Fourier-Scheiben-Theorem lassen sich ein \gls{fourobj} und eine \gls{fourproj} entlang einer radialen Linie in
 einen Zusammenhang stellen. Daraus folgt, dass man mit genügend vielen fouriertransformierten \glspl{proj}, die unter
-unterschiedlichen Winkeln aufgenommen wurden, eine Annäherung an das zweidimensional fouriertransformierte \gls{obj} und
-damit (durch die inverse Fouriertransformation) an das \gls{obj} selbst erreichen kann. Dieses einfache Modell der
-Tomographie lässt sich jedoch nur mit viel Aufwand in dieser Form implementieren (vgl.~\cite{kakslan}, S. 60).
+unterschiedlichen Winkeln aufgenommen wurden, das zweidimensional fouriertransformierte \gls{obj} und damit (durch die
+inverse Fouriertransformation) das \gls{obj} selbst rekonstruieren kann. Dieses einfache Modell der Tomographie lässt
+sich jedoch nur mit viel Aufwand in dieser Form implementieren (vgl.~\cite{kakslan}, S. 60).
 
-Ein bekannter Ansatz, der weniger Aufwand erfordert, ist die gefilterte Rückprojektion, die sehr genau und schnell zu
-implementieren ist und sich aus dem Fourier-Scheiben-Theorem herleiten lässt. Dazu wird die inverse
-Fouriertransformation in einem polaren Koordinatensystem durchgeführt und die Grenzen der zugehörigen Integrale
-entsprechend angepasst (zur mathematischen Herleitung siehe~\cite{kakslan}, S. 63 -- 68). Es ist dieser Schritt, der
-eine effiziente Implementierung der Rekonstruktion für Computer ermöglicht; Kak und Slaney stellen fest: {\glqq}The
-derivation of this algorithm is perhaps one of the most illustrative examples of how we can obtain a radically different
-computer implementation by simply rewriting the fundamental expressions for the underlying theory{\grqq}
-(siehe~\cite{kakslan}, S. 60).
+Ein bekannter Ansatz, der weniger Aufwand erfordert, ist die gefilterte Rückprojektion, die sich aus dem
+Fourier-Scheiben-Theorem herleiten lässt. Dazu werden die inverse Fouriertransformation in einem polaren Koordinatensystem
+durchgeführt und die Grenzen der zugehörigen Integrale entsprechend angepasst (zur mathematischen Herleitung
+siehe~\cite{kakslan}, S. 63 -- 68). Es ist dieser Schritt, der eine effiziente Implementierung der Rekonstruktion für
+Computer ermöglicht; Kak und Slaney stellen fest: {\glqq}The derivation of this algorithm is perhaps one of the most
+illustrative examples of how we can obtain a radically different computer implementation by simply rewriting the
+fundamental expressions for the underlying theory{\grqq} (siehe~\cite{kakslan}, S. 60).
 
 Die Grundlage der gefilterten Rückprojektion ist der Umstand, dass jede \gls{proj} eine nahezu unabhängige Aufnahme des
 \gls{obj}s darstellt. Die einzige Gemeinsamkeit der unter verschiedenen Winkeln aufgenommenen \glspl{proj} ist die
 Gleichheit im Punkt $F(0, 0)$. Transformiert man eine einzelne \gls{proj} und nimmt an, dass es keine anderen
 \glspl{proj} gibt, so lässt sich durch die zweidimensionale inverse Fouriertransformation ein (verzerrtes) \gls{obj}
-rekonstruieren. Durch das Aufsummieren mehrerer transformierter \glspl{proj} nimmt die Qualität des rekonstruierten
-\gls{obj}s zu. Da die Fouriertransformation eine lineare Operation ist, lässt sich dieses Aufsummieren der \glspl{proj}
-auch im Ortsraum durchführen. In diesem Fall spricht man von der Rückprojektion (vgl.~\cite{kakslan}, S. 61).
+rekonstruieren. Es kann gezeigt werden (vgl.~\cite{kakslan}, S. 61), dass eine solche Rekonstruktion äquivalent der mit
+einem einfachen Filter multiplizierten Fouriertransformierten der originalen Objektfunktion ist. Durch das Aufsummieren
+mehrerer transformierter \glspl{proj} ergibt sich schließlich das rekonstruierte \gls{obj}. Da die Fouriertransformation
+eine lineare Operation ist, lässt sich dieses Aufsummieren der \glspl{proj} auch im Ortsraum durchführen. In diesem Fall
+spricht man von der Rückprojektion (vgl.~\cite{kakslan}, S. 61).
 
 Die Filterung lässt sich als Wichtung der \glspl{proj} im Frequenzraum betrachten. Wie bereits in
-Abschnitt~\ref{ssec:fourier_scheibe} erwähnt, nimmt die Anzahl der durch die (in endlicher Zahl vorliegenden) bekannten
+Abschnitt~\ref{ssec:fourier_scheibe} erwähnt, nimmt die Dicht der (in endlicher Zahl vorliegenden) bekannten
 Punkte im Frequenzraum mit steigender Distanz zum Ursprung ab. Durch die stärkere Wichtung der höheren Frequenzen der
 \glspl{proj} lassen sich die fehlenden Punkte approximieren, durch eine möglichst hohe Projektionszahl lässt sich die
 durch die fehlenden Informationen hervorgerufene Abweichung weiter verringern (vgl.~\cite{kakslan}, S. 61).

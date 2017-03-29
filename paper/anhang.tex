@@ -59,11 +59,60 @@ $(t, s)$-Koordinatensystem um den Winkel $\theta$ rotiert, so ist die Fouriertra
 zweidimensionalen Fouriertransformation des Objekts entlang einer radialen Linie, die um den Winkel $\theta$ rotiert
 wird (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{rosenkak}, S. 366).
 
-\chapter{Umsetzung}
+\chapter{Implementierung des FDK-Algorithmus}
 
-\section{Implementierung und Optimierung}
+\section{Implementierung der Filterung}
 
-\subsection{Geometrische Berechnungen}
+\begin{code}
+\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
+__global__ void filter_creation_kernel(float* __restrict__ r,
+    const std::int32_t* __restrict__ j, std::uint32_t size, float tau)
+{
+    auto x = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if(x < size)
+    {
+        if(j[x] == 0)
+            r[x] = (1.f / 8.f) * (1.f / powf(tau, 2.f));
+        else
+        {
+            if(j[x] % 2 == 0)
+                r[x] = 0.f;
+            else
+                r[x] = -(1.f / (2.f * powf(j[x], 2.f)
+                        * powf(M_PI, 2.f)
+                        * powf(tau, 2.f)));
+        }
+    }
+}
+\end{minted}
+\captionof{listing}{Filtergenerierung}
+\label{app:filter_gen}
+\end{code}
+
+\begin{code}
+\begin{minted}[escapeinside=||,fontsize=\small]{cuda}
+__global__ void normalization_kernel(cufftReal* dst,
+    std::size_t pitch, std::uint32_t width,
+    std::uint32_t height, std::uint32_t filter_size)
+{
+    auto x = blockIdx.x * blockDim.x + threadIdx.x;
+    auto y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if((x < width) && (y < height))
+    {
+        auto row = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<cufftReal*>(
+            |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(dst) + y * pitch);
+
+        row[x] /= filter_size;
+    }
+}
+\end{minted}
+\captionof{listing}{Projektionsnormalisierung}
+\label{app:filter_norm}
+\end{code}
+
+\section{Implementierung der gefilterten Rückprojektion}
 
 \begin{code}
 \begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
@@ -94,44 +143,6 @@ __device__ auto proj_pixel_coordinate(float coord, std::uint32_t dim,
 \captionof{listing}{Koordinatensystemtransformation auf dem Detektor}
 \label{app:coord_det}
 \end{code}
-
-\subsection{Implementierung der Vorstufen}
-
-\subsubsection{Filterung}
-
-\begin{code}
-\begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
-__global__ void filter_creation_kernel(float* __restrict__ r,
-    const std::int32_t* __restrict__ j, std::uint32_t size, float tau)
-{
-    auto x = blockIdx.x * blockDim.x + threadIdx.x;
-
-    if(x < size)
-    {
-        if(j[x] == 0)
-            r[x] = (1.f / 8.f) * (1.f / powf(tau, 2.f));
-        else
-        {
-            if(j[x] % 2 == 0)
-                r[x] = 0.f;
-            else
-                r[x] = -(1.f / (2.f * powf(j[x], 2.f)
-                        * powf(M_PI, 2.f)
-                        * powf(tau, 2.f)));
-        }
-    }
-}
-\end{minted}
-\captionof{listing}{Filtergenerierung}
-\label{app:filter_gen}
-\end{code}
-
-\begin{code}
-\captionof{listing}{Projektionsnormalisierung}
-\label{app:filter_norm}
-\end{code}
-
-\subsection{Implementierung der gefilterten Rückprojektion}
 
 \begin{code}
 \begin{minted}[breaklines,breakafter=\,,fontsize=\small]{c++}
@@ -217,4 +228,3 @@ __global__ void backprojection_kernel(
 \label{app:impl_bp}
 \end{code}
 
-\chapter{Analyse}

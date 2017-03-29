@@ -3,95 +3,60 @@
 \section{Die Geschichte und Relevanz der Computertomographie}
 
 Die Geschichte der Computertomographie beginnt mit dem vom deutschen Physiker Wilhelm Conrad Röntgen entdeckten
-und später nach ihm benannten Verfahren der {\glqq}X-Strahlen{\grqq} (vgl. ~\cite{roentgen}). Plötzlich war es möglich,
+und später nach ihm benannten Verfahren der {\glqq}X-Strahlen{\grqq} (vgl.~\cite{roentgen}). Plötzlich war es möglich,
 die innere Beschaffenheit eines Objekts auf nichtinvasive Art und Weise zu untersuchen. Die Bedeutung dieses Verfahrens
 insbesondere für die Anwendung in der Medizin war bereits Röntgens Zeitgenossen klar. So druckte die Wiener Zeitung
 {\glqq}Die Presse{\grqq} am 05.\ Januar 1896 auf ihrer Titelseite unter der Überschrift {\glqq}Eine sensationelle
 Entdeckung{\grqq}: {\glqq}[Man hat es] mit einem in seiner Art epochemachenden Ergebnisse der exacten Forschung zu thun,
 das sowol [sic] auf physikalischem wie auf medicinischem Gebiete ganz merkwürdige Consequenzen bringen dürfte.{\grqq}
-Für seine Entdeckung wurde Röntgen in der Folge unter anderem mit dem ersten Nobelpreis für Physik ausgezeichnet. Bis
-heute ist das Röntgenverfahren ein wichtiger Bestandteil der medizinischen Diagnostik und der Werkstoffprüfung.
+Für seine Entdeckung wurde Röntgen in der Folge unter anderem mit dem ersten Nobelpreis für Physik ausgezeichnet.
 
-Führt man die Vorwärtsprojektion genügend oft in aufeinanderfolgenden Winkelschritten aus, bis man (idealerweise) einen
-Vollkreis abgefahren hat, so lässt sich aus den dabei entstandenen \textit{Projektionen} der ursprünglich durchleuchtete
-Körper, den wir in der Folge als \textit{Volumen} bezeichnen, rekonstruieren. Für jeden Punkt im Volumen
-(\textit{\gls{voxel}}) kann anhand der Informationen aus den Projektionen der Absorptionsgrad berechnet und dadurch die
-innere Struktur des Volumens bestimmt werden. Dieser Zusammenhang wurde in den 60er Jahren des 20. Jahrhunderts durch
-den südafrikanisch-amerikanischen Physiker Allan McLeod Cormack festgestellt, der ebenfalls die dazu notwendigen
-mathematischen Grundlagen entwickelte (vgl.~\cite{cormack63} und~\cite{cormack64}); ihm war allerdings unbekannt, dass
-diese schon 1917 vom österreichischen Mathematiker Johann Radon gefunden wurden(vgl.~\cite{cormack79}). Mathematisch ist
-der Vorgang der \textit{Rückprojektion} eine Anwendung der nach Radon benannten \textit{Radon-Transformation}
-(vgl.~\cite{radon}).
+Führt man eine Röntgenaufnahme (\textit{Vorwärtsprojektion}) genügend oft in aufeinanderfolgenden Winkelschritten aus,
+bis man (idealerweise) einen Vollkreis abgefahren hat, so lässt sich aus den dabei entstandenen Abbildungen
+(\textit{Projektionen}) der durchleuchtete Körper rekonstruieren (\textit{Rückprojektion}). Diese Vorgehensweise wurde
+in den 60er Jahren des 20. Jahrhunderts durch den südafrikanisch-amerikanischen Physiker Allan McLeod Cormack
+entwickelt, der ebenfalls die dazu notwendigen mathematischen Grundlagen herleitete (vgl.~\cite{cormack63}
+und~\cite{cormack64}). Ihm war allerdings nicht bekannt, dass diese Grundlagen schon 1917 vom österreichischen
+Mathematiker Johann Radon gefunden wurden (vgl.~\cite{cormack79}). Mathematisch ist der Vorgang der
+\textit{Rückprojektion} die Inversion der nach Radon benannten \textit{Radon-Transformation} (vgl.~\cite{radon}).
 
-Da die gefilterte Rückprojektion für jedes \gls{voxel} einzeln berechnet werden muss, ist sie für einen Menschen nicht
-in sinnvoller Zeit lösbar. Aus diesem Grund ist man für die Lösung des Gesamtproblems auf einen Computer angewiesen,
-woraus sich der Name des Verfahrens ableitet: \textit{Computertomographie}. Die ersten bis zur Marktreife entwickelten
+Da die Rückprojektion für jeden Punkt im Körper einzeln berechnet werden muss, ist sie für einen Menschen nicht in
+sinnvoller Zeit lösbar. Aus diesem Grund ist man für die Lösung des Gesamtproblems auf einen Computer angewiesen, woraus
+sich der Name des Verfahrens ableitet: \textit{Computertomographie}. Die ersten bis zur Marktreife entwickelten
 Computertomographen wurden gegen Ende der 60er Jahre des 20. Jahrhunderts vom englischen Elektroingenieur Godfrey
-Hounsfield gebaut. Dieser entwickelte die für die Rückprojektion nötigen Algorithmen ebenfalls selbst, da ihm die
-Vorarbeiten von Cormack und Radon nicht bekannt waren. Für ihre voneinander unabhängigen Arbeiten
-erhielten Godfrey und Cormack 1979 den Nobelpreis für Physiologie oder Medizin, was die Bedeutung der
-Computertomographie insbesondere für die Medizin unterstreicht.
+Hounsfield gebaut (vgl.~\cite{houns}). Dieser entwickelte die für die Rückprojektion nötigen Algorithmen ebenfalls
+selbst, da ihm die Vorarbeiten von Cormack und Radon nicht bekannt waren. Für ihre Arbeiten erhielten Hounsfield und
+Cormack 1979 den Nobelpreis für Physiologie oder Medizin, was die Bedeutung der Computertomographie für die Medizin
+unterstreicht.
 
-\section{Aufgabenstellung}
+Bis heute ist die Computertomographie ein bedeutendes Verfahren zur nichtinvasiven Analyse von Strukturen innerhalb
+eines Körpers. Dabei wird sie nicht nur in der Medizin angewendet, sondern wird ebenfalls in der Materialforschung
+eingesetzt. Für Projektionen, die im dreidimensionalen Raum mit Hilfe eines Kegelstrahls erzeugt wurden, haben Feldkamp,
+Davis und Kress 1984 einen Rückprojektionsalgorithmus entwickelt, der einfach zu implementieren ist (vgl.~\cite{fdk}).
+Aufgrund des technischen Fortschritts bei der Geräteentwicklung und Detektorauflösung und der damit zusammenhängenden
+stetig wachsenden Datenmenge ist eine effiziente Implementierung der Rückprojektion auch heute noch wichtig. Eine
+Möglichkeit zur effizienten Verarbeitung dieser Datenmenge liegt im Einsatz von Grafikkarten, deren für parallele
+Berechnungen von computergrafischen Problemen ausgelegte Architektur für die gefilterte Rückprojektion große Vorteile
+verspricht.
 
-Der \gls{fdk} ist ein weit verbreiteter Ansatz zur Rekonstruktion von kegelförmiger Computer-Tomographie. In diesem
-Beleg soll untersucht werden:
+\section{Aufgabenstellung}\label{intro:aufgabenstellung}
 
-\begin{itemize}
-    \item Zusammenfassung des Forschungsstandes hinsichtlich der Parallelisierung / der Verwendung von \gls{cuda}
-    \item Gegenüberstellung verschiedener Optimierungsziele (Time-to-solution, Occupancy)
-    \item Variantenvergleich verschiedener Implementierungsstrategien
-    \item Implementierung und Analyse einer dieser Strategien
-\end{itemize}
+Das Ziel dieser Arbeit ist, den \gls{fdk} mit Grafikkarten zu parallelisieren und diese Implementierung zu optimieren.
+Zum Einsatz kommt dabei die vom Grafikkartenhersteller NVIDIA entwickelte \gls{cuda}-Plattform. Da der Einsatz von
+Grafikkarten mit Limitierungen verbunden ist, wie etwa einem im Vergleich zu herkömmlichen Prozessoren begrenzten
+Speicher, sollen die folgenden Implementierungsziele erreicht werden:
 
-\section{Forschungsstand}\label{sec:forschungsstand}
+\begin{enumerate}
+    \item Der begrenzte Speicher auf \gls{gpu}s soll möglichst effizient genutzt werden. Häufige Kopien zwischen dem
+          Hauptspeicher der \gls{cpu} und dem der \gls{gpu} sind also zu vermeiden.
+    \item Die Rückprojektion soll auf der \gls{gpu} möglichst optimal ausgeführt werden. Daraus folgt, dass
+    \item die Rückprojektion die zur Verfügung stehenden \gls{gpu}s möglichst stark auslasten sollte, um keine
+          Rechenressourcen zu verschwenden.
+    \item Wenn mehrere \gls{gpu}s zur Verfügung stehen, sollen diese auch genutzt werden. Die Implementierung muss also
+          skalierbar sein.
+\end{enumerate}
 
-Aufgrund seiner geringen Komplexität und einfachen Implementierbarkeit ist der \gls{fdk} einer der beliebtesten
-Rückprojektionsalgorithmen für die Kegelstrahl-Computertomographie~\cite{xumuell}. Der Vorteil des \gls{fdk} liegt
-außerdem darin, dass die gefilterte Rückprojektion für jedes \gls{voxel} individuell berechnet werden kann, das heißt
-ohne Abhängigkeiten zu anderen \gls{voxel}n. Dieser Umstand ermöglicht für die maschinelle Berechnung den maximalen Grad
-an Parallelität, der im englischen Sprachraum auch als \textit{embarassingly parallel} bezeichnet wird, und macht den
-\gls{fdk} zu einem idealen Ziel für diverse Parallelisierungsansätze. Einige neuere Ansätze sollen im Folgenden
-vorgestellt werden.
-
-Seit seiner Einführung ist der \gls{fdk} ein beliebtes Untersuchungsobjekt diverser Forschungsgruppen, die sich mit
-seiner Beschleunigung bzw.\ Parallelisierung mittels einer großen Variation von Architekturen, Plattformen und
-Programmiermodellen beschäftigen. 
-
-Xu et al.\ untersuchten bereits 2004, inwieweit sich der \gls{fdk} durch den Einsatz handelsüblicher Grafikkarten
-(\textit{commodity graphics hardware}) beschleunigen lässt~\cite{xumuell}. Dabei wurden die Schritte \textit{Wichtung}
-und \textit{Filterung} aufgrund ihrer geringen Komplexität ($\mathcal{O}(n^2)$) auf der \gls{cpu} ausgeführt, während
-man die komplexere \textit{Rückprojektion} ($\mathcal{O}(n^4)$) auf der \gls{gpu} berechnete. Die Rückprojektion fand
-schichtweise statt, jeweils für eine \gls{voxel}ebene entlang der vertikalen Volumenachse. In ihrem Fazit stellten die
-Autoren die Vermutung auf, dass der Abstand zwischen den Leistungen von \gls{cpu}s und \gls{gpu}s in der Zukunft
-zugunsten der \gls{gpu}s immer größer werden würde: \textit{Since GPU performance has so far doubled every 6 months 
-(i.e., triple of Moore's law), we expect that the gap between CPU and GPU approaches will widen even further in the near
-future.}
-
-Li et al.\ beschäftigten sich 2005 damit, wie man den \gls{fdk} mit einem \gls{fpga} implementieren könnte. Dazu teilten
-sie das Ausgabevolumen, also die Zieldaten der Rückprojektion, in mehrere Würfel (\textit{bricks}) auf, um zu einer
-optimalen Cachenutzung zu kommen. Der verwendete deterministische Aufteilungsalgorithmus hatte zur Folge, dass bei der
-Berechnung auf dem \gls{fpga} kein Cache-Verfehlen (\textit{cache miss}) mehr auftrat.
-
-Knaup et al.\ gingen 2007 der Frage nach, ob der \gls{fdk} durch die Eigenschaften der Cell-Architektur profitieren
-könne~\cite{knaupsteck}.
-
-Scherl et al.\ unternahmen 2008 den Versuch, den \gls{fdk} mittels \gls{cuda} zu beschleunigen~\cite{scherlkeck}. Im
-Gegensatz zu der Gruppe um Xu et al.\ führten sie alle Schritte auf der \gls{gpu} aus und führten die Rückprojektion
-projektionsweise durch, das heißt, dass jede Projektion einzeln in das Gesamtvolumen zurückprojiziert wurde. Diese Art
-der Datenverarbeitung ermöglichte es, die Schritte \textit{Wichtung} und \textit{Filterung} parallel zur Rückprojektion
-auszuführen. Zur Ausnutzung dieser Eigenschaft und zur besseren Kapselung bzw.\ Modularisierung der Teilschritte
-entwickelten die Autoren daher eine Pipeline-Struktur zur parallelen Abarbeitung des Algorithmus, basierend auf dem von
-Mattson et al.\ vorgestellten Entwurfsmuster~\cite{mattsan}.
-
-Balász et al.\ versuchten 2009 das Gleiche mit der \gls{opencl}~\cite{balgab}.
-
-Hofmann et al.\ untersuchten eventuelle Vorteile durch den Einsatz der neuen Koprozessoren vom Typ 
-Intel{\textregistered} Xeon Phi{\texttrademark} {\glq}Knights Corner{\grq}~\cite{hoftrei}.
-
-Zhao et al.\ verfolgten die Absicht, eine Beschleunigung durch Ausnutzung geometrischer Zusammenhänge zu
-erreichen~\cite{zhao}. Sie setzten dabei auf die Tatsache, dass ein einmal bestimmtes, also auf den Detektor
-projiziertes, \gls{voxel} durch Rotation in 90-Grad-Schritten die rotierten \gls{voxel} ebenfalls genau bestimmt. Ist
-also für ein \gls{voxel} im Projektionswinkel 0 Grad die zugehörige Detektorkoordinate gefunden, so kann diese
-Detektorkoordinate für die Projektionswinkel 90 Grad, 180 Grad und 270 Grad und die entsprechenden \gls{voxel}
-wiederverwendet werden.
+Die Parallelisierung des \gls{fdk} ist seit seiner Vorstellung immer wieder Gegenstand der Forschung gewesen. Die
+Umsetzung der vorgenannten Ziele bedingt also zunächst eine Analyse der bisher erfolgten Arbeiten, insbesondere im
+Hinblick auf die Verwendung von \gls{gpu}s, sowie einen Variantenvergleich der erfolgsversprechenden Ideen. Aus diesem
+ist dann ein Ansatz herzuleiten, dessen Implementierung dann im Hinblick auf die Zielstellung analysiert wird.

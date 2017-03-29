@@ -1,9 +1,9 @@
-\documentclass[utf8,german,beleg]{zihpub}
+\documentclass[utf8,german,beleg,lot,lof,lol]{zihpub}
 
 \usepackage{caption}
 \usepackage{datetime}
 \usepackage{etoolbox}
-\usepackage[acronyms,nonumberlist,toc,savewrites,xindy]{glossaries}
+\usepackage[acronyms,nonumberlist,nopostdot,toc,savewrites,xindy]{glossaries}
 \usepackage[chapter,newfloat]{minted}
 \usepackage{pgfplots}
 \usepackage{tcolorbox}
@@ -30,15 +30,16 @@
           \qquad \qquad Dr.-Ing. Guido Juckeland \\
           \qquad \qquad Matthias Werner}
 \date{31. März 2017}
-\copyrighterklaerung{Die in dieser Arbeit verwendeten Grafiken wurden -- soweit nicht anders angegeben -- von mir
-                     persönlich entweder ohne Vorlage oder aber nach einer am jeweiligen Erscheinungsplatz zitierten
-                     Vorlage erstellt. Für die von mir ohne Vorlage erstellten Grafiken behalte ich mir alle Rechte vor.
-                     
-                     Ich versichere ferner, diese Arbeit eigenständig angefertigt und aus anderen Werken übernommene
-                     Zitate und Gedankengänge entsprechend kenntlich gemacht zu haben.}
-\acknowledgments{Für die fachliche Betreuung bei der Erstellung dieser Arbeit bedanke ich mich recht herzlich bei Frau
-                 Dr.-Ing.\ Martina Bieberle vom Helmholtz-Zentrum Dresden-Rossendorf sowie Herrn Dr.-Ing.\ Stephan Boden
-                 von der AREVA-Stiftungsprofessur für bildgebende Messverfahren für die Energie- und Verfahrenstechnik.}
+\copyrighterklaerung{Die nachfolgend aufgeführten Wortmarken sind Markenzeichen ihrer jeweiligen Inhaber, auch wenn sie
+                     im Text dieser Arbeit nicht als solche gekennzeichnet sind. CUDA{\textregistered},
+                     Quadro{\textregistered} und GeForce{\textregistered} sind eingetragene Markenzeichen der Firma
+                     NVIDIA. DirectX{\textregistered} ist ein eingetragenes Markenzeichen der Firma Microsoft.
+                     OpenGL{\texttrademark} und OpenCL{\texttrademark} sind nichteingetragene Markenzeichen der
+                     Khronos Group. Xeon Phi{\texttrademark} ist ein nichteingetragenes Markenzeichen der Firma Intel.}
+\acknowledgments{Für die Bereitstellung der Testdatensätze, die Validierung der Programmergebnisse sowie wertvolle
+                 Erläuterungen der mathematischen Grundlagen dieser Arbeit bedanke ich mich herzlich bei Herrn Dr.-Ing.
+                 Stephan Boden von der AREVA-Stiftungsprofessur für bildgebende Messverfahren für die Energie- und
+                 Verfahrenstechnik.}
 \bibfiles{bibliography.bib}
 
 % Germanisiere LaTeX
@@ -51,16 +52,16 @@
 \printglossary
 \printglossary[type=\acronymtype]
 \printglossary[type=nomencl,style=nomenclstyle]
-\listoffigures
-\listoflistings
-\listoftables
 
 \include{einleitung}
 \include{grundlagen_bp}
-\include{grundlagen_cuda}
+\include{parallelisierung}
 \include{umsetzung}
 \include{leistungsanalyse}
 \include{fazit}
+
+%\listoflistings
+
 \include{anhang}
 
 \end{document}
