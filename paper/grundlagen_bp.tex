@@ -6,7 +6,7 @@ zunächst die mathematischen Voraussetzungen gezeigt, darauf aufbauend schließt
 \section{Mathematische Grundlagen}
 
 In diesem Abschnitt werden die mathematischen Grundlagen der Computertomographie behandelt. Es werden zunächst die
-mathematischen Eigenschaften der Vorwärtsprojektion und das sich daraus ergebende Fourier-Schichten-Theorem erläutert.
+mathematischen Eigenschaften der Vorwärtsprojektion und das sich daraus ergebende Fourier-Schichten-Theorem dargestellt.
 Anschließend wird das Prinzip der daraus abgeleiteten gefilterte Rückprojektion erläutert.
 
 \subsection{Projektionen}
@@ -109,8 +109,8 @@ auf entgegengesetzten Seiten des \gls{obj}s aufgenommen werden.
 
 Eine zweite Aufnahmemöglichkeit ist der Einsatz einer Quelle auf einer festen Position sowie einer Reihe von Detektoren
 entlang einer Linie auf der anderen Seite des \gls{obj}s (siehe Abbildung~\ref{fig:fan_proj}). Solcherart erzeugte
-\glspl{proj} nennt man aufgrund der fächerförmigen Strahlen \textit{Fächerstrahlprojektionen} (vgl.~\cite{kakslan},
-S. 49 -- 51).
+\glspl{proj} nennt man aufgrund der fächerförmigen Strahlen \textit{Fächerstrahlprojektionen}. (vgl.~\cite{kakslan},
+S. 49 -- 51)
 
 \begin{figure}
     \centering
@@ -225,7 +225,7 @@ zweidimensionalen Objektfunktion im Ortsraum. Die Fouriertransformation einer Pa
 \gls{obj}s $f(x, y)$, die unter dem Winkel $\theta$ aufgenommen wurde, entspricht einer Schicht des zweidimensional
 fouriertransformierten \gls{obj}s $F(u, v)$.
 Mit anderen Worten ergibt die Fouriertransformation einer \gls{proj} $p_{\theta}(t)$ die Werte von $F(u, v$) entlang
-einer radialen Linie $BB$ (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{rosenkak}, S.366). 
+einer radialen Linie $BB$ (siehe Abbildung~\ref{fig:fourier_scheibe}). (vgl.~\cite{rosenkak}, S.366)
 
 Dieser Zusammenhang lässt sich auch mathematisch herleiten (siehe Anhang~\ref{app:fourier_scheibe}). Aus ihm folgt, dass
 sich die Werte von $F(u, v)$ entlang radialer Linien dadurch bestimmen lassen, dass man die \glspl{proj} des \gls{obj}s
@@ -347,15 +347,15 @@ Durch das Fourier-Scheiben-Theorem lassen sich ein \gls{fourobj} und eine \gls{f
 einen Zusammenhang stellen. Daraus folgt, dass man mit genügend vielen fouriertransformierten \glspl{proj}, die unter
 unterschiedlichen Winkeln aufgenommen wurden, das zweidimensional fouriertransformierte \gls{obj} und damit (durch die
 inverse Fouriertransformation) das \gls{obj} selbst rekonstruieren kann. Dieses einfache Modell der Tomographie lässt
-sich jedoch nur mit viel Aufwand in dieser Form implementieren (vgl.~\cite{kakslan}, S. 60).
+sich jedoch nur mit viel Aufwand in dieser Form implementieren. (vgl.~\cite{kakslan}, S. 60)
 
 Ein bekannter Ansatz, der weniger Aufwand erfordert, ist die gefilterte Rückprojektion, die sich aus dem
-Fourier-Scheiben-Theorem herleiten lässt. Dazu werden die inverse Fouriertransformation in einem polaren Koordinatensystem
-durchgeführt und die Grenzen der zugehörigen Integrale entsprechend angepasst (zur mathematischen Herleitung
-siehe~\cite{kakslan}, S. 63 -- 68). Es ist dieser Schritt, der eine effiziente Implementierung der Rekonstruktion für
-Computer ermöglicht; Kak und Slaney stellen fest: {\glqq}The derivation of this algorithm is perhaps one of the most
-illustrative examples of how we can obtain a radically different computer implementation by simply rewriting the
-fundamental expressions for the underlying theory{\grqq} (siehe~\cite{kakslan}, S. 60).
+Fourier-Scheiben-Theorem herleiten lässt. Dazu werde die inverse Fouriertransformation in einem polaren
+Koordinatensystem durchgeführt und die Grenzen der zugehörigen Integrale entsprechend angepasst (zur mathematischen
+Herleitung siehe~\cite{kakslan}, S. 63 -- 68). Es ist dieser Schritt, der eine effiziente Implementierung der
+Rekonstruktion für Computer ermöglicht; Kak und Slaney stellen fest: {\glqq}The derivation of this algorithm is perhaps
+one of the most illustrative examples of how we can obtain a radically different computer implementation by simply
+rewriting the fundamental expressions for the underlying theory{\grqq} (siehe~\cite{kakslan}, S. 60).
 
 Die Grundlage der gefilterten Rückprojektion ist der Umstand, dass jede \gls{proj} eine nahezu unabhängige Aufnahme des
 \gls{obj}s darstellt. Die einzige Gemeinsamkeit der unter verschiedenen Winkeln aufgenommenen \glspl{proj} ist die
@@ -365,13 +365,13 @@ rekonstruieren. Es kann gezeigt werden (vgl.~\cite{kakslan}, S. 61), dass eine s
 einem einfachen Filter multiplizierten Fouriertransformierten der originalen Objektfunktion ist. Durch das Aufsummieren
 mehrerer transformierter \glspl{proj} ergibt sich schließlich das rekonstruierte \gls{obj}. Da die Fouriertransformation
 eine lineare Operation ist, lässt sich dieses Aufsummieren der \glspl{proj} auch im Ortsraum durchführen. In diesem Fall
-spricht man von der Rückprojektion (vgl.~\cite{kakslan}, S. 61).
+spricht man von der Rückprojektion. (vgl.~\cite{kakslan}, S. 61)
 
 Die Filterung lässt sich als Wichtung der \glspl{proj} im Frequenzraum betrachten. Wie bereits in
-Abschnitt~\ref{ssec:fourier_scheibe} erwähnt, nimmt die Dicht der (in endlicher Zahl vorliegenden) bekannten
+Abschnitt~\ref{ssec:fourier_scheibe} erwähnt, nimmt die Dichte der (in endlicher Zahl vorliegenden) bekannten
 Punkte im Frequenzraum mit steigender Distanz zum Ursprung ab. Durch die stärkere Wichtung der höheren Frequenzen der
 \glspl{proj} lassen sich die fehlenden Punkte approximieren, durch eine möglichst hohe Projektionszahl lässt sich die
-durch die fehlenden Informationen hervorgerufene Abweichung weiter verringern (vgl.~\cite{kakslan}, S. 61).
+durch die fehlenden Informationen hervorgerufene Abweichung weiter verringern. (vgl.~\cite{kakslan}, S. 61)
 
 Die gewichteten \glspl{proj} lassen sich (im Anschluss an die inverse Fouriertransformation) aufsummieren, um das
 \gls{obj} zu rekonstruieren. Zusammengefasst ergibt sich für die gefilterte Rückprojektion der folgende Algorithmus:
@@ -384,10 +384,9 @@ Für alle Winkel $\theta$:
     \item $P_{\theta}(w)$ invers fouriertransformieren und zurückprojizieren (Addition zum bisherigen Ergebnis)
 \end{enumerate}
 
-Gegenüber der in Abschnitt~\ref{ssec:fourier_scheibe} erwähnten Interpolationsmethode bietet dieser Algorithmus den
-Vorteil, dass direkt nach dem Aufnehmen der ersten \gls{proj} begonnen werden kann. Daneben ist es einfacher, im
-Ortsraum zu interpolieren, als wenn man dies im Frequenzraum täte, da im Ortsraum eine lineare Interpolation häufig
-genügt (vgl.~\cite{kakslan}, S. 62).
+Dieser Algorithmus bietet den Vorteil, dass direkt nach dem Aufnehmen der ersten \gls{proj} begonnen werden kann.
+Daneben ist es einfacher, im Ortsraum zu interpolieren, als wenn man dies im Frequenzraum täte, da im Ortsraum eine
+lineare Interpolation häufig genügt. (vgl.~\cite{kakslan}, S. 62)
 
 \section{Der Feldkamp-Davis-Kress-Algorithmus}\label{sec:fdk}
 

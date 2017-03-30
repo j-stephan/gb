@@ -34,11 +34,11 @@ durch, das heißt, dass jede Projektion einzeln in das Gesamtvolumen zurückproj
 Datenverarbeitung ermöglichte es, die Schritte \textit{Wichtung} und \textit{Filterung} parallel zur Rückprojektion
 auszuführen (vgl.~\cite{scherlkeck}). Zur Ausnutzung dieser Eigenschaft und zur besseren Kapselung bzw.\ Modularisierung
 der Teilschritte entwickelten die Autoren daher eine Pipeline-Struktur zur parallelen Abarbeitung des Algorithmus,
-basierend auf dem von Mattson et al.\ vorgestellten Entwurfsmuster. (vgl.~\cite{mattsan})
+basierend auf dem von Mattson et al.\ vorgestellten Entwurfsmuster (vgl.~\cite{mattsan}).
 
 Hofmann et al.\ untersuchten 2013 eventuelle Vorteile durch den Einsatz der neuen Koprozessoren vom Typ Intel Xeon Phi
 {\glq}Knights Corner{\grq}. Der Fokus ihrer Arbeit lag dabei auf dem Ausnutzen architektonischer Details des Xeon Phi,
-wie etwa effizienten Vektorregister-Operationen. (vgl.~\cite{hoftrei})
+wie etwa effizienter Vektorregister-Operationen. (vgl.~\cite{hoftrei})
 
 Zhao et al.\ verfolgten die Absicht, eine Beschleunigung durch Ausnutzung geometrischer Zusammenhänge zu
 erreichen. Sie setzten dabei auf die Tatsache, dass ein einmal bestimmtes, also auf den Detektor projiziertes,
@@ -64,14 +64,14 @@ Von den in Abschnitt~\ref{sec:forschungsstand} genannten Ansätzen in der Litera
 Da Xu et al. 2004 mit ihrer Arbeit Neuland betraten, standen ihnen viele Methoden und Technologien, die seitdem 
 entwickelt wurden, noch nicht zur Verfügung. Die 2004 erschienenen \gls{gpu}s hatten im Vergleich zu heutigen
 Grafikkarten sehr viel weniger Speicher; das damals beste verfügbare Produkt von NVIDIA, die GeForce 6800 Ultra, konnte
-lediglich mit 512 MiB Speicher aufwarten und war nur über \gls{opengl} oder \gls{directx} indirekt programmierbar
-(vgl.~\cite{geforce6800}). Den begrenzten Speicher versuchte die Gruppe durch eine Aufteilung des Volumens und eine
-schichtweise Rekonstruktion desselben unter Einbeziehung aller Projektionen möglichst effizient zu nutzen
-(vgl.~\cite{xumuell}). Aufgrund des technischen Fortschritts gibt es heute andere Möglichkeiten zur Lösung dieses
-Problems; so bietet etwa die NVIDIA GeForce GTX 1080 mit 8 GiB Speicher und der Möglichkeit der direkten Programmierung
-mittels \gls{cuda} oder \gls{opencl} ganz andere Nutzungs- und Berechnungsmöglichkeiten als ihre frühen Vorgänger
-(vgl.~\cite{gtx1080}). Insbesondere ist es möglich, das ganze Volumen oder größere Teile davon während der Berechnung im
-Speicher zu halten und dadurch häufige Kopien zwischen \gls{cpu}-Speicher und \gls{gpu}-Speicher zu vermeiden.
+lediglich mit 512 MiB Speicher aufwarten und war nur über die \gls{opengl} oder \gls{directx} indirekt programmierbar.
+Den begrenzten Speicher versuchte die Gruppe durch eine Aufteilung des Volumens und eine schichtweise Rekonstruktion
+desselben unter Einbeziehung aller Projektionen möglichst effizient zu nutzen (vgl.~\cite{xumuell}). Aufgrund des
+technischen Fortschritts gibt es heute andere Möglichkeiten zur Lösung dieses Problems; so bietet etwa die NVIDIA
+GeForce GTX 1080 mit 8 GiB Speicher und der Möglichkeit der direkten Programmierung mittels \gls{cuda} oder
+der \gls{opencl} ganz andere Nutzungs- und Berechnungsmöglichkeiten als ihre frühen Vorgänger. Insbesondere ist es
+möglich, das ganze Volumen oder größere Teile davon während der Berechnung im Speicher zu halten und dadurch häufige
+Kopien zwischen \gls{cpu}-Speicher und \gls{gpu}-Speicher zu vermeiden.
 
 Die Forschungsgruppe um Scherl baute auf der Idee, das Volumen im Speicher zu halten, auf und ging im Gegensatz zu Xu et
 al.\ den Weg, jede Projektion einzeln in dieses Volumen zu projizieren (vgl.~\cite{scherlkeck}). Zur Trennung bzw.\
@@ -94,7 +94,7 @@ entspricht. Auf diese Weise lassen sich durch eine Berechnung die Detektorkoordi
 eine Verkürzung der Rechenzeit verspricht (vgl.~\cite{zhao}). In der Praxis scheitert dieses Verfahren an dem
 mechanischen Aufbau üblicher CT-Scanner. Da entweder Quelle und Detektor oder aber das Untersuchungsobjekt rotiert
 werden müssen, kommt es durch Fehler in der Mechanik häufig dazu, dass Aufnahmen doppelt gemacht oder übersprungen
-werden.
+werden, sodass die für die Nutzung der Symmetrien nötigen Projektionen fehlen.
 
 \begin{figure}[!htb]
     \centering
@@ -238,18 +238,18 @@ Parallelisierungsstrategie des \gls{fdk}:
     \item Die Parallelisierung sollte sich über mehrere \gls{gpu}s skalieren lassen.
 \end{enumerate}
 
-Mit der Umsetzung der Punkte 2.\ und 3.\ beschäftigt sich detailliert der nächste Abschnitt, ein Lösungsvorschlag für
+Mit der Umsetzung der Punkte 2.\ und 3.\ beschäftigt sich detailliert das nächste Kapitel, ein Lösungsvorschlag für
 die restlichen Punkte findet sich in der im Folgenden skizzierten Programmstruktur.
 
 Ein üblicher Projektionsdatensatz umfasst 1440 Projektionen, die jeweils eine Auflösung von 1024 x 1024 \gls{pixel}n
 haben; jeder Pixel ist dabei im 4-Byte-Fließkommazahlen-Format gespeichert. Für den kompletten Datensatz ergibt sich
 dadurch eine Datenmenge von 5,625 GiB. Das daraus resultierende Volumen besitzt (abhängig von den konkreten
-Geometrieparametern der CT-Anlage) etwa 1070 x 1070 x 1033 \gls{voxel} (vgl. Abschnitt~\ref{ssec:geometrie}), die das
-gleiche Datenformat wie die Pixel aufweisen. Die Datengröße des Volumens beträgt 4,4 GiB und die kumulierte Datenmenge
-damit 10,25 GiB. Ausgehend von der Annahme, dass eine \gls{gpu} des Typs GeForce GTX 1080 zur Verfügung steht, ist
-allein mit den zu verarbeitenden Daten der verfügbare \gls{gpu}-Speicher nicht ausreichend, da die GTX 1080 über
-lediglich 8 GiB Speicher verfügt (siehe~\cite{gtx1080}). Sowohl die Projektionen als auch das komplette Volumen im
-Speicher zu halten ist demnach kein praktikabler Ansatz. In Abschnitt~\ref{ssec:par_strat} wurden mehrere Ansätze der
+Geometrieparametern der CT-Anlage) etwa 1070 $\times$ 1070 $\times$ 1033 \gls{voxel} (vgl.
+Abschnitt~\ref{ssec:geometrie}), die das gleiche Datenformat wie die Pixel aufweisen. Die Datengröße des Volumens
+beträgt 4,4 GiB und die kumulierte Datenmenge damit 10,25 GiB. Ausgehend von der Annahme, dass eine \gls{gpu} des Typs
+GeForce GTX 1080 zur Verfügung steht, ist der vorhandene Speicher schon für die zu verarbeitenden Daten nicht
+ausreichend, da diese \gls{gpu} lediglich 8 GiB Speicher besitzt. Sowohl die Projektionen als auch das komplette Volumen
+im Speicher zu halten ist demnach kein praktikabler Ansatz. In Abschnitt~\ref{ssec:par_strat} wurden mehrere Ansätze der
 Literatur vorgestellt, die dieses Problem zu umgehen versuchen.
 
 Der erste Ansatz von Xu et al.\ sieht eine Aufteilung des Volumens in mehrere Segmente vor. Jedes Teilvolumen wird dann
@@ -294,7 +294,7 @@ Praktisch ergäbe sich daraus die Notwendigkeit der Synchronisierung zwischen de
 Rückprojektionsoperationen, um Datenkorruption durch \textit{\glspl{race-condition}} zu vermeiden. Es ist daher der
 einfachere Weg, die Rückprojektionen in sequentieller Reihenfolge durchzuführen. Um die Wartezeiten zwischen zwei
 Rückprojektionen zu minimieren, sollten möglichst keine weiteren Operationen in der Zwischenzeit ausgeführt werden.
-Idealerweise werden dann -- neben dem der Rückprojektion -- nur noch das Entnehmen der aktuellen Projektion vom
+Idealerweise werden dann -- neben der Rückprojektion selbst -- nur noch das Entnehmen der aktuellen Projektion vom
 Eingabepuffer sowie das Übergeben dieser Projektion an den Rückprojektions-\gls{kernel} ausgeführt. Demzufolge muss die
 beschriebene Ausführungskette in einem eigenen Thread ausgeführt werden, um die restlichen Operationen, insbesondere die
 Wichtung und die Filterung der Projektionen, durch Nebenläufigkeiten zu kaschieren.

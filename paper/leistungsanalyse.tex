@@ -65,9 +65,12 @@ Rückprojektions-\gls{kernel} gestartet werden. Bei einem Volumen mit 1070 $\tim
 denen jeweils ein Thread zugeordnet wird, werden 1.182.681.700 Threads benötigt. Die GTX 1080 verfügt über 20 \gls{sm}s,
 von denen jeder bis zu 2.048 Threads gleichzeitig ausführen kann und ist somit in der Lage, bis zu 40.960 Threads
 gleichzeitig zu verwalten. Die \gls{gpu} ist daher gezwungen, der Rückprojektion alle verfügbaren Threads zuzuweisen,
-was zur Folge hat, dass keine weiteren \gls{kernel} ausgeführt werden können. Wenn auch die parallele Ausführung der
-Rückprojektion und der vorherigen Schritte nicht gelungen ist, ist auf der Abbildung jedoch zu sehen, dass die
-Ausführung der \gls{kernel} mit geringerem Ressourcenbedarf sich stellenweise überlappt.
+was zur Folge hat, dass keine weiteren \gls{kernel} ausgeführt werden können. Um eine Reduzierung der gestarteten
+Threads zu erreichen und dadurch die parallele Ausführung der Rückprojektion und der anderen Schritte zu ermöglichen,
+ist die Übernahme des von Scherl et al.\ vorgestellten Ansatzes denkbar, also die Iteration eines zweidimensionalen
+Kernels durch das Volumen (vgl.~\cite{scherlkeck}). Wenn auch die parallele Ausführung der Rückprojektion und der
+vorherigen Schritte nicht gelungen ist, ist auf der Abbildung jedoch zu sehen, dass die Ausführung der \gls{kernel} mit
+geringerem Ressourcenbedarf sich stellenweise überlappt.
 
 Die Wartezeit zwischen zwei Rückprojektionen, die über die gesamte Laufzeit akkumuliert ca. 3 Sekunden einnimmt, hat
 also einen akzeptablen Wert erreicht, der dem alltäglichen Gebrauch nicht im Wege steht. Es ist an dieser Stelle aber
@@ -220,7 +223,7 @@ Literaturergebnisse mit einem auf der jeweiligen Taktfrequenz $T$ beruhenden Fak
 auf der GTX 1080, die mit 1733 MHz getaktet ist, zu simulieren:
 
 \begin{equation*}
-    G_{\text{GPU}} = \frac{T(\text{GPU})}{1733 MHz}
+    G_{\text{GPU}} = \frac{T(\text{GPU})}{1733\ \text{MHz}}
 \end{equation*}
 
 Die in Tabelle~\ref{table:paris_vs_scherl_zhao} gezeigten Ergebnisse der Literatur sind mit diesem Faktor normiert

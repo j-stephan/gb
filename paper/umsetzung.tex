@@ -26,7 +26,7 @@ Prozessoren waren Teil einer Entwicklung, die zu einer allmählichen Vereinheitl
 Funktionseinheiten führte: während es auf den GeForce-Serien 6800 und 7800 noch getrennte Prozessoren für die
 \textit{Vertex}- und \textit{Pixel}-Berechnung gab, wurde in der 2005 erschienenen XBox 360 eine
 {\glqq}vereinheitlichte{\grqq} Grafikkarte verbaut, deren Prozessoreinheiten sowohl für die \textit{Vertex}- als auch
-für die \textit{Pixel}-Berechnung geeignet waren (vgl.~\cite{kirkhwu}, S. 28 -- 29).
+für die \textit{Pixel}-Berechnung geeignet waren. (vgl.~\cite{kirkhwu}, S. 28 -- 29)
 
 Durch diese Vereinheitlichung der \gls{gpu}-Prozessoren glich die Hardware mehr und mehr den aus dem \gls{hpc} bekannten
 Parallelrechnern. Mit der Verfügbarkeit \gls{directx}-9-kompatibler \gls{gpu}s wurde diese Entwicklung zunehmend
@@ -41,13 +41,13 @@ vorzuliegen hatten und die Ausgabedaten im der jeweiligen Grafikbibliothek eigen
 Die Umschreibung in einen für die Verwendung von \textit{Pixel-Shadern} geeigneten Algorithmus hatte außerdem den
 gravierenden Nachteil, dass Zugriffe auf beliebige Stellen im Speicher nicht möglich waren. Da ein \textit{Pixel-Shader}
 als Ausgabedatum die Farbe eines \gls{pixel}s zurückliefert, besteht dazu aus Sicht der Grafikbibliothek auch keine
-Notwendigkeit, da die Position des zugehörigen Pixels bereits bekannt ist (vgl.~\cite{kirkhwu}, S. 33).
+Notwendigkeit, da die Position des zugehörigen Pixels bereits bekannt ist. (vgl.~\cite{kirkhwu}, S. 33)
 
 Diese Beschränkungen erwiesen sich für generische numerische Berechnungen bald als zu restriktiv. Erschwerend kam hinzu, 
 dass jeder Entwickler, der sich mit diesen technischen Limitierungen abfinden konnte, zusätzlich noch Wissen über die
 Funktionsweise von \gls{opengl} und \gls{directx} benötigte, um das zu lösende Problem mit Hilfe von \gls{gpu}s
 bewältigen zu lassen. Eine flächendeckende Akzeptanz von \gls{gpu}s als Beschleunigern war unter Forschern daher in den
-ersten Jahren des \gls{gpgpu} nicht gegeben (vgl.~\cite{sandkand}, S. 6).
+ersten Jahren des \gls{gpgpu} nicht gegeben. (vgl.~\cite{sandkand}, S. 6)
 
 Die Situation änderte sich, als NVIDIA 2006 die GeForce 8800 GTX der Öffentlichkeit präsentierte. Diese \gls{gpu} war
 nicht nur zum damals neuen \gls{directx} 10 kompatibel, sondern auch die erste Grafikkarte, die mit \gls{cuda} ohne den
@@ -60,7 +60,7 @@ Prozessoren sich den Instruktionscache und die -kontrolllogik teilten. Diese Str
 Hardware-Fokus auf die parallele Berechnung von \gls{pixel}n für \gls{gpu}s gut. Zusätzlich war es nun möglich, auf
 beliebige Teile des Speichers zuzugreifen. Aus Sicht des Entwicklers lag nun ein Programmiermodell vor, das eine
 Hierarchie paralleler Threads, Synchronisierungsmechanismen und Barrieren sowie atomare Operationen bot und das Ganze in
-eine an C bzw.\ C++ angelehnte Sprache einbettete (vgl.~\cite{kirkhwu}, S. 35).
+eine an C bzw.\ C++ angelehnte Sprache einbettete. (vgl.~\cite{kirkhwu}, S. 35)
 
 \subsection{Das CUDA-Programmiermodell}\label{cuda:modell}
 
@@ -131,7 +131,7 @@ Die Ausführung eines \gls{cuda}-Programms beginnt auf dem \gls{host}. Wird ein 
 man als \textit{\gls{grid}}. Haben alle Threads eines \gls{kernel}s ihre Ausführung beendet, wird auch das \gls{grid}
 beendet. Das Starten eines \gls{kernel}s erzeugt typischerweise eine große Zahl von Threads. Im Gegensatz zur \gls{cpu},
 auf der das Erzeugen eines Threads in der Regel mehrere tausend Zyklen benötigt, ist der gleiche Vorgang auf der
-\gls{gpu} in einigen wenigen Zyklen zu bewältigen (vgl.~\cite{kirkhwu}, S. 44 -- 45).
+\gls{gpu} in einigen wenigen Zyklen zu bewältigen. (vgl.~\cite{kirkhwu}, S. 44 -- 45)
 
 Das oben vorgestellte Beispiel der Vektoraddition lässt sich in C++, wie in Quelltext~\ref{source:vec_add_cpp}
 dargestellt, durch die Iteration über die Vektoren implementieren.  In \gls{cuda} entfällt die Iteration, da hier 
@@ -169,15 +169,15 @@ der Fall wäre, sondern über die Hilfsvariablen \texttt{blockIdx}, \texttt{bloc
 \gls{cuda}-\gls{kernel} ausgeführt, so entsteht auf dem \gls{device} ein Thread-\gls{grid}. Diese Threads werden in
 einer zweistufigen Hierarchie angeordnet. Jedes \gls{grid} besteht aus mehreren Thread-Blöcken, die der Einfachheit
 halber in der Folge als \textit{Blöcke} bezeichnet werden. Alle Blöcke innerhalb eines \gls{grid}s haben die gleiche
-Größe, können jedoch maximal 1024 Threads umfassen; die Thread-Zahl der Blöcke wird auf dem \gls{host} vor der
-Ausführung des \gls{kernel}s definiert. Für ein gegebenes \gls{grid} kann die Anzahl der Threads pro Block durch die 
-Variable \texttt{blockDim} abgefragt werden, während der individuelle Block, zu dem ein bestimmter Thread gehört, durch
-die Variable \texttt{blockIdx} identifiert werden kann. Innerhalb eines Blocks kann ein einzelner Thread über die
-Variable \texttt{threadIdx} bestimmt werden. Durch die Kombination der drei Variablen, wie sie in
+Größe, können jedoch auf aktueller Hardware maximal 1024 Threads umfassen; die Thread-Zahl der Blöcke wird auf dem
+\gls{host} vor der Ausführung des \gls{kernel}s definiert. Für ein gegebenes \gls{grid} kann die Anzahl der Threads pro
+Block durch die Variable \texttt{blockDim} abgefragt werden, während der individuelle Block, zu dem ein bestimmter
+Thread gehört, durch die Variable \texttt{blockIdx} identifiziert werden kann. Innerhalb eines Blocks kann ein einzelner
+Thread über die ariable \texttt{threadIdx} bestimmt werden. Durch die Kombination der drei Variablen, wie sie in
 Quelltext~\ref{source:vec_add_cuda} dargestellt ist, lässt sich somit jeder Thread innerhalb des \gls{grid}s eindeutig
 identifizieren. Da \gls{cuda} das Starten von zwei- und dreidimensionalen \gls{kernel}n unterstützt, kann über die
 Felder \texttt{x}, \texttt{y} und \texttt{z} die Zahl der Blöcke bzw.\ Threads in der jeweiligen Dimension bestimmt
-werden (vgl.~\cite{kirkhwu}, S. 54).
+werden. (vgl.~\cite{kirkhwu}, S. 54)
 
 Ein weiterer Unterschied zur herkömmlichen C++-Programmierung ist das Schlüsselwort \texttt{\_\_global\_\_} vor der
 Deklaration. Dieses Schlüsselwort dient zur Identifizierung einer Funktion als \gls{kernel}, also einer Funktion auf
@@ -185,7 +185,8 @@ dem \gls{device}, die vom \gls{host} aus aufgerufen werden kann. Daneben verwend
 \texttt{\_\_device\_\_} und \texttt{\_\_host\_\_}, die anzeigen, auf welcher Hardware die jeweilige Funktion ausgeführt
 werden kann bzw.\ soll. Eine \texttt{\_\_device\_\_}-Funktion kann dabei nur innerhalb eines \gls{kernel}s oder einer
 weiteren \texttt{\_\_device\_\_}-Funktion aufgerufen werden, eine \texttt{\_\_host\_\_}-Funktion nur auf dem \gls{host}
--- sie entspricht also einer normalen C++-Funktion (vgl. Tabelle~\ref{table:cu_func_keywords} und~\cite{kirkhwu}, S.55).
+-- sie entspricht also einer normalen C++-Funktion (siehe Tabelle~\ref{table:cu_func_keywords}). (vgl.~\cite{kirkhwu},
+S. 55)
 
 \begin{table}
     \centering
@@ -262,13 +263,13 @@ Speicherbereich normalerweise weit auseinander liegen und somit selten gemeinsam
 Zusätzlich verfügt der Texturspeicher über spezielle Maschinenbefehle für die Pixelinterpolation (\textit{nearest
 neighbour} und linear). (vgl.~\cite{sandkand}, S. 116 -- 117)
 
-Neben Texturen verfügt CUDA über einen weiteren Mechanismus, um effizient auf mehrdimensionale Speicherbereiche
-zuzugreifen, den sogenannten \textit{pitched memory}. Durch das Einfügen zusätzlicher Bytes am Ende einer Zeile kann
-der Speicher anhand der Wortbreite (zur Zeit entweder 32, 64 oder 128 Byte) so ausgerichtet werden, dass jede neue Zeile
-am Anfang eines neuen Speicherwortes steht. Ist eine Zeile beispielsweise 16 Byte lang, aber über zwei Speicherworte
-verteilt, muss zweimal auf den Speicher zugegriffen werden, um sie komplett auszulesen. Platziert man den Zeilenanfang
-jedoch am Anfang eines Speicherwortes, genügt ein Zugriff. Der Speicherzugriff wird also effizienter, geht jedoch mit
-einem insgesamt erhöhten Speicherbedarf einher. (vgl.~\cite{cudaprog}, Abschnitt 5.3)
+Neben Texturen besitzt CUDA einen weiteren Mechanismus, um effizient auf mehrdimensionale Speicherbereiche zuzugreifen,
+den sogenannten \textit{pitched memory}. Durch das Einfügen zusätzlicher Bytes am Ende einer Zeile kann der Speicher
+anhand der Wortbreite (zur Zeit entweder 32, 64 oder 128 Byte) so ausgerichtet werden, dass jede neue Zeile am Anfang
+eines neuen Speicherwortes steht. Ist eine Zeile beispielsweise 16 Byte lang, aber über zwei Speicherworte verteilt,
+muss zweimal auf den Speicher zugegriffen werden, um sie komplett auszulesen. Platziert man den Zeilenanfang jedoch am
+Anfang eines Speicherwortes, genügt ein Zugriff. Der Speicherzugriff wird also effizienter, geht jedoch mit einem
+insgesamt erhöhten Speicherbedarf einher. (vgl.~\cite{cudaprog}, Abschnitt 5.3)
 
 Die verschiedenen Speichervarianten sind in Tabelle~\ref{table:cu_mem_hierarchie} zusammengefasst.
 
@@ -837,7 +838,7 @@ Voxeln gezeigt.
 
 Da der vorherige Wert des Voxels zum jeweils aktuellen Wert hinzu addiert wird -- am Anfang haben alle Voxel des
 Volumens den Wert 0 --, muss dieser vor der Addition aus dem globalen Speicher geladen werden. Trotz der bereits
-getroffenen Optimierungen ist dieser Zugriff immer noch mit einer hohen Latenzzeit verbunden, die allerdings maskiert
+durchgeführten Optimierungen ist dieser Zugriff immer noch mit einer hohen Latenzzeit verbunden, die allerdings maskiert
 werden kann. Zu diesem Zweck lädt man den alten Wert schon zu Beginn des \gls{kernel}s aus dem Speicher, sodass
 Berechnungen, die von diesem Wert unabhängig sind, während der Wartezeit ausgeführt werden können (siehe
 Quelltext~\ref{source:fdk_old_val}).
