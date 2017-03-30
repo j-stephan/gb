@@ -1,14 +1,53 @@
 \chapter{Zusammenfassung und Ausblick}
 
-\section{Zusammenfassung}
+Es wurde in dieser Arbeit eine mögliche Implementierung des \gls{fdk} auf dem Fundament der CUDA-Plattform vorgestellt.
+Das Ziel, die Rückprojektion in sinnvoller Zeit zu berechnen, ist erreicht worden. Abhängig von der gewünschten Größe
+des Volumens benötigt der Algorithmus auf moderner Hardware wenige Sekunden bis Minuten. Die Wartezeit zwischen zwei
+Rückprojektionen konnte auf wenige Millisekunden reduziert werden. Insbesondere bei großen Volumen ist sie dadurch
+vernachlässigbar gering, da sie, akkumuliert über die gesamte Laufzeit von einigen Minuten, lediglich wenige Sekunden
+einnimmt. Bei der Rekonstruktion kleinerer Volumen fällt sie allerdings stärker ins Gewicht.
 
-\begin{itemize}
-    \item Faktencheck: Wurden die in der Einleitung genannten Ziele erreicht?
-\end{itemize}
+Es wurde ebenfalls erreicht, dass der Rückprojektions-\gls{kernel} die \gls{gpu} möglichst stark auslastet. Außerdem
+gelang es, den Algorithmus so zu implementieren, dass er bei der Berechnung großer Volumen von mehreren \gls{gpu}s des
+gleichen Typs beschleunigt wird. Die Rekonstruktion kleinerer Volumen profitiert allerdings nicht vom Einsatz mehrerer
+Grafikkarten; eine einzelne \gls{gpu} war in allen Fällen schneller. Die Verwendung verschiedener \gls{gpu}s kann
+außerdem dazu führen, dass der Algorithmus langsamer ausgeführt wird, als wenn man nur die leistungsstärkere Grafikkarte
+verwendet hätte.
 
-\section{Schlussfolgerungen}
+Die Verwendung von CUDA hat sich für die Parallelisierung des \gls{fdk} als vorteilhaft erwiesen. Durch die massiv
+datenparallele Philosophie eignet sich CUDA gut für die Berechnung unabhängiger \gls{voxel}. Aufgrund der
+Spezialisierung der \gls{gpu}s auf grafische Operationen sind sie gut für den Einsatz in bildgebenden Messverfahren wie
+der Computertomographie geeignet. Eine Hürde, die beachtet werden muss, bleibt allerdings der begrenzte Speicher,
+besonders im Hinblick auf die von neuen und zukünftigen Computertomographieanlagen erzeugten Datenmengen.
 
-\section{Ausblick}
+Wie die Analyse gezeigt hat, ist die vorgestellte Implementierung noch nicht an allen Stellen optimal. Insbesondere ist
+es bei kleinen Volumen nicht gelungen, die in der Literatur präsentierten Zeiten für die Rekonstruktion zu erreichen,
+was vermutlich auf zu starken Host-Overhead zurückzuführen ist. Dieser Overhead steigt durch den Einsatz mehrerer
+\gls{gpu}s sogar noch weiter an, sodass der nächste Optimierungsschritt des Programms darin bestehen muss, die
+Operationen auf der \gls{host}-Seite zu optimieren.
 
-Einer gesonderten Untersuchung bedarf die Implementierung einer dynamischen, effizienteren Lastverteilung durch den
-Einsatz von \textit{machine-learning}-Techniken.
+Die Skalierung des \gls{fdk} über mehrere \gls{gpu}s ist insgesamt verbesserungswürdig. Die Tatsache, dass selbst bei
+der Rekonstruktion großer Volumen der Einsatz zwei verschiedener \gls{gpu}s länger dauert als der alleinige Einsatz der
+leistungsstärkeren Karte, zeigt deutlich die Limitierungen der verwendeten statischen Lastverteilung. Denkbar ist hier
+eine vor der Rückprojektion stattfindende algorithmische Bestimmung der idealen Last pro \gls{gpu}, beispielsweise in
+Abhängigkeit von der Taktfrequenz und dem verfügbaren Speicher der jeweiligen Grafikkarte. Auch der Einsatz von
+\textit{Machine-Learning}-Techniken kann in Betracht gezogen werden.
+
+Die gefilterte Rückprojektion könnte außerdem durch einige Ansätze aus der Literatur weiter verbessert werden. Bei
+großen Volumen wäre die Ausnutzung der Symmetrien, wie sie von Zhao et al.\ vorgeschlagen wird, eine Möglichkeit zur
+weiteren Geschwindigkeitssteigerung. Der Ansatz von Scherl et al.\, mit einem zweidimensionalen Kernel durch das Volumen
+zu iterieren, könnte die Zahl der für die Rückprojektion benötigten Ressourcen reduzieren und so auf dem \gls{device}
+die zur Rückprojektion parallele Ausführung der Wichtung und Filterung erlauben. Dadurch wäre es möglich, die Zeit
+zwischen zwei Rückprojektionen weiter zu reduzieren.
+
+Die vorgestellte Implementierung des \gls{fdk} berechnet die Rückprojektion für derzeit gängige Projektionsdatensätze
+in wenigen Minuten. Aufgrund der Aufnahmegeschwindigkeit einer Computertomographieanlage ist es denkbar, die
+generierten Projektionen in Echtzeit zu verarbeiten. Die für die Berechnung benötigte Zeit könnte so durch die Aufnahme
+verdeckt werden, sodass am Ende der Aufnahme bereits ein rekonstruiertes Volumen vorliegt. Dabei wäre es möglich bzw.\
+für die Echtzeitrekonstruktion notwendig, vor der Wichtung und der Filterung der Projektionen zusätzliche
+Vorverarbeitungsschritte in den Algorithmus zu integrieren, wie etwa eine Korrektur defekter Pixel oder eine
+automatische Berücksichtigung des Detektor-Offsets.
+
+Das im Rahmen dieser Arbeit am Helmholtz-Zentrum Dresden-Rossendorf entstandene Programm wurde unter eine freie Lizenz
+gestellt. Der Quelltext ist im Internet unter der nachstehenden Adresse verfügbar:
+\url{https://www.github.com/HZDR-FWDF/PARIS}

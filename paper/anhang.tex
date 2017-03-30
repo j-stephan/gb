@@ -59,7 +59,7 @@ $(t, s)$-Koordinatensystem um den Winkel $\theta$ rotiert, so ist die Fouriertra
 zweidimensionalen Fouriertransformation des Objekts entlang einer radialen Linie, die um den Winkel $\theta$ rotiert
 wird (siehe Abbildung~\ref{fig:fourier_scheibe}, vgl.~\cite{rosenkak}, S. 366).
 
-\chapter{Implementierung des FDK-Algorithmus}
+\chapter{Implementierung}
 
 \section{Implementierung der Filterung}
 
@@ -93,18 +93,18 @@ __global__ void filter_creation_kernel(float* __restrict__ r,
 \begin{code}
 \begin{minted}[escapeinside=||,fontsize=\small]{cuda}
 __global__ void normalization_kernel(cufftReal* dst,
-    std::size_t pitch, std::uint32_t width,
-    std::uint32_t height, std::uint32_t filter_size)
+    std::size_t pitch, std::uint32_t N_h,
+    std::uint32_t N_v, std::uint32_t N_hFFT)
 {
-    auto x = blockIdx.x * blockDim.x + threadIdx.x;
-    auto y = blockIdx.y * blockDim.y + threadIdx.y;
+    auto s = blockIdx.x * blockDim.x + threadIdx.x;
+    auto t = blockIdx.y * blockDim.y + threadIdx.y;
 
-    if((x < width) && (y < height))
+    if((s < N_h) && (t < N_v))
     {
         auto row = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<cufftReal*>(
-            |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(dst) + y * pitch);
+            |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(dst) + t * pitch);
 
-        row[x] /= filter_size;
+        row[s] /= N_hFFT;
     }
 }
 \end{minted}
@@ -149,24 +149,24 @@ __device__ auto proj_pixel_coordinate(float coord, std::uint32_t dim,
 struct backprojection_constants
 {
     /* Volumenkonstanten */
-    std::uint32_t vol_dim_x;    // Voxelzahl in x-Richtung
-    std::uint32_t vol_dim_y;    // Voxelzahl in y-Richtung
-    std::uint32_t vol_dim_z;    // Voxelzahl in z-Richtung
+    std::uint32_t N_x;          // Voxelzahl in x-Richtung
+    std::uint32_t N_y;          // Voxelzahl in y-Richtung
+    std::uint32_t N_z;          // Voxelzahl in z-Richtung
 
-    float l_vx_x;               // Voxelgröße in x-Richtung
-    float l_vx_y;               // Voxelgröße in y-Richtung
-    float l_vx_z;               // Voxelgröße in z-Richtung
+    float d_x;                  // Voxelgröße in x-Richtung
+    float d_y;                  // Voxelgröße in y-Richtung
+    float d_z;                  // Voxelgröße in z-Richtung
 
     /* Projektionskonstanten */
-    std::uint32_t proj_dim_x;   // Pixelzahl in x-Richtung
-    std::uint32_t proj_dim_y;   // Pixelzahl in y-Richtung
+    std::uint32_t N_h;          // Pixelzahl in x-Richtung
+    std::uint32_t N_v;          // Pixelzahl in y-Richtung
 
-    float l_px_x;               // Pixelgröße in x-Richtung
-    float l_px_y;               // Pixelgröße in y-Richtung
+    float d_h;                  // Pixelgröße in x-Richtung
+    float d_v;                  // Pixelgröße in y-Richtung
 
     /* Detektorkonstanten */
-    float delta_s;              // horizontaler Offset
-    float delta_t;              // vertikaler Offset
+    float delta_h;              // horizontaler Offset
+    float delta_v;              // vertikaler Offset
 
     float d_so;                 // Abstand Quelle - Objekt
     float d_sd;                 // Abstand Quelle - Detektor
@@ -180,16 +180,16 @@ struct backprojection_constants
 \begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{cuda}
 __global__ void backprojection_kernel(
     float* vol, std::size_t vol_pitch, cudaTextureObject_t proj,
-    float angle_sin, float angle_cos)
+    float theta_sin, float theta_cos)
 {
     auto k = blockIdx.x * blockDim.x + threadIdx.x;
     auto l = blockIdx.y * blockDim.y + threadIdx.y;
     auto m = blockIdx.z * blockDim.z + threadIdx.z;
 
-    if((k < consts.vol_dim_x) && (l < consts.vol_dim_y) &&
+    if((k < consts.N_x) && (l < consts.N_y) &&
        (m < consts.vol_dim_z)) {
         // berechne gegenwärtige Schicht und Zeile
-        auto slice_pitch = vol_pitch * consts.vol_dim_y;
+        auto slice_pitch = vol_pitch * consts.N_y;
         auto slice = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(vol) + m * slice_pitch;
         auto row = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<float*>(slice + l * vol_pitch);
 
@@ -197,23 +197,20 @@ __global__ void backprojection_kernel(
         auto old_val = row[k];
 
         // Koordinatensystemursprung in Volumenmittelpunkt verschieben
-        auto x_k = vol_centered_coordinate(k, consts.vol_dim_x,
-                                           consts.l_vx_x);
-        auto y_l = vol_centered_coordinate(l, consts.vol_dim_y,
-                                           consts.l_vx_y);
-        auto z_m = vol_centered_coordinate(m, consts.vol_dim_z,
-                                           consts.l_vx_z);
+        auto x = vol_centered_coordinate(k, consts.N_x, consts.d_x);
+        auto y = vol_centered_coordinate(l, consts.N_y, consts.d_y);
+        auto z = vol_centered_coordinate(m, consts.N_z, consts.d_z);
 
         // Koordinaten rotieren
-        auto s = x_k * angle_cos + y_l * angle_sin;
-        auto t = -x_k * angle_sin + y_l * angle_cos;
+        auto s = x * theta_cos + y * theta_sin;
+        auto t = -x * theta_sin + y * theta_cos;
 
         // projiziere rotierte Koordinaten auf Detektor
         auto factor = consts.d_sd / (s + consts.d_so);
-        auto h = proj_pixel_coordinate(t * factor, consts.proj_dim_x,
-             consts.l_px_x, consts.delta_s) + 0.5f;
-        auto v = proj_pixel_coordinate(z_m * factor,
-             consts.proj_dim_y, consts.l_px_y, consts.delta_t) + 0.5f;
+        auto h = proj_pixel_coordinate(t * factor, consts.N_h,
+             consts.d_h, consts.delta_h) + 0.5f;
+        auto v = proj_pixel_coordinate(z * factor, consts.N_v,
+             consts.d_v, consts.delta_v) + 0.5f;
 
         // lies Projektionswert an dieser Stelle
         auto det = tex2D<float>(proj, h, v);

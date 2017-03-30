@@ -33,27 +33,24 @@ Bis heute ist die Computertomographie ein bedeutendes Verfahren zur nichtinvasiv
 eines Körpers. Dabei wird sie nicht nur in der Medizin angewendet, sondern wird ebenfalls in der Materialforschung
 eingesetzt. Für Projektionen, die im dreidimensionalen Raum mit Hilfe eines Kegelstrahls erzeugt wurden, haben Feldkamp,
 Davis und Kress 1984 einen Rückprojektionsalgorithmus entwickelt, der einfach zu implementieren ist (vgl.~\cite{fdk}).
-Aufgrund des technischen Fortschritts bei der Geräteentwicklung und Detektorauflösung und der damit zusammenhängenden
-stetig wachsenden Datenmenge ist eine effiziente Implementierung der Rückprojektion auch heute noch wichtig. Eine
-Möglichkeit zur effizienten Verarbeitung dieser Datenmenge liegt im Einsatz von Grafikkarten, deren für parallele
-Berechnungen von computergrafischen Problemen ausgelegte Architektur für die gefilterte Rückprojektion große Vorteile
-verspricht.
+Dieser Algorithmus wird im Allgemeinen nach seinen drei Entwicklern \gls{fdk} genannt. Aufgrund des technischen
+Fortschritts bei der Geräteentwicklung und Detektorauflösung und der damit zusammenhängenden stetig wachsenden
+Datenmenge ist eine effiziente Implementierung der Rückprojektion auch heute noch wichtig. Eine Möglichkeit zur
+effizienten Verarbeitung dieser Datenmenge liegt im Einsatz von Grafikkarten, deren für parallele Berechnungen von
+computergrafischen Problemen ausgelegte Architektur für die gefilterte Rückprojektion große Vorteile verspricht.
 
 \section{Aufgabenstellung}\label{intro:aufgabenstellung}
 
-Das Ziel dieser Arbeit ist, den \gls{fdk} mit Grafikkarten zu parallelisieren und diese Implementierung zu optimieren.
-Zum Einsatz kommt dabei die vom Grafikkartenhersteller NVIDIA entwickelte \gls{cuda}-Plattform. Da der Einsatz von
-Grafikkarten mit Limitierungen verbunden ist, wie etwa einem im Vergleich zu herkömmlichen Prozessoren begrenzten
-Speicher, sollen die folgenden Implementierungsziele erreicht werden:
+Das Ziel dieser Arbeit ist, die Parallelisierung des \gls{fdk} mit Grafikkarten zu untersuchen. Zum Einsatz kommt dabei
+die vom Grafikkartenhersteller NVIDIA entwickelte \gls{cuda}-Plattform. Da die Verwendung von Grafikkarten mit
+Limitierungen verbunden ist, wie etwa einem im Vergleich zu herkömmlichen Prozessoren begrenzten Speicher, sollen die
+folgenden Implementierungsziele erreicht werden:
 
 \begin{enumerate}
-    \item Der begrenzte Speicher auf \gls{gpu}s soll möglichst effizient genutzt werden. Häufige Kopien zwischen dem
+    \item Der begrenzte Speicher auf der \gls{gpu} soll möglichst effizient genutzt werden. Häufige Kopien zwischen dem
           Hauptspeicher der \gls{cpu} und dem der \gls{gpu} sind also zu vermeiden.
-    \item Die Rückprojektion soll auf der \gls{gpu} möglichst optimal ausgeführt werden. Daraus folgt, dass
-    \item die Rückprojektion die zur Verfügung stehenden \gls{gpu}s möglichst stark auslasten sollte, um keine
-          Rechenressourcen zu verschwenden.
-    \item Wenn mehrere \gls{gpu}s zur Verfügung stehen, sollen diese auch genutzt werden. Die Implementierung muss also
-          skalierbar sein.
+    \item Die Rückprojektion soll die Rechenressourcen der \gls{gpu} möglichst optimal ausnutzen.
+    \item Wenn mehrere \gls{gpu}s zur Verfügung stehen, sollen diese auch genutzt werden.
 \end{enumerate}
 
 Die Parallelisierung des \gls{fdk} ist seit seiner Vorstellung immer wieder Gegenstand der Forschung gewesen. Die

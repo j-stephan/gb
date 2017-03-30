@@ -171,6 +171,10 @@
 \@lotfalse
 \DeclareOption{lot}{\@lottrue}
 
+% Quelltextverzeichnis
+\newif\if@lol
+\@lolfalse
+\DeclareOption{lol}{\@loltrue}
 
 % Hyperref
 \newif\if@hyperref
@@ -714,6 +718,11 @@ Wissenschaftlichen Hochleistungsrechnen''}
 \else
   \newcommand{\printlot}{ }
 \fi
+\if@lol
+    \newcommand{\printlol}{\listoflistings}
+\else
+    \newcommand{\printlol}{ }
+\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % zeile unter dem autor zusammenstellen
@@ -744,6 +753,8 @@ Wissenschaftlichen Hochleistungsrechnen''}
 \printlof
 \cleardoublestandardpage
 \printlot
+\cleardoublestandardpage
+\printlol
 \cleardoublestandardpage
 \@altapp
 \def\@haveapp{1}

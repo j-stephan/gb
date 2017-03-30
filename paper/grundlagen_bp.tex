@@ -410,14 +410,14 @@ allerdings im Vergleich zur {\glqq}ursprünglichen{\grqq} mittleren Ebene gekipp
 Um die Rückprojektion einer Fächerstrahlprojektion auf die gekippte Ebene anwenden zu können, müssen die durch die
 Verschiebung entstandenen Veränderungen berücksichtigt werden. Zum Aufnahmewinkel der Projektion kommt nun noch der
 Winkel zwischen der gekippten Ebene und der mittleren Ebene hinzu, außerdem hat sich für den gekippten Strahl die
-Distanz zwischen der Quelle und dem Detektor vergrößert. Berechnet man diese Faktoren mit ein, so lässt sich die
+Distanz zwischen der Quelle und dem Detektor vergrößert. Rechnet man diese Faktoren mit ein, so lässt sich die
 Rückprojektion von Fächerstrahlprojektionen auch im dreidimensionalen Raum durchführen (zur mathematischen Herleitung
 siehe~\cite{fdk}, S. 614 -- 615). Aufgrund der Kegelform der von der Quelle ausgehenden Strahlen bezeichnet man sie auch
 als \textit{Kegelstrahlen} (englisch \textit{cone-beam}; vgl.\ den Titel der Arbeit von Feldkamp, Davis und Kress,
 \textit{Practical cone-beam algorithm}).
 
 Es ist zu beachten, dass die Kegelstrahltomographie, sofern sie nur auf einer Kreisbahn um das Objekt herum erfolgt,
-mathematisch unterbestimmt ist. Infolgedessen ist bietet der von diesem Fall ausgehende \gls{fdk} keine exakte, sondern
+mathematisch unterbestimmt ist. Infolgedessen bietet der von diesem Fall ausgehende \gls{fdk} keine exakte, sondern
 nur eine näherungsweise Lösung: {\glqq}No rigorous proof exists [\ldots], since the result is approximate{\grqq}
 (siehe~\cite{fdk}, S. 614).
 
@@ -659,7 +659,7 @@ Projektion $p_F$, die unter dem Drehwinkel $\theta$ aufgenommen wurde, die folge
     \item führe die Rückprojektion für jedes \gls{voxel} $vol_{xyz}$ aus:
         \begin{equation}
             \begin{aligned}
-                vol_{xyz} &= vol_{xyz} + 0,5 \cdot det \cdot u^2\\
+                vol_{xyz} &= vol_{xyz} + 0{,}5 \cdot det \cdot u^2\\
                 \text{mit } u &= \frac{d_{src}}{s - d_{src}}
             \end{aligned}
         \end{equation}

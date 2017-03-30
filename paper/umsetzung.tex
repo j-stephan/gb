@@ -1,13 +1,14 @@
 \chapter{Implementierung}\label{chap:implementierung}
 
-In diesem Kapitel wird eine mögliche parallelisierte Implementierung des \gls{fdk} vorgestellt. Dazu wird im ersten
-Abschnitt ein Variantenvergleich vorgenommen, an den sich im zweiten Abschnitt die konkrete Implementierung anschließt.
+Aufbauend auf der in Abschnitt~\ref{ssec:implementierungsidee} vorgeschlagenen Programmstruktur wird in diesem Kapitel
+die Implementierung des \gls{fdk} mit der CUDA-Plattform beschrieben. Dazu werden zunächst die Grundlagen der
+Programmierung mit CUDA erläutert, woran sich in den folgenden Abschnitten die konkrete Implementierung anschließt.
 
-\section{Grundlagen der Programmierung mit CUDA}\label{sec:grundlagen_cuda}
+\section{Grundlagen der CUDA-Programmierung}\label{sec:grundlagen_cuda}
 
-In diesem Kapitel wird die NVIDIA-CUDA-Plattform näher vorgestellt. Eingegangen wird zunächst auf die historische
-Entwicklung, die die Einführung von CUDA begünstigte bzw.\ erforderte. Im Anschluss daran wird das CUDA-Programmiermodell
-vorgestellt, das als technische Basis für die in Kapitel~\ref{chap:umsetzung} beschriebene Implementierung dient.
+Als Basis für die in den nachfolgenden Abschnitten vorgestellte Implementierung dient die CUDA-Plattform der Firma
+NVIDIA\@. Dieser Abschnitt stellt dieses technische Fundament anhand seiner historischen Entwicklung sowie der für diese
+Arbeit wichtigen Konzepte vor.
 
 \subsection{Programmierbare Grafikkarten}\label{ssec:cu_prog_gpu}
 
@@ -40,7 +41,7 @@ vorzuliegen hatten und die Ausgabedaten im der jeweiligen Grafikbibliothek eigen
 Die Umschreibung in einen für die Verwendung von \textit{Pixel-Shadern} geeigneten Algorithmus hatte außerdem den
 gravierenden Nachteil, dass Zugriffe auf beliebige Stellen im Speicher nicht möglich waren. Da ein \textit{Pixel-Shader}
 als Ausgabedatum die Farbe eines \gls{pixel}s zurückliefert, besteht dazu aus Sicht der Grafikbibliothek auch keine
-Notwendigkeit, da die Position des zugehörigen Pixels ja bereits bekannt ist (vgl.~\cite{kirkhwu}, S. 33).
+Notwendigkeit, da die Position des zugehörigen Pixels bereits bekannt ist (vgl.~\cite{kirkhwu}, S. 33).
 
 Diese Beschränkungen erwiesen sich für generische numerische Berechnungen bald als zu restriktiv. Erschwerend kam hinzu, 
 dass jeder Entwickler, der sich mit diesen technischen Limitierungen abfinden konnte, zusätzlich noch Wissen über die
@@ -51,8 +52,8 @@ ersten Jahren des \gls{gpgpu} nicht gegeben (vgl.~\cite{sandkand}, S. 6).
 Die Situation änderte sich, als NVIDIA 2006 die GeForce 8800 GTX der Öffentlichkeit präsentierte. Diese \gls{gpu} war
 nicht nur zum damals neuen \gls{directx} 10 kompatibel, sondern auch die erste Grafikkarte, die mit \gls{cuda} ohne den
 Umweg über \gls{directx} oder \gls{opengl} direkt programmierbar war (vgl.~\cite{sandkand}, S. 7). Programmierer hatten
-nun die Möglichkeit, \textit{datenparallele} Aspekte (vgl. Abschnitt~\ref{sssec:cu_data_par}) des zu lösenden Problems
-zu deklarieren und von der \gls{gpu} ausführen zu lassen. Die \textit{Shader}-Prozessoren hatten sich zu komplett
+nun die Möglichkeit, \textit{datenparallele} Aspekte (vgl. Abschnitt~\ref{cuda:modell}) des zu lösenden Problems zu
+deklarieren und von der \gls{gpu} ausführen zu lassen. Die \textit{Shader}-Prozessoren hatten sich zu komplett
 programmierbaren Prozessoren entwickelt und verfügten über einen Instruktionsspeicher, einen Instruktions-Cache und eine
 Instruktionskontrollogik. Diesen zusätzlichen Hardwareoverhead konnte NVIDIA dadurch reduzieren, dass mehrere
 Prozessoren sich den Instruktionscache und die -kontrolllogik teilten. Diese Struktur funktioniert aufgrund des
@@ -64,10 +65,10 @@ eine an C bzw.\ C++ angelehnte Sprache einbettete (vgl.~\cite{kirkhwu}, S. 35).
 \subsection{Das CUDA-Programmiermodell}\label{cuda:modell}
 
 In diesem Abschnitt wird das der \gls{cuda}-Plattform zugrundeliegende Programmiermodell näher vorgestellt. Das
-gedankliche Fundament dieses Modell ist die \textit{Datenparallelität}, die in Abschnitt~\ref{sssec:cu_data_par}
-erläutert wird. Die konkreten Programmierkonzepte schließen sich in den danach folgenden Abschnitten an.
+gedankliche Fundament dieses Modell ist die \textit{Datenparallelität}, die im Folgenden erläutert wird. Die konkreten
+Programmierkonzepte schließen sich in den danach folgenden Abschnitten an.
 
-\subsubsection*{Datenparallelität}\label{ssec:cu_data_par}
+\subsubsection*{Datenparallelität}
 
 Moderne Programme bearbeiten häufig große Datenmengen und benötigen deswegen auf herkömmlichen Rechnern lange
 Ausführungszeiten. Viele Anwendungen arbeiten dabei mit Daten, die Vorgänge der echten Welt ab- oder nachbilden, wie
@@ -119,9 +120,9 @@ Vektoren führen in diesem Beispiel daher zu einem hohen Maß an Datenparallelit
 
 Der Datenparallelität steht das Konzept der \textit{Task-Parallelität} gegenüber. Die Task-Parallelität kommt vor allem
 in komplexeren Programmen zur Anwendung, in denen es mehrere unterschiedliche Aufgaben gibt, die parallel bearbeitet
-werden können. Vorstellbar ist z.B.\ ein Programm zur Filterung von Bildern, in denen ein Task das die Bilder
-nacheinander lädt, der zweite die Bilder nacheinander filtert und ein weiterer die gefilterten Bilder wieder
-abspeichert (vgl.~\cite{kirkhwu}, S. 42 -- 43).
+werden können. Vorstellbar ist z.B.\ ein Programm zur Filterung von Bildern, in denen ein Task die Bilder nacheinander
+lädt, der zweite die Bilder nacheinander filtert und ein weiterer die gefilterten Bilder wieder abspeichert.
+(vgl.~\cite{kirkhwu}, S. 42 -- 43)
 
 \subsubsection*{Parallele Ausführung}
 
@@ -308,24 +309,22 @@ werden. Die für die Kopie benötigte Zeit kann somit durch die parallel stattfi
 fällt für die Gesamtlaufzeit des Algorithmus nicht mehr ins Gewicht, sofern die Berechnungen länger dauern.
 (vgl.~\cite{sandkand}, S. 198f.)
 
-\section{Optimierungsziele}
+\section{Optimierungsziele}\label{optimierungsziele}
 
-Von den in Abschnitt~\ref{intro:aufgabenstellung} genannten Zielen einer Implementierung des \gls{fdk} sind im Hinblick
-auf die Nutzung von \gls{cuda} die zusammenhängenden Faktoren \textit{Optimierung} und \textit{\gls{gpu}-Auslastung}
-von großer Bedeutung. Da die Rückprojektion im Vergleich zur Wichtung und Filterung einen weitaus höheren Rechenaufwand
-erfordert, ist ihrer Optimierung die höchste Priorität einzuräumen, sodass der gesamte Algorithmus für derzeit gängige
-Datensätze der Computertomographie -- also bis zu einer Projektionsauflösung von 1024 x 1024 \gls{pixel}n -- auf neuer
+Die Rückprojektion erfordert im Vergleich zur Wichtung und Filterung einen weitaus höheren Rechenaufwand. Ihrer
+Optimierung ist deshalb die höchste Priorität einzuräumen, sodass der gesamte Algorithmus für derzeit gängige Datensätze
+der Computertomographie -- also bis zu einer Projektionsauflösung von 1024 $\times$ 1024 \gls{pixel}n -- auf neuer
 Hardware in wenigen Minuten lösbar ist. Da die \gls{cuda}-Plattform den parallelen Einsatz mehrerer \gls{gpu}s
 unterstützt, ist die Implementierung so zu konzipieren, dass sie auf einer oder mehreren Grafikkarten lauffähig ist.
 
-\subsection{Vorüberlegungen}\label{ssec:opti_ueber}
+\subsection*{Vorüberlegungen}
 
-Da, wie wir gesehen haben, die gefilterte Rückprojektion von einer Reihe geometrischer Parameter abhängt, ist die Zahl
-der benötigten Register für die Übergabe dieser Parameter sowie zur Speicherung von Zwischenergebnissen recht hoch. Ein
-großer Teil dieser Parameter ist jedoch während der Rückprojektion konstant, wie zum Beispiel die Abstände zwischen dem
-Objekt, der Quelle und dem Detektor oder die geometrischen Eigenschaften des Detektors. Es empfiehlt sich daher, diese
-in den konstanten Speicher der Grafikkarte auszulagern, um den Bedarf an den zwischen den Threads geteilten Ressourcen
-zu minimieren und dadurch die potentielle Auslastung zu erhöhen.
+Weil die gefilterte Rückprojektion von einer Reihe geometrischer Parameter abhängt, ist die Zahl der benötigten Register
+für die Übergabe dieser Parameter sowie zur Speicherung von Zwischenergebnissen recht hoch. Ein großer Teil dieser
+Parameter ist jedoch während der Rückprojektion konstant, wie zum Beispiel die Abstände zwischen dem Objekt, der Quelle
+und dem Detektor oder die geometrischen Eigenschaften des Detektors. Es empfiehlt sich daher, diese in den konstanten
+Speicher der Grafikkarte auszulagern, um den Bedarf an den zwischen den Threads geteilten Ressourcen zu minimieren und
+dadurch die potentielle Auslastung zu erhöhen.
 
 Anders verhält es sich mit den Projektionen und dem Volumen. Weil während der Ausführung auf beide Speicherbereiche
 schreibend zugegriffen werden muss, ist es sinnvoll, diese Zugriffe möglichst optimal zu gestalten. Da die Projektionen
@@ -515,8 +514,15 @@ Formeln~\ref{eq:det_h} und~\ref{eq:det_v} wie folgt umgeschrieben werden:
 
 \subsection{Volumengeometrie}\label{ssec:geometrie}
 
-Für die Berechnung der Rückprojektion ist notwendig, das zu rekonstruierende Volumen hinsichtlich seiner Auflösung und
-der physischen Ausdehnungen der \gls{voxel} zu definieren.
+Für die Berechnung der Rückprojektion ist es notwendig, das zu rekonstruierende Volumen hinsichtlich seiner Auflösung
+und der physischen Ausdehnungen der \gls{voxel} zu definieren. Diese Werte können grundsätzlich relativ frei gewählt
+werden, gegebenenfalls auf Kosten der Qualität. Es ist jedoch sinnvoll, die Detektorpixel surjektiv auf den
+Rekonstruktionsbereich unter einem bestimmten Winkel (Support-Bereich) abzubilden. Dies ist in
+Abbildung~\ref{fig:vol_detektor_support_horiz} für den horizontalen Fall dargestellt. Aufgrund der Kreisbahn, die die
+Quelle-Detektor-Anordnung bei der Aufnahme abfährt, bilden die äußeren Strahlen des Kegels die Tangenten eines Kreises
+mit dem Radius $r$, ausgehend vom Rotationsmittelpunkt. Dieser Kreis ist der Support-Bereich für den horizontalen Fall.
+$r$ lässt sich über den Winkel $\alpha$ bestimmen, $\alpha$ wiederum aus dem Verhältnis der halben Detektorbreite zum
+Quelle-Detektor-Abstand:
 
 \begin{equation}
     \begin{aligned}
@@ -525,8 +531,25 @@ der physischen Ausdehnungen der \gls{voxel} zu definieren.
     \end{aligned}
 \end{equation}
 
+Setzt man $r$ in Relation zu der Zahl der abgebildeten Pixel, erhält man die Voxelbreite und -höhe:
+
 \begin{equation}
     d_x = d_y = \frac{r}{\frac{\frac{N_h * d_h}{2} + \Delta h}{d_h}}
+\end{equation}
+
+Aus \glssymbol{dx} bzw.\ \glssymbol{dy} und $r$ lässt sich einfach die Voxelzahl in der $x$- und $y$-Richtung bestimmen:
+
+\begin{equation}
+    N_x = N_y = \frac{2r}{d_x}
+\end{equation}
+
+Der vertikale Fall, wie er in Abbildung~\ref{fig:vol_detektor_support_vert} zu sehen ist, unterscheidet sich leicht
+vom horizontalen Fall. Da die $z$-Achse die Rotationsachse der Quelle-Detektor-Anordnung ist, bildet der Support-Bereich
+hier keinen Kreis, sondern ein Hexagon. Die \gls{dz} \glssymbol{dz} wird so gewählt, dass sie \glssymbol{dx} entspricht.
+Dann kann die Voxelzahl \glssymbol{nz} durch die Skalierung der Detektorpixelzahl \glssymbol{nv} bestimmt werden:
+
+\begin{equation}
+    N_z = \left(\frac{N_v \cdot d_v}{2} + \Delta v\right) \cdot \frac{d_{det}}{d_{src}} \cdot \frac{2}{d_z}
 \end{equation}
 
 \begin{figure}
@@ -625,75 +648,49 @@ Formel~\ref{eq:wichtung}:
 
 Es ist leicht zu sehen, dass der Wichtungsfaktor $w_{ij}$ zwar von geometrischen Parametern abhängt, jedoch nicht von
 konkreten Messwerten. Es ist daher möglich, die Berechnung der Wichtungsfaktoren am Anfang des Programms genau einmal
-durchzuführen und in einer Wichtungsmatrix \texttt{m} zu speichern (siehe Quelltext~\ref{source:impl_gen_mat}). Die
-Berechnung der Wichtungsmatrix hängt von mehreren geometrischen Parametern ab (vgl.\
-Abschnitt~\ref{sssec:fdk_geometrie} und
-Abbildungen~\ref{fig:det_geometrie},~\ref{fig:det_pixel},~\ref{fig:det_koord},~\ref{fig:off_geometrie}):
+durchzuführen und in einer Wichtungsmatrix \texttt{m} zu speichern (siehe Quelltext~\ref{source:impl_gen_mat}).
 
-\begin{itemize}
-    \item \texttt{dim\_x}: Anzahl der \gls{pixel} in horizontaler Richtung. Entspricht der Anzahl der Detektorpixel in
-          horizontaler Richtung $N_h$
-    \item \texttt{dim\_y}: Anzahl der \gls{pixel} in vertikaler Richtung. Entspricht der Anzahl der Detektorpixel in
-          vertikaler Richtung $N_v$
-    \item \texttt{h\_min}: horizontaler Abstand vom Detektorrand zum Detektorzentrum in mm.
-    \item \texttt{v\_min}: vertikaler Abstand vom Detektorrand zum Detektorzentrum in mm.
-    \item \texttt{d\_sd}: Abstand von der Quelle zum Detektor. Entsprich der Differenz der Strecken $d_{det}$ (Abstand
-          zwischen dem Objekt und dem Detektor) und $d_{src}$ (Abstand zwischen der Quelle und dem Objekt) bzw.\ der
-          Summe ihrer Beträge:
-          
-          \begin{equation*}
-              d_{det} - d_{src} = |d_{det}| + |d_{src}|
-          \end{equation*}
-
-    \item \texttt{l\_px\_row}: horizontale Länge eines \gls{pixel}s, also der horizontale Abstand zwischen den
-          Mittelpunkten zweier aufeinanderfolgender \gls{pixel}. Entspricht der horizontalen Länge eines Detektorpixels
-          $d_h$.
-    \item \texttt{l\_px\_col}: vertikale Länge eines \gls{pixel}s, also der vertikale Abstand zwischen den
-          Mittelpunkten zweier aufeinanderfolgender \gls{pixel}. Entspricht der vertikalen Länge eines Detektorpixels
-          $d_v$.
-\end{itemize}
-
-\begin{code}
+\begin{listing}
 \begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{cuda}
 __global__ void matrix_generation_kernel(float* m,
-    std::uint32_t dim_x, std::uint32_t dim_y, std::size_t pitch,
-    float h_min, float v_min, float d_sd, float l_px_row,
-    float l_px_col)
+    std::uint32_t N_h, std::uint32_t N_v, std::size_t pitch,
+    float h_min, float v_min, float d_sd, float d_h,
+    float d_v)
 {
     auto s = blockIdx.x * blockDim.x + threadIdx.x;
     auto t = blockIdx.y * blockDim.y + threadIdx.y;
 
-    if((s < dim_x) && (t < dim_y))
+    if((s < N_h) && (t < N_v))
     {
         auto row = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<float*>(
             |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(m) + t * pitch);
 
         // Detektorkoordinaten in mm
-        const auto h_s = (l_px_row / 2.f) + s * l_px_row + h_min;
-        const auto v_t = (l_px_col / 2.f) + t * l_px_col + v_min;
+        const auto h = (d_h / 2.f) + s * d_h + h_min;
+        const auto v = (d_v / 2.f) + t * d_v + v_min;
 
         // berechne Wichtungsfaktor
-        row[s] = d_sd * rsqrtf(d_sd * d_sd + h_s * h_s + v_t * v_t);
+        row[s] = d_sd * rsqrtf(d_sd * d_sd + h * h + v * v);
     }
 }
 \end{minted}
-\captionof{listing}{Generierung der Wichtungsmatrix}
+\caption{Generierung der Wichtungsmatrix}
 \label{source:impl_gen_mat}
-\end{code}
+\end{listing}
 
 Bei der Wichtung einer Projektion \texttt{p} kann der jeweilige Wichtungsfaktor aus der generierten Matrix \texttt{m}
 ausgelesen und auf das zugehörige \gls{pixel} angewendet werden (siehe Quelltext~\ref{source:impl_weighting}). 
 
-\begin{code}
+\begin{listing}
 \begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{cuda}
 __global__ void weighting_kernel(float* p, const float* m,
-    std::uint32_t dim_x, std::uint32_t dim_y, std::size_t pitch,
+    std::uint32_t N_h, std::uint32_t N_v, std::size_t pitch,
     std::size_t m_pitch)
 {
     auto s = blockIdx.x * blockDim.x + threadIdx.x;
     auto t = blockIdx.y * blockDim.y + threadIdx.y;
 
-    if((s < dim_x) && (t < dim_y))
+    if((s < N_h) && (t < N_v))
     {
         auto p_row = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<float*>(
             |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(p) + t * pitch);
@@ -707,11 +704,11 @@ __global__ void weighting_kernel(float* p, const float* m,
 \end{minted}
 \captionof{listing}{Wichtung einer Projektion}
 \label{source:impl_weighting}
-\end{code}
+\end{listing}
 
-\section{Filterung}
+\section{Implementierung der Filterung}
 
-Dem in Abschnitt~\ref{sssec:fdk_filter} vorgestellten Algorithmus entsprechend, folgt die Implementierung des
+Dem in Abschnitt~\ref{ssec:fdk_filter} vorgestellten Algorithmus entsprechend, folgt die Implementierung des
 Filterschrittes dem nachstehenden Schema:
 
 \begin{enumerate}
@@ -724,72 +721,71 @@ Filterschrittes dem nachstehenden Schema:
 Die Implementierung der Filtergenerierung entspricht der Formel~\ref{eq:filter_gen} und kann dem im Anhang befindlichen
 Quelltext~\ref{app:filter_gen} entnommen werden. Dieser Filter wird dann zeilenweise auf jede Projektion angewendet.
 Dazu werden der Filter und die einzelnen Projektionszeilen mit der \gls{cufft}-Bibliothek zunächst fouriertransformiert.
-Im komplexen Raum werden dann die einzelnen Elemente der transformierten Projektionszeile mit den korrespondierenden
+Im Frequenzraum werden dann die einzelnen Elemente der transformierten Projektionszeile mit den korrespondierenden
 Elementen des transformierten Filters multipliziert (siehe Quelltext~\ref{source:impl_filter}). Ist dieser Vorgang
 abgeschlossen, wird die Projektion wieder zurücktransformiert und normalisiert (siehe den angehängten
 Quelltext~\ref{app:filter_norm}). Die Projektion ist dann bereit für die Rückprojektion.
 
-\begin{code}
+\begin{listing}
 \begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{cuda}
 __global__ void filter_application_kernel(
     cufftComplex* __restrict__ data,
     const cufftComplex* __restrict__ filter,
-    std::uint32_t filter_size, std::uint32_t data_height,
+    std::uint32_t N_hFFT, std::uint32_t N_v,
     std::size_t pitch)
 {
-    auto x = blockIdx.x * blockDim.x + threadIdx.x;
-    auto y = blockIdx.y * blockDim.y + threadIdx.y;
+    auto s = blockIdx.x * blockDim.x + threadIdx.x;
+    auto t = blockIdx.y * blockDim.y + threadIdx.y;
 
-    if((x < filter_size) && (y < data_height))
+    if((s < N_hFFT) && (t < N_v))
     {
         auto row = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<cufftComplex*>(
-            |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(data) + y * pitch);
+            |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(data) + t * pitch);
 
-        row[x].x *= filter[x].x;
-        row[x].y *= filter[x].y;
+        row[s].x *= filter[s].x;
+        row[s].y *= filter[s].y;
     }
 }
 \end{minted}
-\captionof{listing}{Filterung einer Projektion}
+\caption{Filterung einer Projektion}
 \label{source:impl_filter}
-\end{code}
+\end{listing}
 
 \section{Implementierung der gefilterten Rückprojektion}
 
-Die Implementierung der gefilterten Rückprojektion soll möglichst optimal auf der \gls{gpu} laufen. Um dies zu
-erreichen, sind drei Dinge erforderlich: eine hohe Auslastung, geringe Wartezeiten zwischen den Rückprojektionen
-der individuellen Projektionen und möglichst schnelle Zugriffe auf den globalen Speicher.
+Ausgehend von den in Abschnitt~\ref{ssec:implementierungsidee} genannten Zielen und den Vorüberlegungen des
+Abschnitts~\ref{optimierungsziele} lassen sich im Hinblick auf den Rückprojektionskernel drei primäre Ziele bestimmen:
+eine hohe \gls{gpu}-Auslastung, geringe Wartezeiten zwischen den Rückprojektionen sowie schnelle Speicherzugriffe.
 
 Eine hohe Auslastung der \gls{gpu} für einen gegebenen \gls{kernel}, also die gleichzeitige Ausführung einer hohen
-Anzahl von Threads, ist dann möglich, wenn jeder Thread sehr wenige geteilte Ressourcen für seine Ausführung benötigt.
-Bei diesen Ressourcen handelt es sich vor allem um die Register und den \textit{shared memory}, die pro \gls{sm} und
-nicht pro Kern vorhanden sind.
+Anzahl von Threads, ist, wie in Abschnitt~\ref{cuda:modell} gezeigt, dann möglich, wenn jeder Thread sehr wenige
+geteilte Ressourcen für seine Ausführung benötigt. Bei diesen Ressourcen handelt es sich vor allem um die Register und
+den geteilten Speicher, die pro \gls{sm} nur begrenzt verfügbar sind.
 
 Der Registerverbrauch eines \gls{kernel}s ist vor allem von zwei Faktoren abhängig: der Zahl der an den \gls{kernel}
 übergebenen Funktionsparameter sowie der Zahl der lokalen Variablen pro Thread, die beispielsweise zur Speicherung der
 Zwischenergebnisse benötigt werden. Die Minimierung beider Zahlen führt daher zu einem geringeren Registerverbrauch und
-somit zu einer effizienteren Verteilung und Ausführung der Threads auf den Multiprozessoren. Da ein großer Teil der
-Berechnungen auf der Detektorgeometrie aufbaut (siehe Abbildung~\ref{fig:fdk_geometrie}) und diese für alle Projektionen
-unverändert bleibt, ist ein großer Teil der Parameter konstant. Indem man diese Konstanten nicht als Parameter übergibt,
-sondern im konstanten Speicher (siehe Abschnitt~\ref{sssec:cu_mem}) der Grafikkarte ablegt, können einige Register
-eingespart werden, sodass nur die in Quelltext~\ref{source:fdk_kernel_param} gezeigten Parameter übrig bleiben. Die
-Struktur der konstanten Parameter wird in Quelltext~\ref{app:fdk_consts} gezeigt.
+somit zu einer effizienteren Verteilung und Ausführung der Threads auf den Multiprozessoren. Im
+Abschnitt~\ref{optimierungsziele} wurde dargelegt, dass ein großer Teil der Berechnungen auf der Detektorgeometrie
+aufbaut und während der Rückprojektion konstant ist. Die geometrischen Konstanten können daher im konstanten Speicher
+abgelegt werden, sodass nur die in Quelltext~\ref{source:fdk_kernel_param} aufgeführten Parameter übrig bleiben. Die
+Struktur der konstanten Parameter wird im angehängten Quelltext~\ref{app:fdk_consts} gezeigt.
 
-\begin{code}
+\begin{listing}
 \begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
 __global__ void backprojection_kernel(
     float* vol,                 // Zeiger auf das Volumen
     std::size_t vol_pitch,      // Volumen-Pitch
     cudaTextureObject_t proj,   // in Textur umgewandelte Projektion
-    float angle_sin,            // Sinus des Projektionswinkels
-    float angle_cos)            // Kosinus des Projektionswinkels
+    float theta_sin,            // Sinus des Projektionswinkels
+    float theta_cos)            // Kosinus des Projektionswinkels
 {
     /* ... */
 }
 \end{minted}
 \caption{FDK-\gls{kernel}-Deklaration}
 \label{source:fdk_kernel_param}
-\end{code}
+\end{listing}
 
 Schwieriger ist die Reduzierung der lokalen Variablen, die zur Speicherung von Zwischenergebnissen verwendet werden. Da
 jeder Thread ein \gls{voxel} bearbeitet und jedes \gls{voxel} je eine Koordinate in $x$-, $y$- und $z$-Richtung besitzt,
@@ -803,9 +799,9 @@ verlassen.
 
 Jeder Thread arbeitet auf einem bestimmten \gls{voxel} und ist zu dessen Berechnung nicht auf benachbarte Threads
 angewiesen. Darüber hinaus ist dieses \gls{voxel} von genau einer Lese- und genau einer Schreiboperation betroffen. Der
-Einsatz von \textit{shared memory} bietet daher für die Rückprojektion keinen Mehrwert.
+Einsatz von geteiltem Speicher bietet daher für die Rückprojektion keinen Mehrwert.
 
-Die Minimierung der Wartezeiten wird, wie in Abschnitt~\ref{ssec:loesungsvorschlag} erwähnt, durch die Ausführung der
+Die Minimierung der Wartezeiten wird, wie in Abschnitt~\ref{ssec:implementierungsidee} erwähnt, durch die Ausführung der
 Rückprojektion in einem eigenen Thread und Stream erreicht. Die im Hauptthread gewichteten und gefilterten Projektionen
 werden in einer Warteschlange abgelegt und aus dieser nach dem FIFO-Prinzip vom Rückprojektionsthread entnommen. Der
 Rückprojektions-\gls{kernel} wird dann mit der entnommenen Projektion gestartet und in den Rückprojektions-Stream
@@ -813,33 +809,23 @@ eingereiht.
 
 Ein weiterer Faktor, der die Ausführungszeit beeinflusst, ist der Zugriff auf den globalen Speicher, in welchem sich
 das Volumen und die Projektionen befinden. Die Projektionen müssen in diesem Schritt nicht mehr verändert werden und
-sind daher konstant. Aufgrund ihrer Datengröße, die üblicherweise mehrere Megabyte beträgt, sind sie für den konstanten
-Speicher zu groß. Es ist aber möglich, sie in eine \gls{cuda}-Textur umzuwandeln, um so von den auf der \gls{gpu}
-verbauten Textur-Caches Gebrauch zu machen. Diese sind insbesondere dann effizient, wenn häufig auf benachbarte
-\gls{pixel} zugegriffen werden muss. Für die Zwecke der Rückprojektion ist das ideal, da benachbarte Threads auf
-benachbarten \gls{voxel}n arbeiten und benachbarte \gls{voxel} wiederum auf benachbarte \gls{pixel} projiziert werden.
-Die \gls{cuda}-Texturroutinen bieten außerdem den Vorteil, dass eine lineare Interpolation beim Zugriff auf die
-\gls{pixel} direkt ausgeführt werden kann -- diese Funktion muss also nicht selbst implementiert werden, was einerseits
-die Komplexität des Quelltextes verringert und andererseits den von NVIDIA optimierten Weg nutzt.
+sind daher konstant. Sie werden deshalb im Texturspeicher abgelegt.
 
-Auf das Volumen selbst erfolgen lesende und schreibende Zugriffe, eine Verwendung von \gls{cuda}-Texturen ist hier daher
-nicht möglich. Da man sich innerhalb des Volumens im dreidimensionalen Raum bewegt, ist es sinnvoll, den für das Volumen
-benötigten globalen Speicher so zu reservieren, dass dreidimensionale Zugriffe optimal erfolgen können. Die in
-\gls{cuda} enthaltene Funktion \texttt{cudaMalloc3D} führt so eine Reservierung durch (vgl.
-Abschnitt~\ref{sssec:cu_mem}). Die Zuordnung eines Threads zu einem bestimmten Punkt innerhalb des Datenfeldes erfolgt
-auf ähnliche Weise wie bei einem zweidimensionalem Feld, nur dass hier noch die jeweilige Schicht des Volumens ermittelt
-werden muss, wie in Quelltext~\ref{source:vol_slice_row} dargestellt.
+Auf das Volumen selbst erfolgen lesende und schreibende Zugriffe, eine Verwendung von \gls{cuda}-Texturen ist hier also
+nicht möglich. Der Speicherzugriff kann aber durch den Einsatz des \textit{pitched memory} optimiert werden (siehe
+Abschnitt~\ref{cuda:modell}). Im Quelltext~\ref{source:vol_slice_row} wird die Zuordnung der Threads zu bestimmten
+Voxeln gezeigt.
 
-\begin{code}
+\begin{listing}
 \begin{minted}[breaklines,breakafter=\,,escapeinside=||,fontsize=\small]{cuda}
     auto k = blockIdx.x * blockDim.x + threadIdx.x;
     auto l = blockIdx.y * blockDim.y + threadIdx.y;
     auto m = blockIdx.z * blockDim.z + threadIdx.z;
 
-    if((k < consts.vol_dim_x) && (l < consts.vol_dim_y) &&
-       (z < consts.vol_dim_z))
+    if((k < consts.N_x) && (l < consts.N_y) &&
+       (m < consts.N_z))
     {
-        auto slice_pitch = vol_pitch * consts.vol_dim_y;
+        auto slice_pitch = vol_pitch * consts.N_y;
         auto slice = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<char*>(vol) + m * slice_pitch;
         auto row = |\textbf{\textcolor{keyword-green}{reinterpret\_cast}}|<float*>(slice + l * vol_pitch);
         /* ... */
@@ -847,7 +833,7 @@ werden muss, wie in Quelltext~\ref{source:vol_slice_row} dargestellt.
 \end{minted}
 \caption{Zuordnung eines Threads zu einer Schicht und einer Zeile in der Schicht}
 \label{source:vol_slice_row}
-\end{code}
+\end{listing}
 
 Da der vorherige Wert des Voxels zum jeweils aktuellen Wert hinzu addiert wird -- am Anfang haben alle Voxel des
 Volumens den Wert 0 --, muss dieser vor der Addition aus dem globalen Speicher geladen werden. Trotz der bereits
@@ -856,63 +842,59 @@ werden kann. Zu diesem Zweck lädt man den alten Wert schon zu Beginn des \gls{k
 Berechnungen, die von diesem Wert unabhängig sind, während der Wartezeit ausgeführt werden können (siehe
 Quelltext~\ref{source:fdk_old_val}).
 
-\begin{code}
+\begin{listing}
 \begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
         auto old_val = row[k];
 \end{minted}
 \caption{\textit{Prefetch} des vorherigen Voxelwertes}
 \label{source:fdk_old_val}
-\end{code}
+\end{listing}
 
 Die Berechnung der Rückprojektion erfolgt mittels der in Abschnitt~\ref{sssec:backprojection} vorgestellten Formeln. Der
 Implementierung liegt dabei die in Abbildung~\ref{fig:fdk_geometrie} gezeigte Geometrie zugrunde. Zunächst ist ein
 Wechsel des Koordinatensystems nötig, wie er in Quelltext~\ref{source:vol_coord_switch} zu sehen ist, da das Voxel
 $(0, 0, 0)$ des im Speicher gehaltenen Volumens in einer der Volumenecken liegt, die Berechnungsvorschriften dagegen von
-einem Ursprung ausgehen, der sich im Zentrum des Volumens befindet. Die Umrechnung einer Voxelkoordinate in eine
-physische Koordinate wurde in Abschnitt~\ref{ssec:geometrie} beschrieben.
+einem Ursprung ausgehen, der sich im Zentrum des Volumens befindet. Die Implementierung der Umrechnung einer
+Voxelkoordinate in eine physische Koordinate wird im angehängten Quelltext~\ref{app:coord_vol} gezeigt.
 
-\begin{code}
+\begin{listing}
 \begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
-        auto x_k = vol_centered_coordinate(k, consts.vol_dim_x,
-                                           consts.l_vx_x);
-        auto y_l = vol_centered_coordinate(l, consts.vol_dim_y,
-                                           consts.l_vx_y);
-        auto z_m = vol_centered_coordinate(m, consts.vol_dim_z,
-                                           consts.l_vx_z);
+        auto x = vol_centered_coordinate(k, consts.N_x, consts.d_x);
+        auto y = vol_centered_coordinate(l, consts.N_y, consts.d_y);
+        auto z = vol_centered_coordinate(m, consts.N_z, consts.d_z);
 \end{minted}
 \caption{Wechsel des Volumenkoordinatensystems}
 \label{source:vol_coord_switch}
-\end{code}
+\end{listing}
 
 Die ermittelten physischen Volumenkoordinaten werden dann unter Berücksichtigung des Aufnahmewinkels der jeweiligen
 Projektion auf den Detektor projiziert (siehe Quelltext~\ref{source:vol_coord_rot}). Analog zum Vorgehen bei der
 Bestimmung der physischen Volumenkoordinaten müssen die physischen Projektionskoordinaten für den Zugriff auf das
 Projektionsdatenfeld wieder in Pixelkoordinaten umgerechnet werden, sodass der Punkt $(0, 0)$ in der oberen linken Ecke
-der Projektion liegt.
+der Projektion liegt (siehe den angehängten Quelltext~\ref{app:coord_det}).
 
-\begin{code}
+\begin{listing}
 \begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
         // Koordinaten rotieren
-        auto s = x_k * angle_cos + y_l * angle_sin;
-        auto t = -x_k * angle_sin + y_l * angle_cos;
+        auto s = x * theta_cos + y * theta_sin;
+        auto t = -x * theta_sin + y * theta_cos;
 
         // projizierte Koordinaten auf Detektor
         auto factor = consts.d_sd / (s + consts.d_so);
-        auto h = proj_pixel_coordinate(t * factor, consts.proj_dim_x,
-             consts.l_px_x, consts.delta_s) + 0.5f;
-        auto v = proj_pixel_coordinate(z_m * factor,
-             consts.proj_dim_y, consts.l_px_y, consts.delta_t) + 0.5f;
+        auto h = proj_pixel_coordinate(t * factor, consts.N_h,
+             consts.d_h, consts.delta_h) + 0.5f;
+        auto v = proj_pixel_coordinate(z * factor, consts.N_v,
+             consts.d_v, consts.delta_v) + 0.5f;
 \end{minted}
 \caption{Projektion der Volumenkoordinaten auf den Detektor}
 \label{source:vol_coord_rot}
-\end{code}
+\end{listing}
 
-An der Stelle $(h, v)$ kann jetzt der Pixelwert ermittelt bzw.\ linear interpoliert und dann für die in
-Quelltext~\ref{source:vol_bp} dargestellte Rückprojektion herangezogen werden. Erst an diesem Punkt kommt der zu Beginn
-des \gls{kernel}s geladene vorherige Voxelwert zum Einsatz, dessen Ladezeit durch die vorangegangenen Berechnungen
-maskiert wurde.
+An der Stelle $(h, v)$ kann jetzt der Pixelwert linear interpoliert und dann für die in Quelltext~\ref{source:vol_bp}
+dargestellte Rückprojektion herangezogen werden. Erst an diesem Punkt kommt der zu Beginn des \gls{kernel}s geladene
+vorherige Voxelwert zum Einsatz, dessen Ladezeit durch die vorangegangenen Berechnungen maskiert wurde.
 
-\begin{code}
+\begin{listing}
 \begin{minted}[breaklines,breakafter=\,,fontsize=\small]{cuda}
         // Projektionswert interpolieren
         auto det = tex2D<float>(proj, h, v);
@@ -923,7 +905,7 @@ maskiert wurde.
 \end{minted}
 \caption{Detektorinterpolation und Rückprojektion}
 \label{source:vol_bp}
-\end{code}
+\end{listing}
 
 Der vollständige Rückprojektions-\gls{kernel} findet sich in Anhang~\ref{app:impl_bp}. Aufgerufen wird der beschriebene
 \gls{kernel} für jede Projektion einzeln. Durch die Aneinanderreihung der einzelnen \gls{kernel}-Instanzen im selben

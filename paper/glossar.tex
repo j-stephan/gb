@@ -41,13 +41,13 @@
                                      Superrechner},
                         plural=Hosts}
 \newglossaryentry{device}{name=Device,
-                          description={Beschleuniger, der einen Kernel ausführt. Im Zusammenhang mit \gls{cuda} ist
-                                       dieser typischerweise eine \gls{gpu}},
+                          description={Beschleuniger, der einen Kernel ausführt. Im Zusammenhang mit CUDA ist dieser
+                                       typischerweise eine GPU},
                           plural=Devices}
 \newglossaryentry{stream}{name=Stream,
-                          description={Warteschlange auf einem \gls{cuda}-\gls{device}. Operationen, wie z.B.\
-                                       \gls{kernel}aufrufe, werden innerhalb eines Streams sequentiell ausgeführt.
-                                       Mehrere Streams können vom gleichen \gls{device} parallel abgearbeitet werden},
+                          description={Warteschlange auf einem CUDA-Device. Operationen, wie z.B.\ Kernelaufrufe, werden
+                                       innerhalb eines Streams sequentiell ausgeführt. Mehrere Streams können vom
+                                       gleichen Device parallel abgearbeitet werden},
                           plural=Streams}
 \newglossaryentry{race-condition}{name=Race Condition,
                                   description={Paralleler, nicht (ausschließlich) lesender Zugriff mehrerer Threads auf
@@ -56,7 +56,7 @@
                                                Möglichkeit der Datenkorruption},
                                   plural=race conditions}
 \newglossaryentry{grid}{name=Grid,
-                        description={Menge aller auf dem \gls{device} durch einen \gls{kernel} gestarteten Threads},
+                        description={Menge aller auf dem Device durch einen Kernel gestarteten Threads},
                         plural=Grids}
 
 \newacronym{fdk}{FDK-Algorithmus}{Feldkamp-Davis-Kress-Algorithmus}
@@ -127,15 +127,15 @@
                        symbol={$d_{sd}$},
                        sort={Abstand, Quelle-Detektor},
                        type=nomencl}
-\newglossaryentry{nh}{name=Zeilenlänge,
+\newglossaryentry{nh}{name=Projektionszeilenlänge,
                       description={Pixelzahl pro Projektionszeile},
                       symbol={$N_h$},
-                      sort={Länge, Zeile},
+                      sort={Länge, Projektionszeile},
                       type=nomencl}
-\newglossaryentry{nv}{name=Spaltenlänge,
+\newglossaryentry{nv}{name=Projektionsspaltenlänge,
                       description={Pixelzahl pro Projektionsspalte},
                       symbol={$N_v$},
-                      sort={Länge, Spalte},
+                      sort={Länge, Projektionsspalte},
                       type=nomencl}
 \newglossaryentry{dh}{name={Pixelbreite},
                       description={physische Breite eines Detektorpixels},
@@ -147,11 +147,57 @@
                       symbol={$d_v$},
                       sort={Pixelabstand, vertikal},
                       type=nomencl}
+\newglossaryentry{nx}{name=Volumenzeilenlänge,
+                      description={Voxelzahl pro Volumenzeile},
+                      symbol={$N_x$},
+                      sort={Länge, Volumenzeile},
+                      type=nomencl}
+\newglossaryentry{ny}{name=Volumenspaltenlänge,
+                      description={Voxelzahl pro Volumenspalte},
+                      symbol={$N_y$},
+                      sort={Länge, Volumenspalte},
+                      type=nomencl}
+\newglossaryentry{nz}{name=Volumenschichten,
+                      description={Anzahl der Schichten im Volumen},
+                      symbol={$N_z$},
+                      sort={Länge, Volumenschichten},
+                      type=nomencl}
+\newglossaryentry{dx}{name={Voxelbreite},
+                      description={physische Breite eines Voxels},
+                      symbol={$d_x$},
+                      sort={Voxelabstand, horizontal},
+                      type=nomencl}
+\newglossaryentry{dy}{name={Voxelhöhe},
+                      description={physische Höhe eines Voxels},
+                      symbol={$d_y$},
+                      sort={Voxelabstand, vertikal},
+                      type=nomencl}
+\newglossaryentry{dz}{name={Voxeltiefe},
+                      description={physische Tiefe eines Voxels},
+                      symbol={$d_z$},
+                      sort={Voxelabstand, Tiefe},
+                      type=nomencl}
+\newglossaryentry{deltah}{name={horizontaler Detektoroffset},
+                          description={horizontale Verschiebung des Detektors},
+                          symbol={$\Delta h$},
+                          sort={Detektoroffset, horizontal},
+                          type=nomencl}
+\newglossaryentry{deltav}{name={vertikaler Detektoroffset},
+                          description={vertikale Verschiebung des Detektors},
+                          symbol={$\Delta v$},
+                          sort={Detektoroffset, vertikal},
+                          type=nomencl}
+
+
 
 \glsadd{filtproj}
 \glsadd{vol}
 \glsadd{dsd}
 \glsadd{nh}
-\glsadd{nv}
 \glsadd{dh}
 \glsadd{dv}
+\glsadd{nx}
+\glsadd{ny}
+\glsadd{dx}
+\glsadd{deltah}
+\glsadd{deltav}

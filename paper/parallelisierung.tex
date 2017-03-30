@@ -233,8 +233,8 @@ Parallelisierungsstrategie des \gls{fdk}:
           vermieden werden.
     \item Die Optimierung der Rückprojektionen sollte die höchste Priorität genießen, woraus folgt, dass
     \item die Rückprojektion die zur Verfügung stehenden \gls{gpu}s möglichst stark auslasten sollte.
-    \item Die Wartezeit zwischen zwei Rückprojektionen sollte möglichst minimal sein, also nicht auf die Wichtung und
-          Filterung warten müssen.
+    \item Die Wartezeit zwischen zwei Rückprojektionen sollte möglichst minimal sein, um die \gls{gpu} nicht
+          unnötigerweise geringer auszulasten.
     \item Die Parallelisierung sollte sich über mehrere \gls{gpu}s skalieren lassen.
 \end{enumerate}
 
