@@ -1,0 +1,53 @@
+\documentclass[convert={density=300,outext=.png}]{standalone}
+\usepackage{tikz}
+
+\begin{document}
+\begin{tikzpicture}[axis/.style={thick,->}]
+    % Detektor
+    \draw (3, 4, -4) -- (9, 4, 4) -- (9, -4, 4) -- (3, -4, -4) -- (3, 4, -4);
+
+    % Rotationsachse unten
+    \draw (0, -3, 0) -- (0, 0, 0);
+
+    % mittlere Ebene
+    \draw[fill=white] (-6, 0, -4) -- (0, 0, 4) -- (9, 0, 4) -- (3, 0, -4) -- (-6, 0, -4);
+
+    % mittlere Achse
+    \draw (-3, 0, 0) -- (6, 0, 0);
+    \draw[fill=black] (-3, 0, 0) circle (1pt) node [below left] {$(-d_{src}, 0, 0)$};
+    \draw[fill=black] (6, 0, 0) circle (1pt) node [above right] {$(d_{det}, 0, 0)$};
+    
+    % Volumen oben
+    \draw[fill=white] (0, 1, -1) -- (-1, 1, -1) -- (0, 1, 1) -- (1, 1, 1) -- (0, 1, -1);
+    \draw[fill=white] (0, 0, 1) -- (0, 1, 1) -- (1, 1, 1) -- (1, 0, 1);
+    \draw[fill=white] (-1, 0, -1) -- (-1, 1, -1) -- (0, 1, 1) -- (0, 0, 1);
+
+    % Volumen unten
+    \draw[dashed] (0, 0, 1) -- (0, -1, 1) -- (1, -1, 1) -- (1, 0, 1);
+    \draw[dashed] (-1, -1, -1) -- (-1, 0, -1);
+    \draw[dashed] (-1, -1, -1) -- (0, -1, 1);
+    \draw[dashed] (0, -1, -1) -- (1, -1, 1);
+
+    % weitere Punkte
+    \draw[fill=black] (0, 0, 0) circle (1pt);
+    \draw[fill=black] (4, 1, -4) circle (1pt);
+    \draw[fill=black] (-0.5, 5/14, -10/7) circle (1pt);
+
+    % Quelle - Detektorpunkt
+    \draw (-3, 0, 0) -- (4, 1, -4);
+
+    % Beschriftungen
+    \draw[->] (0, 0, 6) -- (0, 0, 3) node [pos=0, below left] {mittlere Ebene};
+    \draw[->] (0, 3, -3) -- (4, 2, -4) node [pos=0, left] {Detektorebene};
+    \draw[->] (2.5, -1, 0) -- (0, 0, 0) node [pos=0, right] {$(0, 0, 0)$};
+    \draw[->] (2.5, 0.5, 0) -- (-0.5, 5/14, -10/7) node[pos=0, right] {$(x, y, z)$};
+
+    % fehlende Linien
+    \draw[dashed] (3, 0, -4) -- (3, -4, -4); % Detektor
+    \draw[dashed] (0, -2, 0) -- (0, 0, 0); % Rotationsachse unten
+    \draw[dashed] (0, 0, 0) -- (0, 1, 0); % Rotationsachse oben 1
+    \draw (0, 1, 0) -- (0, 3, 0); % Rotationsachse oben 2
+    \draw[dashed] (-1, 0, 0) -- (1, 0, 0); % mittlere Achse
+
+\end{tikzpicture}
+\end{document}
